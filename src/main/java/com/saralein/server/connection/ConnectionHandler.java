@@ -1,7 +1,7 @@
 package com.saralein.server.connection;
 
 import com.saralein.server.logger.ILogger;
-import com.saralein.server.response.ResponseHandler;
+import com.saralein.server.response.ResponseBuilder;
 
 import java.io.IOException;
 
@@ -14,14 +14,17 @@ public class ConnectionHandler implements Runnable {
         this.logger = logger;
     }
 
+    public void sendResponse(Connection socket) throws IOException {
+        byte[] response = ResponseBuilder.createResponse();
+        socket.write(response);
+    }
+
     public void run() {
-        synchronized (this) {
-            try {
-                ResponseHandler.sendResponse(socket);
-                socket.close();
-            } catch (IOException e) {
-                logger.log(e.getMessage());
-            }
+        try {
+            sendResponse(socket);
+            socket.close();
+        } catch (IOException e) {
+            logger.log(e.getMessage());
         }
     }
 }

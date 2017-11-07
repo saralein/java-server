@@ -2,8 +2,11 @@ package com.saralein.server.connection;
 
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +30,11 @@ public class ConnectionHandlerTest {
 
     @Test
     public void sendsResponseToSocket() {
-        connectionHandler.run();
-        assertArrayEquals(responseArray, socket.getResponseReceived());
+        try {
+            connectionHandler.sendResponse(socket);
+            assertArrayEquals(responseArray, socket.getResponseReceived());
+        } catch (IOException e) {
+            fail("Failed to send response to socket.");
+        }
     }
 }
