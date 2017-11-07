@@ -2,18 +2,18 @@ package com.saralein.server.server;
 
 import com.saralein.server.connection.Connection;
 import com.saralein.server.connection.ConnectionHandler;
-import com.saralein.server.connection.IServerSocket;
-import com.saralein.server.logger.ILogger;
+import com.saralein.server.connection.ServerSocket;
+import com.saralein.server.logger.Logger;
 
 import java.io.IOException;
 
 public class Server implements Runnable {
-    private final IServerSocket serverSocket;
-    private final ILogger logger;
+    private final ServerSocket serverSocket;
+    private final Logger logger;
 
     private boolean listening = true;
 
-    public Server(IServerSocket serverSocket, ILogger logger) {
+    public Server(ServerSocket serverSocket, Logger logger) {
         this.serverSocket = serverSocket;
         this.logger = logger;
     }

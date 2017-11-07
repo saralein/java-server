@@ -1,15 +1,14 @@
 package com.saralein.server.connection;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 
-public class DefaultServerSocket implements IServerSocket {
-    private final ServerSocket serverSocket;
+public class ListeningSocket implements ServerSocket {
+    private final java.net.ServerSocket serverSocket;
     private final int port;
 
-    public DefaultServerSocket(int port) throws IOException {
+    public ListeningSocket(int port) throws IOException {
         this.port = port;
-        this.serverSocket = new ServerSocket(port);
+        this.serverSocket = new java.net.ServerSocket(port);
     }
 
     public int getPort() {

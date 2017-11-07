@@ -1,10 +1,10 @@
 package com.saralein.server.server;
 
 import com.saralein.server.ShutdownHook;
-import com.saralein.server.connection.DefaultServerSocket;
-import com.saralein.server.connection.IServerSocket;
-import com.saralein.server.logger.ILogger;
+import com.saralein.server.connection.ListeningSocket;
+import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.logger.ConnectionLogger;
 
 import java.io.IOException;
 
@@ -16,11 +16,11 @@ public class SetupServer {
 
     public static Server setup(String[] args) {
         Integer port = getPort(args);
-        ILogger logger = new Logger(System.out);
-        IServerSocket serverSocket = null;
+        Logger logger = new ConnectionLogger(System.out);
+        ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new DefaultServerSocket(port);
+            serverSocket = new ListeningSocket(port);
         } catch (IOException e) {
             logger.log(e.getMessage());
         }

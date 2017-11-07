@@ -1,11 +1,11 @@
 package com.saralein.server.mocks;
 
-import com.saralein.server.connection.IServerSocket;
+import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.connection.Connection;
 
 import java.io.IOException;
 
-public class MockServerSocket implements IServerSocket {
+public class MockServerSocket implements ServerSocket {
     private boolean acceptCalled;
     private boolean closeCalled;
 

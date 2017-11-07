@@ -1,15 +1,15 @@
 package com.saralein.server.connection;
 
-import com.saralein.server.logger.ILogger;
+import com.saralein.server.logger.Logger;
 import com.saralein.server.response.ResponseBuilder;
 
 import java.io.IOException;
 
 public class ConnectionHandler implements Runnable {
-    private final ILogger logger;
+    private final Logger logger;
     private final Connection socket;
 
-    public ConnectionHandler(Connection socket, ILogger logger) {
+    public ConnectionHandler(Connection socket, Logger logger) {
         this.socket = socket;
         this.logger = logger;
     }
