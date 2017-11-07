@@ -7,8 +7,6 @@ import com.saralein.server.logger.ILogger;
 import com.saralein.server.logger.Logger;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SetupServer {
     private static int getPort(String[] args) {
@@ -19,7 +17,6 @@ public class SetupServer {
     public static Server setup(String[] args) {
         Integer port = getPort(args);
         ILogger logger = new Logger(System.out);
-        ExecutorService pool = Executors.newSingleThreadExecutor();
         IServerSocket serverSocket = null;
 
         try {
@@ -28,9 +25,9 @@ public class SetupServer {
             logger.log(e.getMessage());
         }
 
-        Server server = new Server(serverSocket, logger, pool);
+        Server server = new Server(serverSocket, logger);
 
-        Runtime.getRuntime().addShutdownHook(new ShutdownHook(server, pool, logger));
+        Runtime.getRuntime().addShutdownHook(new ShutdownHook(server, logger));
 
         return server;
     }

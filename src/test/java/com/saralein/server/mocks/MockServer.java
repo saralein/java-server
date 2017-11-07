@@ -7,8 +7,8 @@ import java.util.concurrent.ExecutorService;
 public class MockServer extends Server {
     private boolean stopCalled = false;
 
-    public MockServer(ExecutorService pool) {
-        super(new MockServerSocket(), new MockLogger(), pool);
+    public MockServer() {
+        super(new MockServerSocket(), new MockLogger());
     }
 
     @Override

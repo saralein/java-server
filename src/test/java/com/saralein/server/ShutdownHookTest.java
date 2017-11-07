@@ -6,22 +6,17 @@ import com.saralein.server.mocks.MockServer;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static org.junit.Assert.*;
 
 public class ShutdownHookTest {
     ShutdownHook shutdownHook;
     MockServer server;
-    ExecutorService pool;
 
     @Before
     public void setUp() {
-        pool = Executors.newSingleThreadExecutor();
-        server = new MockServer(pool);
+        server = new MockServer();
         MockLogger logger = new MockLogger();
-        shutdownHook = new ShutdownHook(server, pool, logger);
+        shutdownHook = new ShutdownHook(server, logger);
     }
 
     @Test
