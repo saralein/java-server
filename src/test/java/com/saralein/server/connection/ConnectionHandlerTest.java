@@ -3,6 +3,8 @@ package com.saralein.server.connection;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 
+import com.saralein.server.response.Response;
+import com.saralein.server.response.ResponseBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +27,8 @@ public class ConnectionHandlerTest {
 
         MockLogger logger = new MockLogger();
         socket = new MockSocket();
-        connectionHandler = new ConnectionHandler(socket, logger);
+        Response responseBuilder = new ResponseBuilder();
+        connectionHandler = new ConnectionHandler(socket, logger, responseBuilder);
     }
 
     @Test

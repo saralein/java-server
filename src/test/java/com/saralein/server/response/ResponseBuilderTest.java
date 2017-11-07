@@ -6,6 +6,7 @@ import org.junit.Test;
 
 public class ResponseBuilderTest {
     private byte[] responseArray;
+    private Response responseBuilder;
 
     @Before
     public void setUp() {
@@ -13,10 +14,11 @@ public class ResponseBuilderTest {
                           "Content-Type: text/html\r\n\r\n" +
                           "<html><head></head><body><h1>Response from Server</h1></body></html>";
         responseArray = response.getBytes();
+        responseBuilder = new ResponseBuilder();
     }
 
     @Test
     public void createsResponse() {
-        assertArrayEquals(responseArray, ResponseBuilder.createResponse());
+        assertArrayEquals(responseArray, responseBuilder.createResponse());
     }
 }
