@@ -4,22 +4,28 @@ import com.saralein.server.ShutdownHook;
 import com.saralein.server.connection.ListeningSocket;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.logger.ConnectionLogger;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 
 import java.io.IOException;
 
 public class SetupServer {
-    private static int getPort(String[] args) {
+    private final Logger logger;
+    private final Runtime runtime;
+    private final Response responseBuilder;
+
+    private int getPort(String[] args) {
         return Integer.parseInt(args[0]);
     }
 
-    public static Server setup(String[] args) {
+    public SetupServer(Logger logger, Runtime runtime, Response responseBuilder) {
+        this.logger = logger;
+        this.runtime = runtime;
+        this.responseBuilder = responseBuilder;
+    }
+
+    public Server setup(String[] args) {
         Integer port = getPort(args);
-        Logger logger = new ConnectionLogger(System.out);
         ServerSocket serverSocket = null;
-        Response responseBuilder = new ResponseBuilder();
 
         try {
             serverSocket = new ListeningSocket(port);
@@ -29,7 +35,7 @@ public class SetupServer {
 
         Server server = new Server(serverSocket, logger, responseBuilder);
 
-        Runtime.getRuntime().addShutdownHook(new ShutdownHook(server, logger));
+        runtime.addShutdownHook(new ShutdownHook(server, logger));
 
         return server;
     }
