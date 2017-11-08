@@ -1,13 +1,12 @@
 package com.saralein.server.mocks;
 
-import com.saralein.server.response.ResponseBuilder;
 import com.saralein.server.server.Server;
 
 public class MockServer extends Server {
     private boolean stopCalled = false;
 
     public MockServer() {
-        super(new MockServerSocket(), new MockLogger(), new ResponseBuilder());
+        super(new MockServerSocket(), new MockLogger(), new MockResponder());
     }
 
     @Override
@@ -19,4 +18,3 @@ public class MockServer extends Server {
         return stopCalled;
     }
 }
-

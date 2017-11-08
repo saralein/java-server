@@ -1,8 +1,8 @@
 package com.saralein.server.server;
 
 import com.saralein.server.mocks.MockLogger;
-import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
+import com.saralein.server.mocks.MockResponder;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,13 +14,13 @@ import static org.junit.Assert.*;
 public class SetupServerTest {
     MockLogger logger;
     Runtime runtime;
-    Response responseBuilder;
+    MockResponder response;
 
     @Before
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        responseBuilder = new ResponseBuilder();
+        response = new MockResponder();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class SetupServerTest {
         } catch (IOException e) {
             fail("Test failed to create blocking socket.");
         } finally {
-            new SetupServer(logger, runtime, responseBuilder).setup(args);
+            new SetupServer(logger, runtime, response).setup(args);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
         }
     }
@@ -40,7 +40,7 @@ public class SetupServerTest {
     @Test
     public void setsUpAndReturnsNewServer() {
         String[] args = new String[]{"1337"};
-        Server server = new SetupServer(logger, runtime, responseBuilder).setup(args);
+        Server server = new SetupServer(logger, runtime, response).setup(args);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());
