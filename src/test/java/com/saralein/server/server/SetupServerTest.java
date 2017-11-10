@@ -1,8 +1,9 @@
 package com.saralein.server.server;
 
 import com.saralein.server.mocks.MockLogger;
-import com.saralein.server.mocks.MockResponder;
-
+import com.saralein.server.request.RequestParser;
+import com.saralein.server.response.SysFileHelper;
+import com.saralein.server.router.ServerRouter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,15 +13,17 @@ import java.net.ServerSocket;
 import static org.junit.Assert.*;
 
 public class SetupServerTest {
-    MockLogger logger;
-    Runtime runtime;
-    MockResponder response;
+    private MockLogger logger;
+    private Runtime runtime;
+    private ServerRouter router;
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        response = new MockResponder();
+        router = new ServerRouter(new SysFileHelper("public"));
+        requestParser = new RequestParser();
     }
 
     @Test
@@ -32,7 +35,7 @@ public class SetupServerTest {
         } catch (IOException e) {
             fail("Test failed to create blocking socket.");
         } finally {
-            new SetupServer(logger, runtime, response).setup(args);
+            new SetupServer(logger, runtime, router, requestParser).setup(args);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
         }
     }
@@ -40,7 +43,7 @@ public class SetupServerTest {
     @Test
     public void setsUpAndReturnsNewServer() {
         String[] args = new String[]{"1337"};
-        Server server = new SetupServer(logger, runtime, response).setup(args);
+        Server server = new SetupServer(logger, runtime, router, requestParser).setup(args);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());

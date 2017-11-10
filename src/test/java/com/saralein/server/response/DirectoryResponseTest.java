@@ -3,26 +3,29 @@ package com.saralein.server.response;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 public class DirectoryResponseTest {
     private byte[] responseArray;
     private DirectoryResponse directoryResponse;
-    private SysFileHelper sysFileHelper;
 
     @Before
     public void setUp() {
         String response = "HTTP/1.1 200 OK\r\n" +
                           "Content-Type: text/html\r\n\r\n" +
-                          "<li><a href=/public/cheetara.jpg>cheetara.jpg</a></li>" +
-                          "<li><a href=/public/marshmallow.gif>marshmallow.gif</a></li>" +
-                          "<li><a href=/public/recipe.txt>recipe.txt</a></li>";
+                          "<li><a href=cake.pdf>cake.pdf</a></li>" +
+                          "<li><a href=cheetara.jpg>cheetara.jpg</a></li>" +
+                          "<li><a href=marshmallow.gif>marshmallow.gif</a></li>" +
+                          "<li><a href=recipe.txt>recipe.txt</a></li>";
 
         responseArray = response.getBytes();
 
-        sysFileHelper = new SysFileHelper("public");
+        File directoryFile = new File("public");
+        FileHelper sysFileHelper = new SysFileHelper("public");
 
-        directoryResponse = new DirectoryResponse(sysFileHelper);
+        directoryResponse = new DirectoryResponse(directoryFile, sysFileHelper);
     }
 
     @Test

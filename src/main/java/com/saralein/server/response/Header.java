@@ -1,10 +1,11 @@
 package com.saralein.server.response;
 
+import static com.saralein.server.Constants.CRLF;
+
 public class Header {
     private final String status;
     private final String contentType;
     private final String fullContent;
-    private final String CRLF = "\r\n";
 
     public Header(String status, String contentType) {
         this.status = status;

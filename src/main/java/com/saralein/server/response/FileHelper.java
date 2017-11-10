@@ -1,8 +1,10 @@
 package com.saralein.server.response;
 
+import java.io.File;
 import java.util.List;
 
 public interface FileHelper {
     String getRelativePath(String name);
-    List<String> getFilenames();
+    String getMimeType(String file);
+    List<String> getFilenames(File directory);
 }
