@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 public class DirectoryResponseTest {
     private byte[] responseArray;
     private DirectoryResponse directoryResponse;
+    private SysFileHelper sysFileHelper;
 
     @Before
     public void setUp() {
@@ -19,7 +20,9 @@ public class DirectoryResponseTest {
 
         responseArray = response.getBytes();
 
-        directoryResponse = new DirectoryResponse();
+        sysFileHelper = new SysFileHelper("public");
+
+        directoryResponse = new DirectoryResponse(sysFileHelper);
     }
 
     @Test

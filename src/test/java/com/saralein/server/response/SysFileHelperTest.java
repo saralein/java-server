@@ -8,8 +8,8 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class FileHelperTest {
-    FileHelper fileHelper;
+public class SysFileHelperTest {
+    SysFileHelper fileHelper;
     String userDir;
     List<String> filenames;
     String jpgPath = "/public/cheetara.jpg";
@@ -19,7 +19,7 @@ public class FileHelperTest {
     @Before
     public void setUp() {
         userDir = System.getProperty("user.dir") + "/";
-        fileHelper = new FileHelper("public");
+        fileHelper = new SysFileHelper("public");
         filenames = new ArrayList<>();
 
         filenames.add("cheetara.jpg");

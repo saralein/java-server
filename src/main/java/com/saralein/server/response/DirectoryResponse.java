@@ -2,6 +2,11 @@ package com.saralein.server.response;
 
 public class DirectoryResponse implements Response {
     private final String contentType = "text/html";
+    private final FileHelper fileHelper;
+
+    public DirectoryResponse(FileHelper fileHelper) {
+        this.fileHelper = fileHelper;
+    }
 
     public byte[] createResponse() {
         StringBuilder response = new StringBuilder();
@@ -16,7 +21,7 @@ public class DirectoryResponse implements Response {
     }
 
     private String createBody() {
-        FileHelper fileHelper = new FileHelper("public");
+//        SysFileHelper fileHelper = new SysFileHelper("public");
         StringBuilder filesHTML = new StringBuilder();
 
         for (String filename: fileHelper.getFilenames()) {
