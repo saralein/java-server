@@ -21,7 +21,6 @@ public class DirectoryResponse implements Response {
     }
 
     private String createBody() {
-//        SysFileHelper fileHelper = new SysFileHelper("public");
         StringBuilder filesHTML = new StringBuilder();
 
         for (String filename: fileHelper.getFilenames()) {
