@@ -11,16 +11,16 @@ import java.io.IOException;
 public class SetupServer {
     private final Logger logger;
     private final Runtime runtime;
-    private final Response responseBuilder;
+    private final Response response;
 
     private int getPort(String[] args) {
         return Integer.parseInt(args[0]);
     }
 
-    public SetupServer(Logger logger, Runtime runtime, Response responseBuilder) {
+    public SetupServer(Logger logger, Runtime runtime, Response response) {
         this.logger = logger;
         this.runtime = runtime;
-        this.responseBuilder = responseBuilder;
+        this.response = response;
     }
 
     public Server setup(String[] args) {
@@ -33,7 +33,7 @@ public class SetupServer {
             logger.log(e.getMessage());
         }
 
-        Server server = new Server(serverSocket, logger, responseBuilder);
+        Server server = new Server(serverSocket, logger, response);
 
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 

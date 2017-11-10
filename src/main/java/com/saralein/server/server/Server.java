@@ -11,14 +11,14 @@ import java.io.IOException;
 public class Server implements Runnable {
     private final ServerSocket serverSocket;
     private final Logger logger;
-    private final Response responseBuilder;
+    private final Response response;
 
     private boolean listening = true;
 
-    public Server(ServerSocket serverSocket, Logger logger, Response responseBuilder) {
+    public Server(ServerSocket serverSocket, Logger logger, Response response) {
         this.serverSocket = serverSocket;
         this.logger = logger;
-        this.responseBuilder = responseBuilder;
+        this.response = response;
     }
 
     public void run() {
@@ -28,7 +28,7 @@ public class Server implements Runnable {
         try {
             while(listening) {
                 Connection socket = serverSocket.accept();
-                ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, responseBuilder);
+                ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, response);
                 connectionHandler.run();
             }
             serverSocket.close();
