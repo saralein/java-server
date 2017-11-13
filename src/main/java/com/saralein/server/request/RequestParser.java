@@ -13,9 +13,9 @@ public class RequestParser {
     private HashMap<String, String> createRequestMap(String[] requestLine) {
         HashMap<String, String> parsedRequest = new HashMap<>();
 
-        parsedRequest.put("method", requestLine[0]);
-        parsedRequest.put("uri", requestLine[1]);
-        parsedRequest.put("version", requestLine[2]);
+        parsedRequest.put("method", parseMethod(requestLine));
+        parsedRequest.put("uri", parseUri(requestLine));
+        parsedRequest.put("version", parseVersion(requestLine));
 
         return parsedRequest;
     }
@@ -28,15 +28,15 @@ public class RequestParser {
         return split(fullRequest[0], " ");
     }
 
-    private String setMethod(String[] requestLine) {
+    private String parseMethod(String[] requestLine) {
         return requestLine[0];
     }
 
-    private String setUri(String[] requestLine) {
+    private String parseUri(String[] requestLine) {
         return requestLine[1];
     }
 
-    private String setVersion(String[] requestLine) {
+    private String parseVersion(String[] requestLine) {
         return requestLine[2];
     }
 }
