@@ -1,16 +1,14 @@
 package com.saralein.server.response;
 
-import com.saralein.server.request.Request;
-import com.saralein.server.request.RequestParser;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
-
+import com.saralein.server.request.Request;
+import com.saralein.server.request.RequestParser;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileResponseTest {
     private byte[] jpgResponse;

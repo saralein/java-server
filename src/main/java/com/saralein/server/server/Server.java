@@ -6,7 +6,6 @@ import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
-
 import java.io.IOException;
 
 public class Server implements Runnable {

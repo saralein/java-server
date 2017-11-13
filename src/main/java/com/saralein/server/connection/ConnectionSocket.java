@@ -1,7 +1,6 @@
 package com.saralein.server.connection;
 
 import static com.saralein.server.Constants.CRLF;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;

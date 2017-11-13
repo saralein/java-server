@@ -6,13 +6,10 @@ import com.saralein.server.response.DirectoryResponse;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.response.FileResponse;
 import com.saralein.server.response.NotFoundResponse;
-
+import java.io.File;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-
-import static org.junit.Assert.*;
 
 public class ServerRouterTest {
     private Request notFoundRequest;

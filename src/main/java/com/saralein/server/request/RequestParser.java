@@ -1,10 +1,25 @@
 package com.saralein.server.request;
 
 import static com.saralein.server.Constants.CRLF;
-
 import java.util.HashMap;
 
 public class RequestParser {
+    public HashMap<String, String> parse(String request) {
+        String[] fullRequest = split(request, CRLF);
+        String[] requestLine = splitRequestLine(fullRequest);
+        return createRequestMap(requestLine);
+    }
+
+    private HashMap<String, String> createRequestMap(String[] requestLine) {
+        HashMap<String, String> parsedRequest = new HashMap<>();
+
+        parsedRequest.put("method", setMethod(requestLine));
+        parsedRequest.put("uri", setUri(requestLine));
+        parsedRequest.put("version", setVersion(requestLine));
+
+        return parsedRequest;
+    }
+
     private String[] split(String request, String splitter) {
         return request.split(splitter);
     }
@@ -23,21 +38,5 @@ public class RequestParser {
 
     private String setVersion(String[] requestLine) {
         return requestLine[2];
-    }
-
-    private HashMap<String, String> createRequestMap(String[] requestLine) {
-        HashMap<String, String> parsedRequest = new HashMap<>();
-
-        parsedRequest.put("method", setMethod(requestLine));
-        parsedRequest.put("uri", setUri(requestLine));
-        parsedRequest.put("version", setVersion(requestLine));
-
-        return parsedRequest;
-    }
-
-    public HashMap<String, String> parse(String request) {
-        String[] fullRequest = split(request, CRLF);
-        String[] requestLine = splitRequestLine(fullRequest);
-        return createRequestMap(requestLine);
     }
 }

@@ -1,13 +1,11 @@
 package com.saralein.server.server;
 
-import com.saralein.server.ShutdownHook;
 import com.saralein.server.connection.ListeningSocket;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
-import com.saralein.server.response.Response;
 import com.saralein.server.router.Router;
-
+import com.saralein.server.ShutdownHook;
 import java.io.IOException;
 
 public class SetupServer {
@@ -15,10 +13,6 @@ public class SetupServer {
     private final Runtime runtime;
     private final Router router;
     private final RequestParser requestParser;
-
-    private int getPort(String[] args) {
-        return Integer.parseInt(args[0]);
-    }
 
     public SetupServer(Logger logger, Runtime runtime, Router router, RequestParser requestParser) {
         this.logger = logger;
@@ -42,5 +36,9 @@ public class SetupServer {
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 
         return server;
+    }
+
+    private int getPort(String[] args) {
+        return Integer.parseInt(args[0]);
     }
 }

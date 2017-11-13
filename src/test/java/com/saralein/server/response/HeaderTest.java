@@ -1,8 +1,7 @@
 package com.saralein.server.response;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class HeaderTest {
     private String header200 = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";

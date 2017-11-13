@@ -2,7 +2,6 @@ package com.saralein.server.response;
 
 import static com.saralein.server.Constants.STATUS_CODES;
 import com.saralein.server.request.Request;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

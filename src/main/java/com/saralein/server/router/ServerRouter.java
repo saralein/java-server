@@ -2,7 +2,6 @@ package com.saralein.server.router;
 
 import com.saralein.server.request.Request;
 import com.saralein.server.response.*;
-
 import java.io.File;
 
 public class ServerRouter implements Router {

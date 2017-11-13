@@ -24,13 +24,6 @@ public class SysFileHelper implements FileHelper {
         return fileNameMap.getContentTypeFor(file);
     }
 
-    private List<File> listDirectoryFiles(File directory) {
-        File[] fileArray = directory.listFiles(
-                file -> !file.isHidden());
-
-        return Arrays.asList(fileArray);
-    }
-
     public List<String> getFilenames(File directory) {
         List<String> fileNames = new ArrayList<>();
 
@@ -41,5 +34,12 @@ public class SysFileHelper implements FileHelper {
         Collections.sort(fileNames);
 
         return fileNames;
+    }
+
+    private List<File> listDirectoryFiles(File directory) {
+        File[] fileArray = directory.listFiles(
+                file -> !file.isHidden());
+
+        return Arrays.asList(fileArray);
     }
 }

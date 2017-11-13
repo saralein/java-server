@@ -1,7 +1,6 @@
 package com.saralein.server.response;
 
 import static com.saralein.server.Constants.STATUS_CODES;
-
 import java.io.File;
 
 public class DirectoryResponse implements Response {

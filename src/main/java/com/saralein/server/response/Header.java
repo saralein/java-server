@@ -13,6 +13,10 @@ public class Header {
         this.fullContent = createHeaders();
     }
 
+    public String getContent() {
+        return fullContent;
+    }
+
     private String createStatusLine(String status) {
         return  "HTTP/1.1 " + status + CRLF;
     }
@@ -29,9 +33,5 @@ public class Header {
         headerBuilder.append(CRLF);
 
         return headerBuilder.toString();
-    }
-
-    public String getContent() {
-        return fullContent;
     }
 }

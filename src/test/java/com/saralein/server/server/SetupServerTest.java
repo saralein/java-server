@@ -4,13 +4,11 @@ import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.router.ServerRouter;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.ServerSocket;
-
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SetupServerTest {
     private MockLogger logger;

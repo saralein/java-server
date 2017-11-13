@@ -4,7 +4,6 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -21,14 +20,6 @@ public class ConnectionHandler implements Runnable {
         this.requestParser = requestParser;
     }
 
-    private HashMap<String, String> getRequest(Connection socket) throws IOException {
-        return requestParser.parse(socket.read());
-    }
-
-    private void sendResponse(Connection socket, byte[] response) throws IOException {
-        socket.write(response);
-    }
-
     public void run() {
         try {
             Request request = new Request(getRequest(socket));
@@ -38,5 +29,13 @@ public class ConnectionHandler implements Runnable {
         } catch (IOException e) {
             logger.log(e.getMessage());
         }
+    }
+
+    private HashMap<String, String> getRequest(Connection socket) throws IOException {
+        return requestParser.parse(socket.read());
+    }
+
+    private void sendResponse(Connection socket, byte[] response) throws IOException {
+        socket.write(response);
     }
 }

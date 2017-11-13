@@ -2,18 +2,15 @@ package com.saralein.server.connection;
 
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
-
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.DirectoryResponse;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.response.NotFoundResponse;
 import com.saralein.server.router.ServerRouter;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.File;
-
-import static org.junit.Assert.*;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;

@@ -1,11 +1,9 @@
 package com.saralein.server.request;
 
+import java.util.HashMap;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.*;
 
 public class RequestTest {
     private String requestString = "GET /public/cheetara.jpg HTTP/1.1";
