@@ -31,7 +31,7 @@ public class SetupServerTest {
         try {
             new ServerSocket(6066);
         } catch (IOException e) {
-            fail("Test failed to create blocking socket.");
+            fail("Test failed to createContents blocking socket.");
         } finally {
             new SetupServer(logger, runtime, router, requestParser).setup(args);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());

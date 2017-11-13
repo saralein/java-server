@@ -31,21 +31,21 @@ public class SysFileHelperTest {
 
     @Test
     public void getsRelativePathOfFile() {
-        assertEquals(jpgPath, fileHelper.getRelativePath("cheetara.jpg"));
-        assertEquals(txtPath, fileHelper.getRelativePath("recipe.txt"));
-        assertEquals(gifPath, fileHelper.getRelativePath("marshmallow.gif"));
+        assertEquals(jpgPath, fileHelper.createRelativePath("cheetara.jpg"));
+        assertEquals(txtPath, fileHelper.createRelativePath("recipe.txt"));
+        assertEquals(gifPath, fileHelper.createRelativePath("marshmallow.gif"));
     }
 
     @Test
     public void getsMimeTypesOfFiles() {
-        assertEquals("application/pdf", fileHelper.getMimeType("/cake.pdf"));
-        assertEquals("image/jpeg", fileHelper.getMimeType("/cheetara.jpg"));
-        assertEquals("image/gif", fileHelper.getMimeType("/marshmallow.gif"));
-        assertEquals("text/plain", fileHelper.getMimeType("/recipe.txt"));
+        assertEquals("application/pdf", fileHelper.determineMimeType("/cake.pdf"));
+        assertEquals("image/jpeg", fileHelper.determineMimeType("/cheetara.jpg"));
+        assertEquals("image/gif", fileHelper.determineMimeType("/marshmallow.gif"));
+        assertEquals("text/plain", fileHelper.determineMimeType("/recipe.txt"));
     }
 
     @Test
     public void getsNamesOfFilesInDirectory() {
-        assertEquals(filenames, fileHelper.getFilenames(directory));
+        assertEquals(filenames, fileHelper.listFileNames(directory));
     }
 }

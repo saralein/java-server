@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 public interface FileHelper {
-    String getRelativePath(String name);
-    String getMimeType(String file);
-    List<String> getFilenames(File directory);
+    String createRelativePath(String name);
+    String determineMimeType(String file);
+    List<String> listFileNames(File directory);
 }

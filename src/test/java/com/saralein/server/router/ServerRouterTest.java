@@ -46,16 +46,16 @@ public class ServerRouterTest {
 
     @Test
     public void returnsNullResponseForNonExistentResources() {
-        assertArrayEquals(notFoundResponse, router.getResponse(notFoundRequest));
+        assertArrayEquals(notFoundResponse, router.resolveRequest(notFoundRequest));
     }
 
     @Test
     public void returnsDirectoryResponseForDirectory() {
-        assertArrayEquals(directoryResponse, router.getResponse(directoryRequest));
+        assertArrayEquals(directoryResponse, router.resolveRequest(directoryRequest));
     }
 
     @Test
     public void returnsFileResponseForFile() {
-        assertArrayEquals(fileResponse, router.getResponse(fileRequest));
+        assertArrayEquals(fileResponse, router.resolveRequest(fileRequest));
     }
 }

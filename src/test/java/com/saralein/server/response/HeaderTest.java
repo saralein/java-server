@@ -11,13 +11,13 @@ public class HeaderTest {
     public void returns200HeaderForHTML() {
         Header header = new Header("200 OK", "text/html");
 
-        assertEquals(header200, header.getContent());
+        assertEquals(header200, header.createContents());
     }
 
     @Test
     public void returns404HeaderForGIF() {
         Header header = new Header("404 Not Found", "image/gif");
 
-        assertEquals(header404, header.getContent());
+        assertEquals(header404, header.createContents());
     }
 }

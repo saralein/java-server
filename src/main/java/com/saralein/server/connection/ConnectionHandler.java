@@ -22,16 +22,13 @@ public class ConnectionHandler implements Runnable {
 
     public void run() {
         try {
-            Request request = new Request(getRequest(socket));
-            byte[] response = router.getResponse(request);
+            HashMap<String, String> parsedRequest = requestParser.parse(socket.read());
+            Request request = new Request(parsedRequest);
+            byte[] response = router.resolveRequest(request);
             socket.write(response);
             socket.close();
         } catch (IOException e) {
             logger.log(e.getMessage());
         }
-    }
-
-    private HashMap<String, String> getRequest(Connection socket) throws IOException {
-        return requestParser.parse(socket.read());
     }
 }

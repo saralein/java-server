@@ -14,13 +14,13 @@ public class ServerRouter implements Router {
         this.fileHelper = fileHelper;
     }
 
-    public byte[] getResponse(Request request) {
+    public byte[] resolveRequest(Request request) {
         resourceStatus(request);
         return route(request);
     }
 
     private void resourceStatus(Request request) {
-        String resourceUri = fileHelper.getRelativePath(request.getUri());
+        String resourceUri = fileHelper.createRelativePath(request.getUri());
 
         resource = new File(resourceUri);
 

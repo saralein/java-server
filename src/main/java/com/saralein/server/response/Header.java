@@ -5,16 +5,10 @@ import static com.saralein.server.Constants.CRLF;
 public class Header {
     private final String status;
     private final String contentType;
-    private final String fullContent;
 
     public Header(String status, String contentType) {
         this.status = status;
         this.contentType = contentType;
-        this.fullContent = createHeaders();
-    }
-
-    public String getContent() {
-        return fullContent;
     }
 
     private String createStatusLine(String status) {
@@ -25,7 +19,7 @@ public class Header {
         return "Content-Type: " + contentType + CRLF;
     }
 
-    private String createHeaders() {
+    public String createContents() {
         StringBuilder headerBuilder = new StringBuilder();
 
         headerBuilder.append(createStatusLine(status));

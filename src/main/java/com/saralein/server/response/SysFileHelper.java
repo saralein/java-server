@@ -15,16 +15,16 @@ public class SysFileHelper implements FileHelper {
         this.root = root;
     }
 
-    public String getRelativePath(String name) {
+    public String createRelativePath(String name) {
         return root + "/" + name;
     }
 
-    public String getMimeType(String file) {
+    public String determineMimeType(String file) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         return fileNameMap.getContentTypeFor(file);
     }
 
-    public List<String> getFilenames(File directory) {
+    public List<String> listFileNames(File directory) {
         List<String> fileNames = new ArrayList<>();
 
         for (File file: listDirectoryFiles(directory)) {

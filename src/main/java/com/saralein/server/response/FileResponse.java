@@ -35,9 +35,9 @@ public class FileResponse implements Response {
     }
 
     private String createHeader() {
-        String mimeType = fileHelper.getMimeType(request.getUri());
+        String mimeType = fileHelper.determineMimeType(request.getUri());
 
-        return new Header(STATUS_CODES.get(200), mimeType).getContent();
+        return new Header(STATUS_CODES.get(200), mimeType).createContents();
     }
 
     private byte[] createBody() {

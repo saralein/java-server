@@ -30,7 +30,7 @@ public class FileResponseTest {
 
         String jpgString = "GET /cheetara.jpg HTTP/1.1";
         String jpgPath = "public/cheetara.jpg";
-        String jpgHeader = new Header("200 OK", "image/jpeg").getContent();
+        String jpgHeader = new Header("200 OK", "image/jpeg").createContents();
 
         byte[] jpgBytes = getFileBytes(jpgPath);
         File jpgFile = new File(jpgPath);
@@ -42,7 +42,7 @@ public class FileResponseTest {
 
         String gifString = "GET /marshmallow.gif HTTP/1.1";
         String gifPath = "public/marshmallow.gif";
-        String gifHeader = new Header("200 OK", "image/gif").getContent();
+        String gifHeader = new Header("200 OK", "image/gif").createContents();
 
         byte[] gifBytes = getFileBytes(gifPath);
         File gifFile = new File(gifPath);
@@ -54,7 +54,7 @@ public class FileResponseTest {
 
         String txtString = "GET /recipe.txt HTTP/1.1";
         String txtPath = "public/recipe.txt";
-        String txtHeader = new Header("200 OK", "text/plain").getContent();
+        String txtHeader = new Header("200 OK", "text/plain").createContents();
 
         byte[] txtBytes = getFileBytes(txtPath);
         File txtFile = new File(txtPath);
@@ -66,7 +66,7 @@ public class FileResponseTest {
 
         String pdfString = "GET /cake.pdf HTTP/1.1";
         String pdfPath = "public/recipe.txt";
-        String pdfHeader = new Header("200 OK", "application/pdf").getContent();
+        String pdfHeader = new Header("200 OK", "application/pdf").createContents();
 
         byte[] pdfBytes = getFileBytes(pdfPath);
         File pdfFile = new File(pdfPath);
@@ -84,7 +84,7 @@ public class FileResponseTest {
             File file = new File(filePath);
             fileByte = Files.readAllBytes(file.toPath());
         } catch (IOException e) {
-            fail("Failed to create file bytes in test.");
+            fail("Failed to createContents file bytes in test.");
         }
 
         return fileByte;

@@ -22,20 +22,20 @@ public class DirectoryResponse implements Response {
     }
 
     private String createHeader() {
-        return new Header(STATUS_CODES.get(200), contentType).getContent();
+        return new Header(STATUS_CODES.get(200), contentType).createContents();
     }
 
     private String createBody() {
         StringBuilder filesHTML = new StringBuilder();
 
-        for (String filename: fileHelper.getFilenames(resource)) {
-            filesHTML.append(getHTML(filename));
+        for (String filename: fileHelper.listFileNames(resource)) {
+            filesHTML.append(createFileHTML(filename));
         }
 
         return filesHTML.toString();
     }
 
-    private String getHTML(String filename) {
+    private String createFileHTML(String filename) {
         return "<li><a href=" + filename + ">" + filename + "</a></li>";
     }
 }
