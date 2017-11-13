@@ -29,16 +29,12 @@ public class ServerRouter implements Router {
     }
 
     private byte[] route(Request request) {
-        Response response;
-
         if (!resourceExists) {
-            response = new NotFoundResponse();
+            return new NotFoundResponse().createResponse();
         } else if (resourceIsDirectory) {
-            response = new DirectoryResponse(resource, fileHelper);
+            return new DirectoryResponse(resource, fileHelper).createResponse();
         } else {
-            response = new FileResponse(request, resource, fileHelper);
+            return new FileResponse(request, resource, fileHelper).createResponse();
         }
-
-        return response.createResponse();
     }
 }

@@ -24,7 +24,7 @@ public class ConnectionHandler implements Runnable {
         try {
             Request request = new Request(getRequest(socket));
             byte[] response = router.getResponse(request);
-            sendResponse(socket, response);
+            socket.write(response);
             socket.close();
         } catch (IOException e) {
             logger.log(e.getMessage());
@@ -33,9 +33,5 @@ public class ConnectionHandler implements Runnable {
 
     private HashMap<String, String> getRequest(Connection socket) throws IOException {
         return requestParser.parse(socket.read());
-    }
-
-    private void sendResponse(Connection socket, byte[] response) throws IOException {
-        socket.write(response);
     }
 }

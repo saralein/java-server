@@ -22,7 +22,7 @@ public class ConnectionSocket implements Connection {
 
         String str;
 
-        while ((str = bufferedReader.readLine()) != null && !str.equals("")) {
+        while ((str = bufferedReader.readLine()) != null && !str.isEmpty()) {
             request.append(str).append(CRLF);
         }
 
