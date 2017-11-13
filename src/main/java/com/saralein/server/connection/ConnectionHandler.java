@@ -22,8 +22,7 @@ public class ConnectionHandler implements Runnable {
 
     public void run() {
         try {
-            HashMap<String, String> parsedRequest = requestParser.parse(socket.read());
-            Request request = new Request(parsedRequest);
+            Request request = requestParser.parse(socket.read());
             byte[] response = router.resolveRequest(request);
             socket.write(response);
             socket.close();

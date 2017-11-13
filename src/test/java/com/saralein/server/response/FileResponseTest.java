@@ -34,8 +34,7 @@ public class FileResponseTest {
 
         byte[] jpgBytes = getFileBytes(jpgPath);
         File jpgFile = new File(jpgPath);
-        HashMap<String, String> jpgResponseHash = requestParser.parse(jpgString);
-        Request jpgRequest = new Request(jpgResponseHash);
+        Request jpgRequest = requestParser.parse(jpgString);
 
         jpgResponse = getFullResponse(jpgHeader, jpgBytes);
         jpgResponder = new FileResponse(jpgRequest, jpgFile, fileHelper);
@@ -46,8 +45,7 @@ public class FileResponseTest {
 
         byte[] gifBytes = getFileBytes(gifPath);
         File gifFile = new File(gifPath);
-        HashMap<String, String> gifResponseHash = requestParser.parse(gifString);
-        Request gifRequest = new Request(gifResponseHash);
+        Request gifRequest = requestParser.parse(gifString);
 
         gifResponse = getFullResponse(gifHeader, gifBytes);
         gifResponder = new FileResponse(gifRequest, gifFile, fileHelper);
@@ -58,8 +56,7 @@ public class FileResponseTest {
 
         byte[] txtBytes = getFileBytes(txtPath);
         File txtFile = new File(txtPath);
-        HashMap<String, String> txtResponseHash = requestParser.parse(txtString);
-        Request txtRequest = new Request(txtResponseHash);
+        Request txtRequest = requestParser.parse(txtString);
 
         txtResponse = getFullResponse(txtHeader, txtBytes);
         txtResponder = new FileResponse(txtRequest, txtFile, fileHelper);
@@ -70,8 +67,7 @@ public class FileResponseTest {
 
         byte[] pdfBytes = getFileBytes(pdfPath);
         File pdfFile = new File(pdfPath);
-        HashMap<String, String> pdfResponseHash = requestParser.parse(pdfString);
-        Request pdfRequest = new Request(pdfResponseHash);
+        Request pdfRequest = requestParser.parse(pdfString);
 
         pdfResponse = getFullResponse(pdfHeader, pdfBytes);
         pdfResponder = new FileResponse(pdfRequest, pdfFile, fileHelper);

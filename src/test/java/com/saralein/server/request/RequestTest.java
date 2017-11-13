@@ -12,8 +12,7 @@ public class RequestTest {
 
     @Before
     public void setUp() {
-        parsedRequest = new RequestParser().parse(requestString);
-        request = new Request(parsedRequest);
+        request = new RequestParser().parse(requestString);
     }
 
     @Test

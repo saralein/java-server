@@ -8,49 +8,42 @@ import org.junit.Test;
 public class RequestParserTest {
     private String request1 = "GET / HTTP/1.1";
     private String request2 = "GET /public/cheetara.jpg HTTP/1.1";
-    private HashMap<String, String> testRequest1 = null;
-    private HashMap<String, String> testRequest2 = null;
+    private HashMap<String, String> test1Hash = null;
+    private HashMap<String, String> test2Hash = null;
+    private Request test1Request;
+    private Request test2Request;
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        testRequest1 = new HashMap<String, String>() {{
+        test1Hash = new HashMap<String, String>() {{
             put("method", "GET");
             put("uri", "/");
             put("version", "HTTP/1.1");
         }};
 
-        testRequest2 = new HashMap<String, String>() {{
+        test2Hash = new HashMap<String, String>() {{
             put("method", "GET");
             put("uri", "/public/cheetara.jpg");
             put("version", "HTTP/1.1");
         }};
+
+        test1Request = new Request(test1Hash);
+        test2Request = new Request(test2Hash);
+
+        requestParser = new RequestParser();
     }
 
     @Test
-    public void parsesRequestLineFromClientForBaseUri() {
-        RequestParser requestParser = new RequestParser();
-        HashMap<String, String> parsedRequest = requestParser.parse(request1);
+    public void returnsRequestWithCorrectInformation() {
+        Request test1ThroughParser = requestParser.parse(request1);
 
-        assertTrue(parsedRequest.containsKey("method"));
-        assertTrue(parsedRequest.containsKey("uri"));
-        assertTrue(parsedRequest.containsKey("version"));
+        assertEquals(test1Request.getMethod(), test1ThroughParser.getMethod());
+        assertEquals(test1Request.getUri(), test1ThroughParser.getUri());
 
-        assertEquals(testRequest1.get("method"), parsedRequest.get("method"));
-        assertEquals(testRequest1.get("uri"), parsedRequest.get("uri"));
-        assertEquals(testRequest1.get("version"), parsedRequest.get("version"));
-    }
+        Request test2ThroughParser = requestParser.parse(request2);
 
-    @Test
-    public void parsesRequestLineFromClientForMoreComplexUri() {
-        RequestParser requestParser = new RequestParser();
-        HashMap<String, String> parsedRequest = requestParser.parse(request2);
-
-        assertTrue(parsedRequest.containsKey("method"));
-        assertTrue(parsedRequest.containsKey("uri"));
-        assertTrue(parsedRequest.containsKey("version"));
-
-        assertEquals(testRequest2.get("method"), parsedRequest.get("method"));
-        assertEquals(testRequest2.get("uri"), parsedRequest.get("uri"));
-        assertEquals(testRequest2.get("version"), parsedRequest.get("version"));
+        assertEquals(test2Request.getMethod(), test2ThroughParser.getMethod());
+        assertEquals(test2Request.getUri(), test2ThroughParser.getUri());
     }
 }

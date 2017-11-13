@@ -26,18 +26,19 @@ public class ServerRouterTest {
     @Before
     public void setUp() {
         SysFileHelper fileHelper = new SysFileHelper("public");
+        RequestParser requestParser = new RequestParser();
 
         String nullString = "GET /snarf.jpg HTTP/1.1";
-        notFoundRequest = new Request(new RequestParser().parse(nullString));
+        notFoundRequest = requestParser.parse(nullString);
         notFoundResponse = new NotFoundResponse().createResponse();
 
         String directoryString = "GET / HTTP/1.1";
-        directoryRequest = new Request(new RequestParser().parse(directoryString));
+        directoryRequest = requestParser.parse(directoryString);
         File directoryFile = new File("public");
         directoryResponse = new DirectoryResponse(directoryFile, fileHelper).createResponse();
 
         String fileString = "GET /cheetara.jpg HTTP/1.1";
-        fileRequest = new Request(new RequestParser().parse(fileString));
+        fileRequest = requestParser.parse(fileString);
         File file = new File("public/cheetara.jpg");
         fileResponse = new FileResponse(fileRequest, file, fileHelper).createResponse();
 

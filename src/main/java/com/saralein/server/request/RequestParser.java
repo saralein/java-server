@@ -4,10 +4,12 @@ import static com.saralein.server.Constants.CRLF;
 import java.util.HashMap;
 
 public class RequestParser {
-    public HashMap<String, String> parse(String request) {
+    public Request parse(String request) {
         String[] fullRequest = split(request, CRLF);
         String[] requestLine = splitRequestLine(fullRequest);
-        return createRequestMap(requestLine);
+        HashMap<String, String> parsedRequest = createRequestMap(requestLine);
+
+        return new Request(parsedRequest);
     }
 
     private HashMap<String, String> createRequestMap(String[] requestLine) {
