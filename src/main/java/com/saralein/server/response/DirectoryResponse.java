@@ -22,7 +22,7 @@ public class DirectoryResponse implements Response {
     }
 
     private String createHeader() {
-        return new Header(STATUS_CODES.get("200"), contentType).getContent();
+        return new Header(STATUS_CODES.get(200), contentType).getContent();
     }
 
     private String createBody() {

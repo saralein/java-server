@@ -14,7 +14,7 @@ public class NotFoundResponse implements Response {
     }
 
     private String createHeader() {
-        return new Header(STATUS_CODES.get("404"), contentType).getContent();
+        return new Header(STATUS_CODES.get(404), contentType).getContent();
     }
 
     private String createBody() {
