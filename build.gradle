@@ -16,7 +16,11 @@ dependencies {
 }
 
 run {
-    args += '1337'
+    if (project.hasProperty("runArgs")) {
+        args(runArgs.split(','))
+    } else {
+        args = ['1337', 'Public']
+    }
 }
 
 jar {

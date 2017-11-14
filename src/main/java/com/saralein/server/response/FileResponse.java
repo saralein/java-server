@@ -18,7 +18,7 @@ public class FileResponse implements Response {
     }
 
     public byte[] createResponse() {
-        byte[] headers = createHeader().toString().getBytes();
+        byte[] headers = createHeader().getBytes();
         byte[] body = createBody();
 
         return combineResponseParts(headers, body);

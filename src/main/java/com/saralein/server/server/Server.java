@@ -7,12 +7,15 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Server implements Runnable {
     private final ServerSocket serverSocket;
     private final Logger logger;
     private final Router router;
     private final RequestParser requestParser;
+    private String serverIP = null;
 
     private boolean listening = true;
 
@@ -24,8 +27,10 @@ public class Server implements Runnable {
     }
 
     public void run() {
+        setServerIP();
+
         logger.log("Server is starting..." +
-                "\nServer is listening on port " + serverSocket.getPort() + "...");
+                "\nServer is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
 
         try {
             while(listening) {
@@ -41,5 +46,14 @@ public class Server implements Runnable {
 
     public void stop() {
         listening = false;
+    }
+
+    private void setServerIP() {
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            serverIP = address.getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.log(e.getMessage());
+        }
     }
 }

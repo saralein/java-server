@@ -25,7 +25,9 @@ public class ServerRouterTest {
 
     @Before
     public void setUp() {
-        SysFileHelper fileHelper = new SysFileHelper("public");
+        String rootPath = System.getProperty("user.dir") + "/" + "public";
+        File root = new File(rootPath);
+        SysFileHelper fileHelper = new SysFileHelper(root);
         RequestParser requestParser = new RequestParser();
 
         String nullString = "GET /snarf.jpg HTTP/1.1";

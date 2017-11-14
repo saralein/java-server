@@ -21,8 +21,7 @@ public class SetupServer {
         this.requestParser =requestParser;
     }
 
-    public Server setup(String[] args) {
-        Integer port = getPort(args);
+    public Server setup(Integer port) {
         ServerSocket serverSocket = null;
 
         try {
@@ -36,9 +35,5 @@ public class SetupServer {
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 
         return server;
-    }
-
-    private int getPort(String[] args) {
-        return Integer.parseInt(args[0]);
     }
 }

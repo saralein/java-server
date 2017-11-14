@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class NotFoundResponseTest {
-    byte[] responseArray;
-    NotFoundResponse notFoundResponse;
+    private byte[] responseArray;
+    private NotFoundResponse notFoundResponse;
 
     @Before
     public void setUp() {

@@ -8,32 +8,39 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SysFileHelperTest {
+    private File root;
     private SysFileHelper fileHelper;
-    private String userDir;
-    private File directory;
-    private List<String> filenames;
-    private String jpgPath = "public/cheetara.jpg";
-    private String txtPath = "public/recipe.txt";
-    private String gifPath = "public/marshmallow.gif";
+    private List<String> fileNames;
+    private String rootPath = System.getProperty("user.dir") + "/" + "public";
+    private String jpgPath = rootPath + File.separator + "cheetara.jpg";
+    private String txtPath = rootPath + File.separator + "recipe.txt";
+    private String gifPath = rootPath + File.separator + "marshmallow.gif";
+    private File subdirectory = new File(rootPath + File.separator + "sloths");
 
     @Before
     public void setUp() {
-        userDir = System.getProperty("user.dir") + "/";
-        fileHelper = new SysFileHelper("public");
-        directory = new File("public");
-        filenames = new ArrayList<>();
+        root = new File(rootPath);
+        fileHelper = new SysFileHelper(root);
+        fileNames = new ArrayList<>();
 
-        filenames.add("cake.pdf");
-        filenames.add("cheetara.jpg");
-        filenames.add("marshmallow.gif");
-        filenames.add("recipe.txt");
+        fileNames.add("cake.pdf");
+        fileNames.add("cheetara.jpg");
+        fileNames.add("marshmallow.gif");
+        fileNames.add("recipe.txt");
+        fileNames.add("sloths");
     }
 
     @Test
-    public void getsRelativePathOfFile() {
-        assertEquals(jpgPath, fileHelper.createRelativePath("cheetara.jpg"));
-        assertEquals(txtPath, fileHelper.createRelativePath("recipe.txt"));
-        assertEquals(gifPath, fileHelper.createRelativePath("marshmallow.gif"));
+    public void getsAbsolutePathOfFile() {
+        assertEquals(jpgPath, fileHelper.createAbsolutePath("cheetara.jpg"));
+        assertEquals(txtPath, fileHelper.createAbsolutePath("recipe.txt"));
+        assertEquals(gifPath, fileHelper.createAbsolutePath("marshmallow.gif"));
+    }
+
+    @Test
+    public void getsDifferenceFromRootPath() {
+        assertEquals("sloths/sleepy.gif", fileHelper.createRelativeFilePath("sleepy.gif", subdirectory));
+        assertEquals("sloths/space", fileHelper.createRelativeFilePath("space", subdirectory));
     }
 
     @Test
@@ -46,6 +53,6 @@ public class SysFileHelperTest {
 
     @Test
     public void getsNamesOfFilesInDirectory() {
-        assertEquals(filenames, fileHelper.listFileNames(directory));
+        assertEquals(fileNames, fileHelper.listFileNames(root));
     }
 }

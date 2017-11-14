@@ -29,13 +29,14 @@ public class DirectoryResponse implements Response {
         StringBuilder filesHTML = new StringBuilder();
 
         for (String filename: fileHelper.listFileNames(resource)) {
-            filesHTML.append(createFileHTML(filename));
+            String filepath = fileHelper.createRelativeFilePath(filename, resource);
+            filesHTML.append(createFileHTML(filepath, filename));
         }
 
         return filesHTML.toString();
     }
 
-    private String createFileHTML(String filename) {
-        return "<li><a href=" + filename + ">" + filename + "</a></li>";
+    private String createFileHTML(String filepath, String filename) {
+        return "<li><a href=" + filepath + ">" + filename + "</a></li>";
     }
 }

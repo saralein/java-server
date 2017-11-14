@@ -22,7 +22,9 @@ public class ConnectionHandlerTest {
 
     @Before
     public void setUp() {
-        SysFileHelper fileHelper = new SysFileHelper("public");
+        String rootPath = System.getProperty("user.dir") + "/" + "public";
+        File root = new File(rootPath);
+        SysFileHelper fileHelper = new SysFileHelper(root);
         MockLogger logger = new MockLogger();
         RequestParser requestParser = new RequestParser();
 

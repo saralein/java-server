@@ -3,7 +3,6 @@ package com.saralein.server.response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import static org.junit.Assert.*;
@@ -26,7 +25,9 @@ public class FileResponseTest {
     @Before
     public void setUp() {
         RequestParser requestParser = new RequestParser();
-        SysFileHelper fileHelper = new SysFileHelper("public");
+        String rootPath = System.getProperty("user.dir") + "/" + "public";
+        File root = new File(rootPath);
+        SysFileHelper fileHelper = new SysFileHelper(root);
 
         String jpgString = "GET /cheetara.jpg HTTP/1.1";
         String jpgPath = "public/cheetara.jpg";

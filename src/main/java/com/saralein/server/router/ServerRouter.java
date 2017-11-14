@@ -20,7 +20,7 @@ public class ServerRouter implements Router {
     }
 
     private void resourceStatus(Request request) {
-        String resourceUri = fileHelper.createRelativePath(request.getUri());
+        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
 
         resource = new File(resourceUri);
 

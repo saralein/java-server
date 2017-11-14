@@ -2,11 +2,11 @@ package com.saralein.server.response;
 
 import static com.saralein.server.Constants.CRLF;
 
-public class Header {
+class Header {
     private final String status;
     private final String contentType;
 
-    public Header(String status, String contentType) {
+    Header(String status, String contentType) {
         this.status = status;
         this.contentType = contentType;
     }
@@ -19,7 +19,7 @@ public class Header {
         return "Content-Type: " + contentType + CRLF;
     }
 
-    public String createContents() {
+    String createContents() {
         StringBuilder headerBuilder = new StringBuilder();
 
         headerBuilder.append(createStatusLine(status));
