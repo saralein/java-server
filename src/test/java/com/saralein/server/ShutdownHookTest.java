@@ -2,11 +2,9 @@ package com.saralein.server;
 
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockServer;
-
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ShutdownHookTest {
     ShutdownHook shutdownHook;

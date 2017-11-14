@@ -4,21 +4,23 @@ import com.saralein.server.connection.Connection;
 import com.saralein.server.connection.ConnectionHandler;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.response.Response;
-
+import com.saralein.server.request.RequestParser;
+import com.saralein.server.router.Router;
 import java.io.IOException;
 
 public class Server implements Runnable {
     private final ServerSocket serverSocket;
     private final Logger logger;
-    private final Response response;
+    private final Router router;
+    private final RequestParser requestParser;
 
     private boolean listening = true;
 
-    public Server(ServerSocket serverSocket, Logger logger, Response response) {
+    public Server(ServerSocket serverSocket, Logger logger, Router router, RequestParser requestParser) {
         this.serverSocket = serverSocket;
         this.logger = logger;
-        this.response = response;
+        this.router = router;
+        this.requestParser = requestParser;
     }
 
     public void run() {
@@ -28,7 +30,7 @@ public class Server implements Runnable {
         try {
             while(listening) {
                 Connection socket = serverSocket.accept();
-                ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, response);
+                ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, router, requestParser);
                 connectionHandler.run();
             }
             serverSocket.close();

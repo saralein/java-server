@@ -1,15 +1,14 @@
 package com.saralein.server.response;
 
+import static com.saralein.server.Constants.CRLF;
+
 public class Header {
     private final String status;
     private final String contentType;
-    private final String fullContent;
-    private final String CRLF = "\r\n";
 
     public Header(String status, String contentType) {
         this.status = status;
         this.contentType = contentType;
-        this.fullContent = createHeaders();
     }
 
     private String createStatusLine(String status) {
@@ -20,7 +19,7 @@ public class Header {
         return "Content-Type: " + contentType + CRLF;
     }
 
-    private String createHeaders() {
+    public String createContents() {
         StringBuilder headerBuilder = new StringBuilder();
 
         headerBuilder.append(createStatusLine(status));
@@ -28,9 +27,5 @@ public class Header {
         headerBuilder.append(CRLF);
 
         return headerBuilder.toString();
-    }
-
-    public String getContent() {
-        return fullContent;
     }
 }

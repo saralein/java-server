@@ -1,6 +1,8 @@
 package com.saralein.server.response;
 
 import java.io.File;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,30 +15,31 @@ public class SysFileHelper implements FileHelper {
         this.root = root;
     }
 
-    public String getRelativePath(String name) {
-        return "/" + root + "/" + name;
+    public String createRelativePath(String name) {
+        return root + "/" + name;
     }
 
-    private File getDirectoryContents() {
-        return new File(root);
+    public String determineMimeType(String file) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        return fileNameMap.getContentTypeFor(file);
     }
 
-    private List<File> listDirectoryFiles() {
-        File[] fileArray = getDirectoryContents().listFiles(
-                file -> !file.getName().equals(".DS_Store"));
-
-        return Arrays.asList(fileArray);
-    }
-
-    public List<String> getFilenames() {
+    public List<String> listFileNames(File directory) {
         List<String> fileNames = new ArrayList<>();
 
-        for (File file: listDirectoryFiles()) {
+        for (File file: listDirectoryFiles(directory)) {
             fileNames.add(file.getName());
         }
 
         Collections.sort(fileNames);
 
         return fileNames;
+    }
+
+    private List<File> listDirectoryFiles(File directory) {
+        File[] fileArray = directory.listFiles(
+                file -> !file.isHidden());
+
+        return Arrays.asList(fileArray);
     }
 }
