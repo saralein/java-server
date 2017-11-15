@@ -19,7 +19,7 @@ run {
     if (project.hasProperty("runArgs")) {
         args(runArgs.split(','))
     } else {
-        args = ['1337', 'Public']
+        args = ['-p', '1337','-d', 'public']
     }
 }
 
