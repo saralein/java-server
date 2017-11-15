@@ -18,9 +18,12 @@ Get the code from GitHub:
 * For default parameters, `gradle -q run`.
     * Server will run on port 1337.
     * Server will serve from the `Public` folder of your home directory.
-* To specify parameters, `gradle -q run -PrunArgs=port,directory`.
-    * Replace `port` with a number between 1 and 65535.
-    * Replace `directory` with the directory you wish to server relative to your home directory.
+* To specify parameters, you may provide one or both of the following options:
+    * To specify a port, you many use the `-p,port` option, where `port` is replaced with a number between 1 and 65535.
+        * Example: `gradle -q run -PrunArgs=-p,6066`.
+    * To specify a directory, you many use the `-d,directory` option, where `directory` is replaced by the directory you wish to serve relative to your home directory.
+        *Example: `gradle -q run -PrunArgs=-d,my-dir`.
+    * Example with both options: `gradle -q run -PrunArgs=-p,6066,-d,my-dir`.
 
 ### From a JAR:
 
@@ -29,9 +32,12 @@ Get the code from GitHub:
 * For default parameters, run the JAR with `java -jar (JAR_NAME}.jar` in the `build/libs` directory.
     * Server will run on port 1337.
     * Server will serve from the `Public` folder of your home directory.
-* To specify parameters, run the JAR with `java -jar {JAR_NAME}.jar port directory` in the `build/libs` directory.
-    * Replace `port` with a number between 1 and 65535.
-    * Replace `directory` with the directory you wish to server relative to your home directory.
+* To specify parameters, you may provide one or both of the following options:
+    * To specify a port, you may use the `-p port` option, where `port` is replaced with a number between 1 and 65535.
+        * Example: `java -jar (JAR_NAME}.jar -p 5000`.
+    * To specify a directory, you may use the `-d directory` option, where `directory` is replaced by the directory you wish to serve relative to your home directory.
+        * Example: `java -jar (JAR_NAME}.jar -d my-dir`.
+    * Example with both options: `java -jar (JAR_NAME}.jar -p 5000 -d my-dir`.
 
 ## Stopping the Server
 
