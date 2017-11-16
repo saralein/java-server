@@ -38,7 +38,7 @@ public class SetupServerTest {
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
         }
     }
-    
+
     @Test
     public void setsUpAndReturnsNewServer() {
         Server server = new SetupServer(logger, runtime, router, requestParser).setup(1337);

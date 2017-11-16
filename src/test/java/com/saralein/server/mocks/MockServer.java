@@ -10,7 +10,8 @@ public class MockServer extends Server {
     private boolean stopCalled = false;
 
     public MockServer() {
-        super(new MockServerSocket(),
+        super("0.0.0.0",
+              new MockServerSocket(),
               new MockLogger(),
               new ServerRouter(
                       new SysFileHelper(

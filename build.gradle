@@ -18,8 +18,6 @@ dependencies {
 run {
     if (project.hasProperty("runArgs")) {
         args(runArgs.split(','))
-    } else {
-        args = ['-p', '1337','-d', 'public']
     }
 }
 

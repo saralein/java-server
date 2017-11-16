@@ -7,6 +7,8 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
 import com.saralein.server.ShutdownHook;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class SetupServer {
     private final Logger logger;
@@ -30,10 +32,23 @@ public class SetupServer {
             logger.log(e.getMessage());
         }
 
-        Server server = new Server(serverSocket, logger, router, requestParser);
+        Server server = new Server(findServerIP(), serverSocket, logger, router, requestParser);
 
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 
         return server;
+    }
+
+    private String findServerIP() {
+        String serverIP = null;
+
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            serverIP = address.getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.log(e.getMessage());
+        }
+
+        return serverIP;
     }
 }

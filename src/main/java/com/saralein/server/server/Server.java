@@ -7,19 +7,18 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class Server implements Runnable {
     private final ServerSocket serverSocket;
     private final Logger logger;
     private final Router router;
     private final RequestParser requestParser;
-    private String serverIP = null;
+    private final String serverIP;
 
     private boolean listening = true;
 
-    public Server(ServerSocket serverSocket, Logger logger, Router router, RequestParser requestParser) {
+    public Server(String serverIP, ServerSocket serverSocket, Logger logger, Router router, RequestParser requestParser) {
+        this.serverIP = serverIP;
         this.serverSocket = serverSocket;
         this.logger = logger;
         this.router = router;
@@ -27,8 +26,6 @@ public class Server implements Runnable {
     }
 
     public void run() {
-        setServerIP();
-
         logger.log("Server is starting..." +
                 "\nServer is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
 
@@ -46,14 +43,5 @@ public class Server implements Runnable {
 
     public void stop() {
         listening = false;
-    }
-
-    private void setServerIP() {
-        try {
-            InetAddress address = InetAddress.getLocalHost();
-            serverIP = address.getHostAddress();
-        } catch (UnknownHostException e) {
-            logger.log(e.getMessage());
-        }
     }
 }
