@@ -12,7 +12,7 @@ class ArgsParser {
     }
 
     Integer parsePort() {
-        if (args.size() != 0) {
+        if (args.size() != 0 && args.contains("-p")) {
             int portIndex = args.indexOf("-p") + 1;
             return Integer.parseInt(args.get(portIndex));
         } else {
@@ -21,7 +21,7 @@ class ArgsParser {
     }
 
     File parseRoot(String home) {
-        if (args.size() != 0) {
+        if (args.size() != 0 && args.contains("-d")) {
             int portIndex = args.indexOf("-d") + 1;
             return new File (home + File.separator + args.get(portIndex));
         } else {
