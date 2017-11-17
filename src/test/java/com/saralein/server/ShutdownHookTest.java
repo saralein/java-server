@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ShutdownHookTest {
-    ShutdownHook shutdownHook;
-    MockServer server;
+    private ShutdownHook shutdownHook;
+    private MockServer server;
 
     @Before
     public void setUp() {

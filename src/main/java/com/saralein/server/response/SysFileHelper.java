@@ -9,14 +9,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class SysFileHelper implements FileHelper {
-    String root;
+    private File root;
 
-    public SysFileHelper(String root) {
+    public SysFileHelper(File root) {
         this.root = root;
     }
 
-    public String createRelativePath(String name) {
-        return root + "/" + name;
+    public String createAbsolutePath(String name) {
+        return root.getPath() + File.separator + name;
+    }
+
+    public String createRelativeFilePath(String name, File resource) {
+        return removeRootPortionOfPath(resource) + File.separator + name;
     }
 
     public String determineMimeType(String file) {
@@ -34,6 +38,10 @@ public class SysFileHelper implements FileHelper {
         Collections.sort(fileNames);
 
         return fileNames;
+    }
+
+    private String removeRootPortionOfPath(File resource) {
+        return resource.getName().replace(root.getName(), "");
     }
 
     private List<File> listDirectoryFiles(File directory) {

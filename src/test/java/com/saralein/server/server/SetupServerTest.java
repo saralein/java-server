@@ -4,6 +4,7 @@ import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.router.ServerRouter;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import static org.junit.Assert.*;
@@ -20,28 +21,27 @@ public class SetupServerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        router = new ServerRouter(new SysFileHelper("public"));
+        String rootPath = System.getProperty("user.dir") + "/" + "public";
+        File root = new File(rootPath);
+        router = new ServerRouter(new SysFileHelper(root));
         requestParser = new RequestParser();
     }
 
     @Test
     public void setupLogsErrorInSetup() {
-        String[] args = new String[]{"6066"};
-
         try {
             new ServerSocket(6066);
         } catch (IOException e) {
             fail("Test failed to createContents blocking socket.");
         } finally {
-            new SetupServer(logger, runtime, router, requestParser).setup(args);
+            new SetupServer(logger, runtime, router, requestParser).setup(6066);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
         }
     }
-    
+
     @Test
     public void setsUpAndReturnsNewServer() {
-        String[] args = new String[]{"1337"};
-        Server server = new SetupServer(logger, runtime, router, requestParser).setup(args);
+        Server server = new SetupServer(logger, runtime, router, requestParser).setup(1337);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());

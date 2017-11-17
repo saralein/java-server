@@ -9,7 +9,7 @@ public class Request {
         this.request = request;
     }
 
-    public String getMethod() {
+    String getMethod() {
         return request.get("method");
     }
 

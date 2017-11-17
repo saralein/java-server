@@ -10,7 +10,7 @@ import java.net.Socket;
 public class ConnectionSocket implements Connection {
     private final Socket socket;
 
-    public ConnectionSocket(Socket socket) {
+    ConnectionSocket(Socket socket) {
         this.socket = socket;
     }
 

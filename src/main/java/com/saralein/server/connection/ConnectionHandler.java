@@ -5,7 +5,6 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.router.Router;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class ConnectionHandler implements Runnable {
     private final Logger logger;

@@ -13,10 +13,12 @@ public class Server implements Runnable {
     private final Logger logger;
     private final Router router;
     private final RequestParser requestParser;
+    private final String serverIP;
 
     private boolean listening = true;
 
-    public Server(ServerSocket serverSocket, Logger logger, Router router, RequestParser requestParser) {
+    public Server(String serverIP, ServerSocket serverSocket, Logger logger, Router router, RequestParser requestParser) {
+        this.serverIP = serverIP;
         this.serverSocket = serverSocket;
         this.logger = logger;
         this.router = router;
@@ -25,7 +27,7 @@ public class Server implements Runnable {
 
     public void run() {
         logger.log("Server is starting..." +
-                "\nServer is listening on port " + serverSocket.getPort() + "...");
+                "\nServer is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
 
         try {
             while(listening) {
