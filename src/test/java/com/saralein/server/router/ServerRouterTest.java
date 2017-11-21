@@ -1,11 +1,11 @@
 package com.saralein.server.router;
 
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.Controller.FileController;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
-import com.saralein.server.response.DirectoryResponse;
 import com.saralein.server.response.SysFileHelper;
-import com.saralein.server.response.FileResponse;
-import com.saralein.server.response.NotFoundResponse;
+import com.saralein.server.Controller.NotFoundResponse;
 import java.io.File;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -37,14 +37,15 @@ public class ServerRouterTest {
         String directoryString = "GET / HTTP/1.1";
         directoryRequest = requestParser.parse(directoryString);
         File directoryFile = new File("public");
-        directoryResponse = new DirectoryResponse(directoryFile, fileHelper).createResponse();
+        directoryResponse = new DirectoryController(directoryFile, fileHelper).createResponse();
 
         String fileString = "GET /cheetara.jpg HTTP/1.1";
         fileRequest = requestParser.parse(fileString);
         File file = new File("public/cheetara.jpg");
-        fileResponse = new FileResponse(fileRequest, file, fileHelper).createResponse();
+        fileResponse = new FileController(fileRequest, file, fileHelper).createResponse();
 
-        router = new ServerRouter(fileHelper);
+        Routes routes = new Routes();
+        router = new ServerRouter(routes, fileHelper);
     }
 
     @Test

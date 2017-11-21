@@ -3,6 +3,7 @@ package com.saralein.server.server;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.SysFileHelper;
+import com.saralein.server.router.Routes;
 import com.saralein.server.router.ServerRouter;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class SetupServerTest {
         runtime = Runtime.getRuntime();
         String rootPath = System.getProperty("user.dir") + "/" + "public";
         File root = new File(rootPath);
-        router = new ServerRouter(new SysFileHelper(root));
+        router = new ServerRouter(new Routes(), new SysFileHelper(root));
         requestParser = new RequestParser();
     }
 

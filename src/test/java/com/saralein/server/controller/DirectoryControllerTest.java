@@ -1,13 +1,17 @@
-package com.saralein.server.response;
+package com.saralein.server.controller;
 
 import java.io.File;
 import static org.junit.Assert.*;
+
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.response.FileHelper;
+import com.saralein.server.response.SysFileHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DirectoryResponseTest {
+public class DirectoryControllerTest {
     private byte[] responseArray;
-    private DirectoryResponse directoryResponse;
+    private DirectoryController directoryController;
 
     @Before
     public void setUp() {
@@ -26,11 +30,11 @@ public class DirectoryResponseTest {
         File root = new File(rootPath);
         FileHelper sysFileHelper = new SysFileHelper(root);
 
-        directoryResponse = new DirectoryResponse(directoryFile, sysFileHelper);
+        directoryController = new DirectoryController(directoryFile, sysFileHelper);
     }
 
     @Test
     public void returnsCorrectResponseForDirectory() {
-        assertArrayEquals(responseArray, directoryResponse.createResponse());
+        assertArrayEquals(responseArray, directoryController.createResponse());
     }
 }

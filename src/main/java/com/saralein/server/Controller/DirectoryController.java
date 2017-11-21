@@ -1,28 +1,26 @@
-package com.saralein.server.response;
+package com.saralein.server.Controller;
 
-import static com.saralein.server.Constants.STATUS_CODES;
+import com.saralein.server.response.FileHelper;
+import com.saralein.server.response.ResponseBuilder;
 import java.io.File;
 
-public class DirectoryResponse implements Response {
+public class DirectoryController implements Controller {
     private final String contentType = "text/html";
     private final File resource;
     private final FileHelper fileHelper;
 
-    public DirectoryResponse(File resource, FileHelper fileHelper) {
+    public DirectoryController(File resource, FileHelper fileHelper) {
         this.resource = resource;
         this.fileHelper = fileHelper;
     }
 
     public byte[] createResponse() {
-        StringBuilder response = new StringBuilder();
-        response.append(createHeader());
-        response.append(createBody());
-
-        return response.toString().getBytes();
-    }
-
-    private String createHeader() {
-        return new Header(STATUS_CODES.get(200), contentType).createContents();
+        return new ResponseBuilder()
+                    .addStatus(200)
+                    .addHeader("Content-Type", contentType)
+                    .addBody(createBody())
+                    .build()
+                    .convertToBytes();
     }
 
     private String createBody() {

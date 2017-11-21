@@ -1,30 +1,49 @@
 package com.saralein.server.response;
 
 import static com.saralein.server.Constants.CRLF;
+import static com.saralein.server.Constants.STATUS_CODES;
+import java.util.HashMap;
 
-class Header {
-    private final String status;
-    private final String contentType;
+public class Header {
+    private final String version = "HTTP/1.1";
+    private HashMap<String, String> header;
 
-    Header(String status, String contentType) {
-        this.status = status;
-        this.contentType = contentType;
+    public Header() {
+        this.header = new HashMap<>();
     }
 
-    private String createStatusLine(String status) {
-        return  "HTTP/1.1 " + status + CRLF;
+    public void addStatus(int code) {
+        header.put("Status", createStatusLine(code));
     }
 
-    private String createContentTypeHeader(String contentType) {
-        return "Content-Type: " + contentType + CRLF;
+    public void addHeader(String title, String content) {
+        header.put(title, content);
     }
 
-    String createContents() {
+    public byte[] convertToBytes() {
+        return createContents().getBytes();
+    }
+
+    private String createStatusLine(int code) {
+        return  version + " " + STATUS_CODES.get(code);
+    }
+
+    private String createContents() {
         StringBuilder headerBuilder = new StringBuilder();
 
-        headerBuilder.append(createStatusLine(status));
-        headerBuilder.append(createContentTypeHeader(contentType));
-        headerBuilder.append(CRLF);
+        if (header.containsKey("Status")) {
+            headerBuilder.append(header.get("Status") + CRLF);
+        }
+
+        for (String key : header.keySet()) {
+            if (!key.equals("Status")) {
+                headerBuilder.append(key + ": " + header.get(key) + CRLF);
+            }
+        }
+
+        if (headerBuilder.length() != 0) {
+            headerBuilder.append(CRLF);
+        }
 
         return headerBuilder.toString();
     }

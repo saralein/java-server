@@ -11,6 +11,7 @@ public final class Constants {
 
     public static final Map<Integer, String> STATUS_CODES = Collections.unmodifiableMap(new HashMap<Integer, String>() {{
         put(200, "200 OK");
+        put(302, "302 Found");
         put(404, "404 Not Found");
     }});
 }

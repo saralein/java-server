@@ -4,7 +4,9 @@ import com.saralein.server.logger.ConnectionLogger;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.SysFileHelper;
+import com.saralein.server.router.Routes;
 import com.saralein.server.router.ServerRouter;
+import com.saralein.server.router.SetupRoutes;
 import com.saralein.server.server.Server;
 import com.saralein.server.server.SetupServer;
 import com.saralein.server.validation.ArgsValidation;
@@ -34,8 +36,9 @@ public class Main {
             File root = argsParser.parseRoot(home);
 
             Runtime runtime = Runtime.getRuntime();
+            Routes routes = new SetupRoutes().setup();
             SysFileHelper sysFileHelper = new SysFileHelper(root);
-            ServerRouter router = new ServerRouter(sysFileHelper);
+            ServerRouter router = new ServerRouter(routes, sysFileHelper);
             RequestParser requestParser = new RequestParser();
             Server server = new SetupServer(logger, runtime, router, requestParser).setup(port);
 

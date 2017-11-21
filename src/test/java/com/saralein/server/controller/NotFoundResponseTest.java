@@ -1,6 +1,8 @@
-package com.saralein.server.response;
+package com.saralein.server.controller;
 
 import static org.junit.Assert.*;
+
+import com.saralein.server.Controller.NotFoundResponse;
 import org.junit.Before;
 import org.junit.Test;
 

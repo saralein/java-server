@@ -2,6 +2,7 @@ package com.saralein.server.mocks;
 
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.SysFileHelper;
+import com.saralein.server.router.Routes;
 import com.saralein.server.router.ServerRouter;
 import com.saralein.server.server.Server;
 import java.io.File;
@@ -14,6 +15,7 @@ public class MockServer extends Server {
               new MockServerSocket(),
               new MockLogger(),
               new ServerRouter(
+                      new Routes(),
                       new SysFileHelper(
                               new File(System.getProperty("user.dir") + File.separator + "public"))),
               new RequestParser());

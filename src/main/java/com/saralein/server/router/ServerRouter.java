@@ -1,16 +1,21 @@
 package com.saralein.server.router;
 
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.Controller.FileController;
+import com.saralein.server.Controller.NotFoundResponse;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.*;
 import java.io.File;
 
 public class ServerRouter implements Router {
     private final FileHelper fileHelper;
+    private final Routes routes;
     private File resource = null;
     private boolean resourceExists = false;
     private boolean resourceIsDirectory = false;
 
-    public ServerRouter(FileHelper fileHelper) {
+    public ServerRouter(Routes routes, FileHelper fileHelper) {
+        this.routes = routes;
         this.fileHelper = fileHelper;
     }
 
@@ -29,12 +34,14 @@ public class ServerRouter implements Router {
     }
 
     private byte[] route(Request request) {
-        if (!resourceExists) {
+        if (routes.isRoute(request.getUri())) {
+            return routes.getController(request.getUri()).createResponse();
+        } else if (!resourceExists) {
             return new NotFoundResponse().createResponse();
         } else if (resourceIsDirectory) {
-            return new DirectoryResponse(resource, fileHelper).createResponse();
+            return new DirectoryController(resource, fileHelper).createResponse();
         } else {
-            return new FileResponse(request, resource, fileHelper).createResponse();
+            return new FileController(request, resource, fileHelper).createResponse();
         }
     }
 }

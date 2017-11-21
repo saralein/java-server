@@ -3,9 +3,10 @@ package com.saralein.server.connection;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.RequestParser;
-import com.saralein.server.response.DirectoryResponse;
+import com.saralein.server.Controller.DirectoryController;
 import com.saralein.server.response.SysFileHelper;
-import com.saralein.server.response.NotFoundResponse;
+import com.saralein.server.Controller.NotFoundResponse;
+import com.saralein.server.router.Routes;
 import com.saralein.server.router.ServerRouter;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -32,12 +33,12 @@ public class ConnectionHandlerTest {
 
         directoryString = "GET / HTTP/1.1";
         File directoryFile = new File("public");
-        directoryResponse = new DirectoryResponse(directoryFile, fileHelper).createResponse();
+        directoryResponse = new DirectoryController(directoryFile, fileHelper).createResponse();
 
         notFoundString = "GET /snarf.jpg HTTP/1.1";
         notFoundResponse = new NotFoundResponse().createResponse();
 
-        ServerRouter router = new ServerRouter(fileHelper);
+        ServerRouter router = new ServerRouter(new Routes(), fileHelper);
         connectionHandler = new ConnectionHandler(socket, logger, router, requestParser);
     }
 
