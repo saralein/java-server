@@ -1,9 +1,9 @@
 package com.saralein.server.response;
 
-        import org.junit.Before;
-        import org.junit.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-        import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 
 public class ResponseBuilderTest {
     private ResponseBuilder responseBuilder;
@@ -15,22 +15,24 @@ public class ResponseBuilderTest {
 
     @Test
     public void addsStatusToBuilder() {
-        byte[] status = "HTTP/1.1 200 OK\r\n\r\n".getBytes();
+        String status = "HTTP/1.1 200 OK\r\n\r\n";
         Response response = responseBuilder
                                 .addStatus(200)
                                 .build();
+        Header header = response.getHeader();
 
-        assertArrayEquals(status, response.convertToBytes());
+        assertEquals(status, header.formatToString());
     }
 
     @Test
     public void addsHeaderToBuilder() {
-        byte[] header = "Location: /\r\n\r\n".getBytes();
+        String fullHeader = "Location: /\r\n\r\n";
         Response response = responseBuilder
                                 .addHeader("Location", "/")
                                 .build();
+        Header header = response.getHeader();
 
-        assertArrayEquals(header, response.convertToBytes());
+        assertEquals(fullHeader, header.formatToString());
     }
 
     @Test
@@ -40,7 +42,7 @@ public class ResponseBuilderTest {
                                 .addBody(body)
                                 .build();
 
-        assertArrayEquals(body, response.convertToBytes());
+        assertArrayEquals(body, response.getBody());
     }
 
     @Test
@@ -51,7 +53,8 @@ public class ResponseBuilderTest {
                                 .addHeader("Content-Type", "image/gif")
                                 .addBody("Hello Builder")
                                 .build();
+        byte[] responseBytes = new ResponseSerializer().convertToBytes(response);
 
-        assertArrayEquals(fullResponse, response.convertToBytes());
+        assertArrayEquals(fullResponse, responseBytes);
     }
 }

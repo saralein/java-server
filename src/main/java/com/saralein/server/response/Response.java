@@ -9,23 +9,11 @@ public class Response {
         this.body = body;
     }
 
-    public byte[] convertToBytes() {
-        byte[] headerBytes = header.convertToBytes();
-
-        if (body != null) {
-            return combineResponseParts(headerBytes, body);
-        } else {
-            return headerBytes;
-        }
+    public Header getHeader() {
+        return header;
     }
 
-    private byte[] combineResponseParts(byte[] headers, byte[] body) {
-        byte[] combined = new byte[headers.length + body.length];
-
-        for (int i = 0; i < combined.length; ++i) {
-            combined[i] = i < headers.length ? headers[i] : body[i - headers.length];
-        }
-
-        return combined;
+    public byte[] getBody() {
+        return body;
     }
 }

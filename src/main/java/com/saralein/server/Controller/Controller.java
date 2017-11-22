@@ -1,5 +1,7 @@
 package com.saralein.server.Controller;
 
+import com.saralein.server.response.Response;
+
 public interface Controller {
-    byte[] createResponse();
+    Response createResponse();
 }

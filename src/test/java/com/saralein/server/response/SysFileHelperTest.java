@@ -1,6 +1,9 @@
 package com.saralein.server.response;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -8,18 +11,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SysFileHelperTest {
-    private File root;
+    private Path root;
     private SysFileHelper fileHelper;
     private List<String> fileNames;
+    private String separator = FileSystems.getDefault().getSeparator();
     private String rootPath = System.getProperty("user.dir") + "/" + "public";
-    private String jpgPath = rootPath + File.separator + "cheetara.jpg";
-    private String txtPath = rootPath + File.separator + "recipe.txt";
-    private String gifPath = rootPath + File.separator + "marshmallow.gif";
-    private File subdirectory = new File(rootPath + File.separator + "sloths");
+    private String jpgPath = rootPath + separator + "cheetara.jpg";
+    private String txtPath = rootPath + separator + "recipe.txt";
+    private String gifPath = rootPath + separator + "marshmallow.gif";
+    private Path subdirectory = Paths.get(rootPath + separator + "sloths");
 
     @Before
     public void setUp() {
-        root = new File(rootPath);
+        root = Paths.get(rootPath);
         fileHelper = new SysFileHelper(root);
         fileNames = new ArrayList<>();
 
@@ -39,8 +43,8 @@ public class SysFileHelperTest {
 
     @Test
     public void getsDifferenceFromRootPath() {
-        assertEquals("sloths/sleepy.gif", fileHelper.createRelativeFilePath("sleepy.gif", subdirectory));
-        assertEquals("sloths/space", fileHelper.createRelativeFilePath("space", subdirectory));
+        assertEquals("/sloths/sleepy.gif", fileHelper.createRelativeFilePath("sleepy.gif", subdirectory));
+        assertEquals("/sloths/space", fileHelper.createRelativeFilePath("space", subdirectory));
     }
 
     @Test
@@ -53,6 +57,10 @@ public class SysFileHelperTest {
 
     @Test
     public void getsNamesOfFilesInDirectory() {
-        assertEquals(fileNames, fileHelper.listFileNames(root));
+        try {
+            assertEquals(fileNames, fileHelper.listFileNames(root));
+        } catch (IOException e) {
+            fail("Failed to list file names in File Helper test.");
+        }
     }
 }

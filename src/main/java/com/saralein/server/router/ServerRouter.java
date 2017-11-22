@@ -2,15 +2,17 @@ package com.saralein.server.router;
 
 import com.saralein.server.Controller.DirectoryController;
 import com.saralein.server.Controller.FileController;
-import com.saralein.server.Controller.NotFoundResponse;
+import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.*;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ServerRouter implements Router {
     private final FileHelper fileHelper;
     private final Routes routes;
-    private File resource = null;
+    private Path resource = null;
     private boolean resourceExists = false;
     private boolean resourceIsDirectory = false;
 
@@ -19,7 +21,7 @@ public class ServerRouter implements Router {
         this.fileHelper = fileHelper;
     }
 
-    public byte[] resolveRequest(Request request) {
+    public Response resolveRequest(Request request) {
         resourceStatus(request);
         return route(request);
     }
@@ -27,17 +29,17 @@ public class ServerRouter implements Router {
     private void resourceStatus(Request request) {
         String resourceUri = fileHelper.createAbsolutePath(request.getUri());
 
-        resource = new File(resourceUri);
+        resource = Paths.get(resourceUri);
 
-        resourceExists = resource.exists();
-        resourceIsDirectory = resource.isDirectory();
+        resourceExists = Files.exists(resource);
+        resourceIsDirectory = Files.isDirectory(resource);
     }
 
-    private byte[] route(Request request) {
+    private Response route(Request request) {
         if (routes.isRoute(request.getUri())) {
             return routes.getController(request.getUri()).createResponse();
         } else if (!resourceExists) {
-            return new NotFoundResponse().createResponse();
+            return new NotFoundController().createResponse();
         } else if (resourceIsDirectory) {
             return new DirectoryController(resource, fileHelper).createResponse();
         } else {

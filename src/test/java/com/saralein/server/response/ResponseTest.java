@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 public class ResponseTest {
     Response response;
+    byte[] body;
 
     @Before
     public void setUp() {
@@ -14,15 +15,21 @@ public class ResponseTest {
         header.addStatus(200);
         header.addHeader("Content-Type", "text/html");
 
-        byte[] body = "Hello".getBytes();
+        body = "Hello".getBytes();
 
         response = new Response(header, body);
     }
 
     @Test
-    public void convertsResponseToBytes() {
-        byte[] fullResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nHello".getBytes();
+    public void getsHeaderFromResponse() {
+        Header responseHeader = response.getHeader();
 
-        assertArrayEquals(fullResponse, response.convertToBytes());
+        assertEquals(Header.class, responseHeader.getClass());
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", responseHeader.formatToString());
+    }
+
+    @Test
+    public void getsBodyFromResponse() {
+        assertArrayEquals(body, response.getBody());
     }
 }

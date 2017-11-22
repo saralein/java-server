@@ -11,7 +11,7 @@ public class HeaderTest {
 
         header.addStatus(200);
 
-        assertArrayEquals(header200.getBytes(), header.convertToBytes());
+        assertEquals(header200, header.formatToString());
     }
 
     @Test
@@ -22,7 +22,7 @@ public class HeaderTest {
         header.addStatus(200);
         header.addHeader("Content-Type", "text/html");
 
-        assertArrayEquals(header200.getBytes(), header.convertToBytes());
+        assertEquals(header200, header.formatToString());
     }
 
     @Test
@@ -33,6 +33,6 @@ public class HeaderTest {
         header.addStatus(404);
         header.addHeader("Content-Type", "image/gif");
 
-        assertArrayEquals(header404.getBytes(), header.convertToBytes());
+        assertEquals(header404, header.formatToString());
     }
 }

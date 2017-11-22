@@ -1,7 +1,6 @@
 package com.saralein.server.router;
 
 import com.saralein.server.Controller.Controller;
-
 import java.util.HashMap;
 
 public class Routes {

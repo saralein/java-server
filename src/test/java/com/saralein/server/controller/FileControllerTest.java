@@ -4,10 +4,13 @@ import com.saralein.server.Controller.FileController;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Header;
+import com.saralein.server.response.Response;
 import com.saralein.server.response.SysFileHelper;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javafx.util.Pair;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -21,7 +24,7 @@ public class FileControllerTest {
     public void setUp() {
         requestParser = new RequestParser();
         String rootPath = System.getProperty("user.dir") + "/" + "public";
-        File root = new File(rootPath);
+        Path root = Paths.get(rootPath);
         fileHelper = new SysFileHelper(root);
     }
 
@@ -29,8 +32,8 @@ public class FileControllerTest {
         byte[] fileByte = null;
 
         try {
-            File file = new File(filePath);
-            fileByte = Files.readAllBytes(file.toPath());
+            Path file = Paths.get(filePath);
+            fileByte = Files.readAllBytes(file);
         } catch (IOException e) {
             fail("Failed to createContents file bytes in test.");
         }
@@ -38,77 +41,73 @@ public class FileControllerTest {
         return fileByte;
     }
 
-    private byte[] getFullResponse(byte[] headers, byte[] fileBytes) {
-        byte[] combined = new byte[headers.length + fileBytes.length];
-
-        for (int i = 0; i < combined.length; ++i)
-        {
-            combined[i] = i < headers.length ? headers[i] : fileBytes[i - headers.length];
-        }
-
-        return combined;
-    }
-
-    private Pair<byte[], FileController> createController(String requestLine, String path, String mimeType) {
+    private Pair<byte[], Response> createResponse(String requestLine, String path, String mimeType) {
         Header header = new Header();
         header.addStatus(200);
         header.addHeader("Content-Type", mimeType);
 
-        byte[] fileBytes = getFileBytes(path);
-        File file = new File(path);
+        Path resource = Paths.get(path);
         Request request = requestParser.parse(requestLine);
 
         return new Pair<>(
-            getFullResponse(header.convertToBytes(), fileBytes),
-            new FileController(request, file, fileHelper)
+            getFileBytes(path),
+            new FileController(request, resource, fileHelper).createResponse()
         );
     }
 
     @Test
     public void returnsResponseForJPG() {
-        Pair<byte[], FileController> jpgPair = createController(
+        Pair<byte[], Response> jpgPair = createResponse(
                 "GET /cheetara.jpg HTTP/1.1",
                 "public/cheetara.jpg",
                 "image/jpeg");
-        byte[] response = jpgPair.getKey();
-        FileController controller = jpgPair.getValue();
+        byte[] body = jpgPair.getKey();
+        Response response = jpgPair.getValue();
+        Header header = response.getHeader();
 
-        assertArrayEquals(response, controller.createResponse());
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n", header.formatToString());
+        assertArrayEquals(body, response.getBody());
     }
 
     @Test
     public void returnsResponseForGIF() {
-        Pair<byte[], FileController> gifPair = createController(
+        Pair<byte[], Response> gifPair = createResponse(
                 "GET /marshmallow.gif HTTP/1.1",
                 "public/marshmallow.gif",
                 "image/gif");
-        byte[] response = gifPair.getKey();
-        FileController controller = gifPair.getValue();
+        byte[] body = gifPair.getKey();
+        Response response = gifPair.getValue();
+        Header header = response.getHeader();
 
-        assertArrayEquals(response, controller.createResponse());
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: image/gif\r\n\r\n", header.formatToString());
+        assertArrayEquals(body, response.getBody());
     }
 
     @Test
     public void returnsResponseForTXT() {
-        Pair<byte[], FileController> txtPair = createController(
+        Pair<byte[], Response> txtPair = createResponse(
                 "GET /recipe.txt HTTP/1.1",
                 "public/recipe.txt",
                 "text/plain");
-        byte[] response = txtPair.getKey();
-        FileController controller = txtPair.getValue();
+        byte[] body = txtPair.getKey();
+        Response response = txtPair.getValue();
+        Header header = response.getHeader();
 
-        assertArrayEquals(response, controller.createResponse());
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n", header.formatToString());
+        assertArrayEquals(body, response.getBody());
     }
 
     @Test
     public void returnsResponseForPDF() {
-        Pair<byte[], FileController> pdfPair = createController(
+        Pair<byte[], Response> pdfPair = createResponse(
                 "GET /cake.pdf HTTP/1.1",
                 "public/cake.pdf",
                 "application/pdf");
-        byte[] response = pdfPair.getKey();
-        FileController controller = pdfPair.getValue();
+        byte[] body = pdfPair.getKey();
+        Response response = pdfPair.getValue();
+        Header header = response.getHeader();
 
-        assertArrayEquals(response, controller.createResponse());
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: application/pdf\r\n\r\n", header.formatToString());
+        assertArrayEquals(body, response.getBody());
     }
 }

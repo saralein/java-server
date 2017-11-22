@@ -1,7 +1,7 @@
 package com.saralein.server.response;
 
 import static com.saralein.server.Constants.CRLF;
-import static com.saralein.server.Constants.STATUS_CODES;
+import com.saralein.server.protocol.StatusCodes;
 import java.util.HashMap;
 
 public class Header {
@@ -20,31 +20,37 @@ public class Header {
         header.put(title, content);
     }
 
-    public byte[] convertToBytes() {
-        return createContents().getBytes();
-    }
-
     private String createStatusLine(int code) {
-        return  version + " " + STATUS_CODES.get(code);
+        return  version + " " + StatusCodes.retrieve(code);
     }
 
-    private String createContents() {
+    public String formatToString() {
         StringBuilder headerBuilder = new StringBuilder();
 
+        addsStatusLine(headerBuilder);
+        addsHeaders(headerBuilder);
+        addsBlankLine(headerBuilder);
+
+        return headerBuilder.toString();
+    }
+
+    private void addsStatusLine(StringBuilder headerBuilder) {
         if (header.containsKey("Status")) {
             headerBuilder.append(header.get("Status") + CRLF);
         }
+    }
 
+    private void addsHeaders(StringBuilder headerBuilder) {
         for (String key : header.keySet()) {
             if (!key.equals("Status")) {
                 headerBuilder.append(key + ": " + header.get(key) + CRLF);
             }
         }
+    }
 
+    private void addsBlankLine(StringBuilder headerBuilder) {
         if (headerBuilder.length() != 0) {
             headerBuilder.append(CRLF);
         }
-
-        return headerBuilder.toString();
     }
 }
