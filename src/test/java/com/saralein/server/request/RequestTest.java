@@ -6,10 +6,12 @@ import org.junit.Test;
 
 public class RequestTest {
     private Request request;
+    private Request requestWithoutBody;
 
     @Before
     public void setUp() {
-        request = new RequestParser().parse("GET /public/cheetara.jpg HTTP/1.1");
+        request = new RequestParser().parse("GET /public/cheetara.jpg HTTP/1.1\r\n\r\nBody: Hello");
+        requestWithoutBody = new RequestParser().parse("GET /public/cheetara.jpg HTTP/1.1\r\n");
     }
 
     @Test
@@ -20,5 +22,11 @@ public class RequestTest {
     @Test
     public void returnsUriOfRequest() {
         assertEquals("/public/cheetara.jpg", request.getUri());
+    }
+
+    @Test
+    public void returnsBodyOfRequest() {
+        assertEquals("Hello", request.getBody());
+        assertEquals("", requestWithoutBody.getBody());
     }
 }

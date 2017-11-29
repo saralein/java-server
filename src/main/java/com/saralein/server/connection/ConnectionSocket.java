@@ -21,9 +21,20 @@ public class ConnectionSocket implements Connection {
         BufferedReader bufferedReader = new BufferedReader(in);
 
         String str;
+        int length = 0;
 
         while ((str = bufferedReader.readLine()) != null && !str.isEmpty()) {
             request.append(str).append(CRLF);
+
+            if (str.startsWith("Content-Length")) {
+                length = Integer.parseInt(str.split(":")[1].trim());
+            }
+        }
+
+        if (length > 0) {
+            char[] body = new char[length];
+            bufferedReader.read(body);
+            request.append(CRLF + "Body: " + new String(body));
         }
 
         return request.toString();

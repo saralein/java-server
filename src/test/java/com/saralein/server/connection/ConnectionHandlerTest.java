@@ -1,7 +1,9 @@
 package com.saralein.server.connection;
 
+import com.saralein.server.Controller.FileController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
+import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.Controller.DirectoryController;
 import com.saralein.server.response.Response;
@@ -9,6 +11,7 @@ import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.router.Routes;
+import com.saralein.server.router.RoutesBuilder;
 import com.saralein.server.router.ServerRouter;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -36,14 +39,21 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
 
         directoryString = "GET / HTTP/1.1";
-        Response directoryResponse = new DirectoryController(root, fileHelper).createResponse();
+        Request directoryRequest = requestParser.parse(directoryString);
+        DirectoryController directoryController = new DirectoryController(fileHelper);
+        Response directoryResponse = directoryController.createResponse(directoryRequest);
         directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
         notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Response notFoundResponse = new NotFoundController().createResponse();
+        Request notFoundRequest = requestParser.parse(notFoundString);
+        NotFoundController notFoundController = new NotFoundController();
+        Response notFoundResponse = notFoundController.createResponse(notFoundRequest);
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
-        ServerRouter router = new ServerRouter(new Routes(), fileHelper);
+        FileController fileController = new FileController(fileHelper);
+        Routes routes = new RoutesBuilder(directoryController, fileController, notFoundController).build();
+
+        ServerRouter router = new ServerRouter(routes, fileHelper);
         connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
     }
 

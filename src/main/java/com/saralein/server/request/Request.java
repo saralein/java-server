@@ -9,11 +9,15 @@ public class Request {
         this.request = request;
     }
 
-    String getMethod() {
+    public String getMethod() {
         return request.get("method");
     }
 
     public String getUri() {
         return request.get("uri");
+    }
+
+    public String getBody() {
+        return request.getOrDefault("Body", "");
     }
 }

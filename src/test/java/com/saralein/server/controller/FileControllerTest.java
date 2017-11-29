@@ -46,12 +46,11 @@ public class FileControllerTest {
         header.addStatus(200);
         header.addHeader("Content-Type", mimeType);
 
-        Path resource = Paths.get(path);
         Request request = requestParser.parse(requestLine);
 
         return new Pair<>(
             getFileBytes(path),
-            new FileController(request, resource, fileHelper).createResponse()
+            new FileController(fileHelper).createResponse(request)
         );
     }
 

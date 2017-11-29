@@ -20,10 +20,6 @@ public class Header {
         header.put(title, content);
     }
 
-    private String createStatusLine(int code) {
-        return  version + " " + StatusCodes.retrieve(code);
-    }
-
     public String formatToString() {
         StringBuilder headerBuilder = new StringBuilder();
 
@@ -32,6 +28,10 @@ public class Header {
         addsBlankLine(headerBuilder);
 
         return headerBuilder.toString();
+    }
+
+    private String createStatusLine(int code) {
+        return  version + " " + StatusCodes.retrieve(code);
     }
 
     private void addsStatusLine(StringBuilder headerBuilder) {

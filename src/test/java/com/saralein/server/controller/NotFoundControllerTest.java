@@ -1,10 +1,11 @@
 package com.saralein.server.controller;
 
-import static org.junit.Assert.*;
-
 import com.saralein.server.Controller.NotFoundController;
+import com.saralein.server.request.Request;
+import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,8 +14,10 @@ public class NotFoundControllerTest {
 
     @Before
     public void setUp() {
+        RequestParser requestParser = new RequestParser();
+        Request request = requestParser.parse("GET /snarf.jpg HTTP/1.1");
         NotFoundController notFoundController = new NotFoundController();
-        notFoundResponse = notFoundController.createResponse();
+        notFoundResponse = notFoundController.createResponse(request);
     }
 
     @Test

@@ -4,22 +4,42 @@ import static com.saralein.server.Constants.CRLF;
 import java.util.HashMap;
 
 public class RequestParser {
+    private HashMap<String, String> parsedRequest;
+
+    public RequestParser() {
+        this.parsedRequest = new HashMap<>();
+    }
+
     public Request parse(String request) {
         String[] fullRequest = split(request, CRLF);
-        String[] requestLine = splitRequestLine(fullRequest);
-        HashMap<String, String> parsedRequest = createRequestMap(requestLine);
+        createRequestMap(fullRequest);
 
         return new Request(parsedRequest);
     }
 
-    private HashMap<String, String> createRequestMap(String[] requestLine) {
-        HashMap<String, String> parsedRequest = new HashMap<>();
+    private void createRequestMap(String[] fullRequest) {
+        addRequestLine(fullRequest);
+
+        if (fullRequest.length > 0) {
+            addHeadersAndBody(fullRequest);
+        }
+    }
+
+    private void addRequestLine(String[] fullRequest) {
+        String[] requestLine = splitRequestLine(fullRequest);
 
         parsedRequest.put("method", parseMethod(requestLine));
         parsedRequest.put("uri", parseUri(requestLine));
         parsedRequest.put("version", parseVersion(requestLine));
+    }
 
-        return parsedRequest;
+    private void addHeadersAndBody(String[] fullRequest) {
+        for (String headerOrBody : fullRequest) {
+            if (headerOrBody.contains(":")) {
+                String[] splitHeaderOrBody = split(headerOrBody, ":");
+                parsedRequest.put(splitHeaderOrBody[0].trim(), splitHeaderOrBody[1].trim());
+            }
+        }
     }
 
     private String[] split(String request, String splitter) {

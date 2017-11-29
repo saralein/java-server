@@ -1,7 +1,6 @@
 package com.saralein.server.response;
 
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class ResponseSerializerTest {

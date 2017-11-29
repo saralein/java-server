@@ -7,27 +7,27 @@ import com.saralein.server.response.ResponseBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileController implements Controller {
-    private final Request request;
-    private final Path resource;
     private final FileHelper fileHelper;
 
-    public FileController(Request request, Path resource, FileHelper fileHelper) {
-        this.request = request;
-        this.resource = resource;
+    public FileController(FileHelper fileHelper) {
         this.fileHelper = fileHelper;
     }
 
-    public Response createResponse() {
+    public Response createResponse(Request request) {
         return new ResponseBuilder()
                     .addStatus(200)
-                    .addHeader("Content-Type", getMimeType())
-                    .addBody(createBody())
+                    .addHeader("Content-Type", getMimeType(request))
+                    .addBody(createBody(request))
                     .build();
     }
 
-    private byte[] createBody() {
+    private byte[] createBody(Request request) {
+        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
+        Path resource = Paths.get(resourceUri);
+
         byte[] fileByte = new byte[]{};
 
         try {
@@ -39,7 +39,7 @@ public class FileController implements Controller {
         return fileByte;
     }
 
-    private String getMimeType() {
+    private String getMimeType(Request request) {
         return fileHelper.determineMimeType(request.getUri());
     }
 }
