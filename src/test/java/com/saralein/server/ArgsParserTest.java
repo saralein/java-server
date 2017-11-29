@@ -1,13 +1,12 @@
 package com.saralein.server;
 
+import java.nio.file.FileSystems;
 import org.junit.Test;
-
-import java.io.File;
-
 import static org.junit.Assert.*;
 
 public class ArgsParserTest {
     private String home = System.getProperty("user.dir");
+    private String separator = FileSystems.getDefault().getSeparator();
 
     @Test
     public void returnsDefaultPortIfNotProvided() {
@@ -28,17 +27,17 @@ public class ArgsParserTest {
     public void returnsDefaultDirectoryIfNotProvided() {
         String[] args = new String[]{};
         ArgsParser argsParser = new ArgsParser(args);
-        String defaultPath = home + File.separator + "public";
+        String defaultPath = home + separator + "public";
 
-        assertEquals(defaultPath, argsParser.parseRoot(home).getAbsolutePath());
+        assertEquals(defaultPath, argsParser.parseRoot(home).toString());
     }
 
     @Test
     public void returnsDirectoryIfProvided() {
         String[] args = new String[]{"-d","sloths"};
         ArgsParser argsParser = new ArgsParser(args);
-        String dirPath = home + File.separator + "sloths";
+        String dirPath = home + separator + "sloths";
 
-        assertEquals(dirPath, argsParser.parseRoot(home).getAbsolutePath());
+        assertEquals(dirPath, argsParser.parseRoot(home).toString());
     }
 }

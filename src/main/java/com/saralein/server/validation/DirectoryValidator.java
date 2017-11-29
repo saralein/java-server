@@ -1,9 +1,13 @@
 package com.saralein.server.validation;
 
-import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DirectoryValidator extends Validator {
     private final String home;
+    private String separator = FileSystems.getDefault().getSeparator();
 
     public DirectoryValidator(String userHome) {
         super("-d", "Valid directory option not provided.  Please include '-d' followed by a valid directory.");
@@ -12,9 +16,9 @@ public class DirectoryValidator extends Validator {
 
     @Override
     protected void checkForErrors(String dirArg) {
-        File dir = new File(home + File.separator + dirArg);
+        Path dir = Paths.get(home + separator + dirArg);
 
-        if (!dir.exists() && !dir.isDirectory()) {
+        if (!Files.exists(dir) && !Files.isDirectory(dir)) {
             errors.add("Valid directory not provided in options.");
         }
     }

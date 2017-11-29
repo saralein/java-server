@@ -1,26 +1,30 @@
 package com.saralein.server.response;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class SysFileHelper implements FileHelper {
-    private File root;
+    private Path root;
+    private String separator = FileSystems.getDefault().getSeparator();
 
-    public SysFileHelper(File root) {
+    public SysFileHelper(Path root) {
         this.root = root;
     }
 
     public String createAbsolutePath(String name) {
-        return root.getPath() + File.separator + name;
+        return root.toString() + separator + name;
     }
 
-    public String createRelativeFilePath(String name, File resource) {
-        return removeRootPortionOfPath(resource) + File.separator + name;
+    public String createRelativeFilePath(String name, Path resource) {
+        return removeRootPortionOfPath(resource) + separator + name;
     }
 
     public String determineMimeType(String file) {
@@ -28,11 +32,12 @@ public class SysFileHelper implements FileHelper {
         return fileNameMap.getContentTypeFor(file);
     }
 
-    public List<String> listFileNames(File directory) {
+    public List<String> listFileNames(Path directory) throws IOException {
         List<String> fileNames = new ArrayList<>();
+        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory);
 
-        for (File file: listDirectoryFiles(directory)) {
-            fileNames.add(file.getName());
+        for (Path path : directoryStream) {
+            listFileIfNotHidden(path, fileNames);
         }
 
         Collections.sort(fileNames);
@@ -40,14 +45,13 @@ public class SysFileHelper implements FileHelper {
         return fileNames;
     }
 
-    private String removeRootPortionOfPath(File resource) {
-        return resource.getName().replace(root.getName(), "");
+    private String removeRootPortionOfPath(Path resource) {
+        return resource.toString().replace(root.toString(), "");
     }
 
-    private List<File> listDirectoryFiles(File directory) {
-        File[] fileArray = directory.listFiles(
-                file -> !file.isHidden());
-
-        return Arrays.asList(fileArray);
+    private void listFileIfNotHidden(Path path, List<String> fileNames) throws IOException {
+        if (!Files.isHidden(path)) {
+            fileNames.add(path.getFileName().toString());
+        }
     }
 }

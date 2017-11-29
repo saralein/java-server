@@ -14,7 +14,7 @@ public abstract class Validator {
         this.argError = argError;
     }
 
-    ArrayList<String> validate(List<String> args) {
+    final ArrayList<String> validate(List<String> args) {
         int flagIndex = args.indexOf(flag);
         int argIndex = flagIndex + 1;
 

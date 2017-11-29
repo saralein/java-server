@@ -1,31 +1,56 @@
 package com.saralein.server.response;
 
 import static com.saralein.server.Constants.CRLF;
+import com.saralein.server.protocol.StatusCodes;
+import java.util.HashMap;
 
-class Header {
-    private final String status;
-    private final String contentType;
+public class Header {
+    private final String version = "HTTP/1.1";
+    private HashMap<String, String> header;
 
-    Header(String status, String contentType) {
-        this.status = status;
-        this.contentType = contentType;
+    public Header() {
+        this.header = new HashMap<>();
     }
 
-    private String createStatusLine(String status) {
-        return  "HTTP/1.1 " + status + CRLF;
+    public void addStatus(int code) {
+        header.put("Status", createStatusLine(code));
     }
 
-    private String createContentTypeHeader(String contentType) {
-        return "Content-Type: " + contentType + CRLF;
+    public void addHeader(String title, String content) {
+        header.put(title, content);
     }
 
-    String createContents() {
+    private String createStatusLine(int code) {
+        return  version + " " + StatusCodes.retrieve(code);
+    }
+
+    public String formatToString() {
         StringBuilder headerBuilder = new StringBuilder();
 
-        headerBuilder.append(createStatusLine(status));
-        headerBuilder.append(createContentTypeHeader(contentType));
-        headerBuilder.append(CRLF);
+        addsStatusLine(headerBuilder);
+        addsHeaders(headerBuilder);
+        addsBlankLine(headerBuilder);
 
         return headerBuilder.toString();
+    }
+
+    private void addsStatusLine(StringBuilder headerBuilder) {
+        if (header.containsKey("Status")) {
+            headerBuilder.append(header.get("Status") + CRLF);
+        }
+    }
+
+    private void addsHeaders(StringBuilder headerBuilder) {
+        for (String key : header.keySet()) {
+            if (!key.equals("Status")) {
+                headerBuilder.append(key + ": " + header.get(key) + CRLF);
+            }
+        }
+    }
+
+    private void addsBlankLine(StringBuilder headerBuilder) {
+        if (headerBuilder.length() != 0) {
+            headerBuilder.append(CRLF);
+        }
     }
 }
