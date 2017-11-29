@@ -66,9 +66,6 @@ public class Main {
         FormStore formStore = new FormStore();
 
         return new RoutesBuilder(new DirectoryController(fileHelper), new FileController(fileHelper), new NotFoundController())
-                .addRoute("directory", "GET", new DirectoryController(fileHelper))
-                .addRoute("file", "GET", new FileController(fileHelper))
-                .addRoute("notFound", "GET", new NotFoundController())
                 .addRoute("/redirect", "GET", new RedirectController())
                 .addRoute("/form", "GET", new FormGetController(formStore))
                 .addRoute("/form", "POST", new FormController(formStore))
