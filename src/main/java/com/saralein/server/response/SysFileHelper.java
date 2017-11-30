@@ -3,13 +3,11 @@ package com.saralein.server.response;
 import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SysFileHelper implements FileHelper {
     private Path root;
@@ -33,25 +31,27 @@ public class SysFileHelper implements FileHelper {
     }
 
     public List<String> listFileNames(Path directory) throws IOException {
-        List<String> fileNames = new ArrayList<>();
-        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory);
-
-        for (Path path : directoryStream) {
-            listFileIfNotHidden(path, fileNames);
-        }
-
-        Collections.sort(fileNames);
-
-        return fileNames;
+        return Files.list(directory)
+                .filter(this::isNotHidden)
+                .map(this::formatName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     private String removeRootPortionOfPath(Path resource) {
         return resource.toString().replace(root.toString(), "");
     }
 
-    private void listFileIfNotHidden(Path path, List<String> fileNames) throws IOException {
-        if (!Files.isHidden(path)) {
-            fileNames.add(path.getFileName().toString());
+    private String formatName(Path path) {
+        String nameEnding = Files.isDirectory(path) ? "/" : "";
+        return path.getFileName().toString() + nameEnding;
+    }
+
+    private boolean isNotHidden(Path path) {
+        try {
+            return !Files.isHidden(path);
+        } catch (IOException e) {
+            return false;
         }
     }
 }
