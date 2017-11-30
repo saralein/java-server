@@ -18,6 +18,6 @@ public class Request {
     }
 
     public String getBody() {
-        return request.getOrDefault("Body", "");
+        return request.getOrDefault("body", "");
     }
 }

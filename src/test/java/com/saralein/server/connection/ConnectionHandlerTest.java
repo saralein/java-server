@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
@@ -39,13 +40,21 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
 
         directoryString = "GET / HTTP/1.1";
-        Request directoryRequest = requestParser.parse(directoryString);
+        Request directoryRequest = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/");
+            put("version", "HTTP/1.1");
+        }});
         DirectoryController directoryController = new DirectoryController(fileHelper);
         Response directoryResponse = directoryController.createResponse(directoryRequest);
         directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
         notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Request notFoundRequest = requestParser.parse(notFoundString);
+        Request notFoundRequest = new Request(new HashMap<String, String>() {{
+            put("method", "GET");
+            put("uri", "/snarf.jpg");
+            put("version", "HTTP/1.1");
+        }});
         NotFoundController notFoundController = new NotFoundController();
         Response notFoundResponse = notFoundController.createResponse(notFoundRequest);
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);

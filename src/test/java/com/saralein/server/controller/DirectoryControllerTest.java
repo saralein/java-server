@@ -2,13 +2,14 @@ package com.saralein.server.controller;
 
 import com.saralein.server.Controller.DirectoryController;
 import com.saralein.server.request.Request;
-import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.FileHelper;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.SysFileHelper;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,11 @@ public class DirectoryControllerTest {
         String rootPath = System.getProperty("user.dir") + "/" + "public";
         Path root = Paths.get(rootPath);
         FileHelper sysFileHelper = new SysFileHelper(root);
-        RequestParser requestParser = new RequestParser();
-        Request request = requestParser.parse("GET / HTTP/1.1");
+        Request request = new Request(new HashMap<String, String>() {{
+            put("method", "GET");
+            put("uri", "/");
+            put("version", "HTTP/1.1");
+        }});
 
         DirectoryController directoryController = new DirectoryController(sysFileHelper);
         directoryResponse = directoryController.createResponse(request);

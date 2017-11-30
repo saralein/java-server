@@ -3,7 +3,6 @@ package com.saralein.server.data;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 

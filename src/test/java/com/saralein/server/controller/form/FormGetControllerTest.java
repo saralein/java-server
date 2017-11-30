@@ -14,11 +14,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class FormGetControllerTest {
-    byte[] formWithBodyArray;
-    DataStore dataStore;
-    FormGetController formGetController;
-    Response formResponseWithBody;
-    Response formResponseWithoutBody;
+    private byte[] formWithBodyArray;
+    private Response formResponseWithBody;
+    private Response formResponseWithoutBody;
 
     @Before
     public void setUp() {
@@ -28,8 +26,8 @@ public class FormGetControllerTest {
         Request requestWithBody = new RequestParser().parse("GET /form HTTP/1.1\r\n\r\nBody: My=Data&More=Stuff");
         Request requestWithoutBody = new RequestParser().parse("GET /form HTTP/1.1\r\n");
 
-        dataStore = new FormStore();
-        formGetController = new FormGetController(dataStore);
+        DataStore dataStore = new FormStore();
+        FormGetController formGetController = new FormGetController(dataStore);
 
         formResponseWithoutBody = formGetController.createResponse(requestWithoutBody);
 

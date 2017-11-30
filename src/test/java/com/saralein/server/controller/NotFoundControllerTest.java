@@ -2,20 +2,24 @@ package com.saralein.server.controller;
 
 import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.request.Request;
-import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 public class NotFoundControllerTest {
     private Response notFoundResponse;
 
     @Before
     public void setUp() {
-        RequestParser requestParser = new RequestParser();
-        Request request = requestParser.parse("GET /snarf.jpg HTTP/1.1");
+        Request request = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/snarf.jpg");
+            put("version", "HTTP/1.1");
+        }});
         NotFoundController notFoundController = new NotFoundController();
         notFoundResponse = notFoundController.createResponse(request);
     }

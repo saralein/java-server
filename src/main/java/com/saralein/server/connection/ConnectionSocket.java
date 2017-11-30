@@ -34,7 +34,7 @@ public class ConnectionSocket implements Connection {
         if (length > 0) {
             char[] body = new char[length];
             bufferedReader.read(body);
-            request.append(CRLF + "Body: " + new String(body));
+            request.append(CRLF + "body: " + new String(body));
         }
 
         return request.toString();

@@ -6,19 +6,17 @@ import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.Controller.RedirectController;
 import com.saralein.server.response.FileHelper;
 import com.saralein.server.response.SysFileHelper;
-import org.junit.Test;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class RoutesTest {
     private Path root = Paths.get(System.getProperty("user.dir") + "/" + "public");
     private FileHelper fileHelper = new SysFileHelper(root);
-    DirectoryController directoryController = new DirectoryController(fileHelper);
-    FileController fileController = new FileController(fileHelper);
-    NotFoundController notFoundController = new NotFoundController();
+    private DirectoryController directoryController = new DirectoryController(fileHelper);
+    private FileController fileController = new FileController(fileHelper);
+    private NotFoundController notFoundController = new NotFoundController();
 
     private Routes routes = new RoutesBuilder(directoryController, fileController, notFoundController)
                                 .addRoute("/redirect", "GET", new RedirectController())
