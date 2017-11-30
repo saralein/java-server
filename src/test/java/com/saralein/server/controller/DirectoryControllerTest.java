@@ -23,7 +23,7 @@ public class DirectoryControllerTest {
                       "<li><a href=/cheetara.jpg>cheetara.jpg</a></li>" +
                       "<li><a href=/marshmallow.gif>marshmallow.gif</a></li>" +
                       "<li><a href=/recipe.txt>recipe.txt</a></li>" +
-                      "<li><a href=/sloths>sloths</a></li>";
+                      "<li><a href=/sloths/>sloths/</a></li>";
 
         bodyArray = body.getBytes();
 
