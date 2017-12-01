@@ -1,5 +1,8 @@
 package com.saralein.server.router;
 
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.Controller.FileController;
+import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Header;
@@ -24,18 +27,24 @@ public class ServerRouterTest {
         String rootPath = System.getProperty("user.dir") + "/" + "public";
         Path root = Paths.get(rootPath);
         SysFileHelper fileHelper = new SysFileHelper(root);
-        RequestParser requestParser = new RequestParser();
 
         String nullString = "GET /snarf.jpg HTTP/1.1";
-        notFoundRequest = requestParser.parse(nullString);
+        RequestParser nullParser = new RequestParser();
+        notFoundRequest = nullParser.parse(nullString);
 
         String directoryString = "GET / HTTP/1.1";
-        directoryRequest = requestParser.parse(directoryString);
+        RequestParser directoryParser = new RequestParser();
+        directoryRequest = directoryParser.parse(directoryString);
 
         String fileString = "GET /cheetara.jpg HTTP/1.1";
-        fileRequest = requestParser.parse(fileString);
+        RequestParser fileParser = new RequestParser();
+        fileRequest = fileParser.parse(fileString);
 
-        Routes routes = new Routes();
+        DirectoryController directoryController = new DirectoryController(fileHelper);
+        FileController fileController = new FileController(fileHelper);
+        NotFoundController notFoundController = new NotFoundController();
+        Routes routes = new RoutesBuilder(directoryController, fileController, notFoundController).build();
+
         router = new ServerRouter(routes, fileHelper);
     }
 
@@ -66,7 +75,7 @@ public class ServerRouterTest {
                 "<li><a href=/cheetara.jpg>cheetara.jpg</a></li>" +
                 "<li><a href=/marshmallow.gif>marshmallow.gif</a></li>" +
                 "<li><a href=/recipe.txt>recipe.txt</a></li>" +
-                "<li><a href=/sloths>sloths</a></li>";
+                "<li><a href=/sloths/>sloths/</a></li>";
 
         byte[] bodyArray = body.getBytes();
 

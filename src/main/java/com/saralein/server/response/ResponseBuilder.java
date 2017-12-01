@@ -1,8 +1,8 @@
 package com.saralein.server.response;
 
 public class ResponseBuilder {
-    byte[] body;
-    Header header;
+    private byte[] body;
+    private Header header;
 
     public ResponseBuilder() {
         this.header = new Header();

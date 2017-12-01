@@ -1,9 +1,8 @@
 package com.saralein.server.response;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ResponseBuilderTest {
     private ResponseBuilder responseBuilder;

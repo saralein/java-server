@@ -1,16 +1,20 @@
 package com.saralein.server.server;
 
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.Controller.FileController;
+import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
+import com.saralein.server.response.FileHelper;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.router.Routes;
+import com.saralein.server.router.RoutesBuilder;
 import com.saralein.server.router.ServerRouter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +32,15 @@ public class SetupServerTest {
         runtime = Runtime.getRuntime();
         String rootPath = System.getProperty("user.dir") + "/" + "public";
         Path root = Paths.get(rootPath);
-        router = new ServerRouter(new Routes(), new SysFileHelper(root));
+
+        FileHelper fileHelper = new SysFileHelper(root);
+        DirectoryController directoryController = new DirectoryController(fileHelper);
+        FileController fileController = new FileController(fileHelper);
+        NotFoundController notFoundController = new NotFoundController();
+
+        Routes routes = new RoutesBuilder(directoryController, fileController, notFoundController).build();
+
+        router = new ServerRouter(routes, new SysFileHelper(root));
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
     }

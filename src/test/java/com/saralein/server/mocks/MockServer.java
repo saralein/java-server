@@ -1,13 +1,14 @@
 package com.saralein.server.mocks;
 
+import com.saralein.server.Controller.DirectoryController;
+import com.saralein.server.Controller.FileController;
+import com.saralein.server.Controller.NotFoundController;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.response.SysFileHelper;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.ServerRouter;
 import com.saralein.server.server.Server;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class MockServer extends Server {
     private boolean stopCalled = false;
@@ -17,9 +18,11 @@ public class MockServer extends Server {
               new MockServerSocket(),
               new MockLogger(),
               new ServerRouter(
-                      new Routes(),
-                      new SysFileHelper(
-                              Paths.get(System.getProperty("user.dir") + FileSystems.getDefault().getSeparator() + "public"))),
+                      new Routes(new HashMap<>(),
+                                 new DirectoryController(new MockFileHelper()),
+                                 new FileController(new MockFileHelper()),
+                                 new NotFoundController()),
+                      new MockFileHelper()),
               new RequestParser(),
               new ResponseSerializer());
     }

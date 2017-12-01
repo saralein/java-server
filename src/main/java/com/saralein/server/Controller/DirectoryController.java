@@ -1,31 +1,32 @@
 package com.saralein.server.Controller;
 
+import com.saralein.server.request.Request;
 import com.saralein.server.response.FileHelper;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DirectoryController implements Controller {
-    private final String contentType = "text/html";
-    private final Path resource;
     private final FileHelper fileHelper;
 
-    public DirectoryController(Path resource, FileHelper fileHelper) {
-        this.resource = resource;
+    public DirectoryController(FileHelper fileHelper) {
         this.fileHelper = fileHelper;
     }
 
-    public Response createResponse() {
+    public Response createResponse(Request request) {
         return new ResponseBuilder()
                     .addStatus(200)
-                    .addHeader("Content-Type", contentType)
-                    .addBody(createBody())
+                    .addHeader("Content-Type", "text/html")
+                    .addBody(createBody(request))
                     .build();
     }
 
-    private String createBody() {
+    private String createBody(Request request) {
         StringBuilder filesHTML = new StringBuilder();
+        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
+        Path resource = Paths.get(resourceUri);
 
         try {
             for (String filename : fileHelper.listFileNames(resource)) {

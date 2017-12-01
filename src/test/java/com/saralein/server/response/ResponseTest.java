@@ -2,12 +2,11 @@ package com.saralein.server.response;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class ResponseTest {
-    Response response;
-    byte[] body;
+    private Response response;
+    private byte[] body;
 
     @Before
     public void setUp() {

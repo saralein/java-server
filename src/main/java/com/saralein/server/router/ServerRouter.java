@@ -1,8 +1,6 @@
 package com.saralein.server.router;
 
-import com.saralein.server.Controller.DirectoryController;
-import com.saralein.server.Controller.FileController;
-import com.saralein.server.Controller.NotFoundController;
+import com.saralein.server.Controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.*;
 import java.nio.file.Files;
@@ -23,27 +21,30 @@ public class ServerRouter implements Router {
 
     public Response resolveRequest(Request request) {
         resourceStatus(request);
-        return route(request);
+        Controller controller = route(request);
+
+        return controller.createResponse(request);
     }
 
     private void resourceStatus(Request request) {
         String resourceUri = fileHelper.createAbsolutePath(request.getUri());
-
         resource = Paths.get(resourceUri);
-
         resourceExists = Files.exists(resource);
         resourceIsDirectory = Files.isDirectory(resource);
     }
 
-    private Response route(Request request) {
-        if (routes.isRoute(request.getUri())) {
-            return routes.getController(request.getUri()).createResponse();
+    private Controller route(Request request) {
+        String uri = request.getUri();
+        String method = request.getMethod();
+
+        if (routes.isRoute(uri, method)) {
+            return routes.retrieveController(uri, method);
         } else if (!resourceExists) {
-            return new NotFoundController().createResponse();
+            return routes.retrieve404Controller();
         } else if (resourceIsDirectory) {
-            return new DirectoryController(resource, fileHelper).createResponse();
+            return routes.retrieveDirectoryController();
         } else {
-            return new FileController(request, resource, fileHelper).createResponse();
+            return routes.retrieveFileController();
         }
     }
 }

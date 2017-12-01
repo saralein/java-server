@@ -6,40 +6,54 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class RequestParserTest {
-    private Request test1Request;
-    private Request test2Request;
     private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        HashMap<String, String> test1Hash = new HashMap<String, String>() {{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }};
-
-        HashMap<String, String> test2Hash = new HashMap<String, String>() {{
-            put("method", "GET");
-            put("uri", "/public/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }};
-
-        test1Request = new Request(test1Hash);
-        test2Request = new Request(test2Hash);
-
         requestParser = new RequestParser();
     }
 
     @Test
-    public void returnsRequestWithCorrectInformation() {
-        Request test1ThroughParser = requestParser.parse("GET / HTTP/1.1");
+    public void correctlyParsesRequestForRoot() {
+        Request request = new Request(new HashMap<String, String>() {{
+            put("method", "GET");
+            put("uri", "/");
+            put("version", "HTTP/1.1");
+        }});
 
-        assertEquals(test1Request.getMethod(), test1ThroughParser.getMethod());
-        assertEquals(test1Request.getUri(), test1ThroughParser.getUri());
+        Request parsedRequest = requestParser.parse("GET / HTTP/1.1");
 
-        Request test2ThroughParser = requestParser.parse("GET /public/cheetara.jpg HTTP/1.1");
+        assertEquals(request.getMethod(), parsedRequest.getMethod());
+        assertEquals(request.getUri(), parsedRequest.getUri());
+    }
 
-        assertEquals(test2Request.getMethod(), test2ThroughParser.getMethod());
-        assertEquals(test2Request.getUri(), test2ThroughParser.getUri());
+    @Test
+    public void correctlyParsesRequestWithNoBody() {
+        Request request = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/cheetara.jpg");
+            put("version", "HTTP/1.1");
+        }});
+
+        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1");
+
+        assertEquals(request.getMethod(), parsedRequest.getMethod());
+        assertEquals(request.getUri(), parsedRequest.getUri());
+    }
+
+    @Test
+    public void returnsRequestWithBody() {
+        Request request = new Request(new HashMap<String, String>(){{
+            put("method", "POST");
+            put("uri", "/form");
+            put("version", "HTTP/1.1");
+            put("body", "My=Data&More=Data");
+        }});
+
+        Request parsedRequest = requestParser.parse("POST /form HTTP/1.1\r\n\r\nbody: My=Data&More=Data");
+
+        assertEquals(request.getMethod(), parsedRequest.getMethod());
+        assertEquals(request.getUri(), parsedRequest.getUri());
+        assertEquals(request.getBody(), parsedRequest.getBody());
     }
 }

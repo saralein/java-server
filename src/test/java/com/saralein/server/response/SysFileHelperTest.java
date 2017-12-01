@@ -31,7 +31,7 @@ public class SysFileHelperTest {
         fileNames.add("cheetara.jpg");
         fileNames.add("marshmallow.gif");
         fileNames.add("recipe.txt");
-        fileNames.add("sloths");
+        fileNames.add("sloths/");
     }
 
     @Test
