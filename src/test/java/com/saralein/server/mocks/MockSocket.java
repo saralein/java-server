@@ -2,8 +2,6 @@ package com.saralein.server.mocks;
 
 import com.saralein.server.connection.Connection;
 
-import java.io.*;
-
 public class MockSocket implements Connection {
     private byte[] response = null;
     private String request = null;
@@ -22,5 +20,5 @@ public class MockSocket implements Connection {
         response = output;
     }
 
-    public void close() throws IOException { }
+    public void close() { }
 }

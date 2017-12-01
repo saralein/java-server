@@ -7,6 +7,8 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
+
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +25,17 @@ public class FormGetControllerTest {
         String formWithBody = "<p>My=Data<br>More=Stuff<br></p>";
         formWithBodyArray = formWithBody.getBytes();
 
-        Request requestWithBody = new RequestParser().parse("GET /form HTTP/1.1\r\n\r\nBody: My=Data&More=Stuff");
-        Request requestWithoutBody = new RequestParser().parse("GET /form HTTP/1.1\r\n");
+        Request requestWithBody = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/form");
+            put("version", "HTTP/1.1");
+        }});
+
+        Request requestWithoutBody = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/form");
+            put("version", "HTTP/1.1");
+        }});
 
         DataStore dataStore = new FormStore();
         FormGetController formGetController = new FormGetController(dataStore);

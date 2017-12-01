@@ -10,11 +10,15 @@ public class RequestParser {
         this.parsedRequest = new HashMap<>();
     }
 
-    public Request parse(String request) {
-        String[] fullRequest = split(request, CRLF);
-        createRequestMap(fullRequest);
+    public Request parse(String request) throws Exception {
+        try {
+            String[] fullRequest = split(request, CRLF);
+            createRequestMap(fullRequest);
 
-        return new Request(parsedRequest);
+            return new Request(parsedRequest);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new Exception("Bad request.  Connection closed.");
+        }
     }
 
     private void createRequestMap(String[] fullRequest) {

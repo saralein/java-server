@@ -3,10 +3,14 @@ package com.saralein.server.request;
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class RequestParserTest {
     private RequestParser requestParser;
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -21,10 +25,13 @@ public class RequestParserTest {
             put("version", "HTTP/1.1");
         }});
 
-        Request parsedRequest = requestParser.parse("GET / HTTP/1.1");
-
-        assertEquals(request.getMethod(), parsedRequest.getMethod());
-        assertEquals(request.getUri(), parsedRequest.getUri());
+        try {
+            Request parsedRequest = requestParser.parse("GET / HTTP/1.1");
+            assertEquals(request.getMethod(), parsedRequest.getMethod());
+            assertEquals(request.getUri(), parsedRequest.getUri());
+        } catch(Exception e) {
+            fail("Exception was thrown.");
+        }
     }
 
     @Test
@@ -35,10 +42,13 @@ public class RequestParserTest {
             put("version", "HTTP/1.1");
         }});
 
-        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1");
-
-        assertEquals(request.getMethod(), parsedRequest.getMethod());
-        assertEquals(request.getUri(), parsedRequest.getUri());
+        try {
+            Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1");
+            assertEquals(request.getMethod(), parsedRequest.getMethod());
+            assertEquals(request.getUri(), parsedRequest.getUri());
+        } catch(Exception e) {
+            fail("Exception was thrown.");
+        }
     }
 
     @Test
@@ -50,10 +60,13 @@ public class RequestParserTest {
             put("body", "My=Data&More=Data");
         }});
 
-        Request parsedRequest = requestParser.parse("POST /form HTTP/1.1\r\n\r\nbody: My=Data&More=Data");
-
-        assertEquals(request.getMethod(), parsedRequest.getMethod());
-        assertEquals(request.getUri(), parsedRequest.getUri());
-        assertEquals(request.getBody(), parsedRequest.getBody());
+        try {
+            Request parsedRequest = requestParser.parse("POST /form HTTP/1.1\r\n\r\nbody: My=Data&More=Data");
+            assertEquals(request.getMethod(), parsedRequest.getMethod());
+            assertEquals(request.getUri(), parsedRequest.getUri());
+            assertEquals(request.getBody(), parsedRequest.getBody());
+        } catch(Exception e) {
+            fail("Exception was thrown.");
+        }
     }
 }
