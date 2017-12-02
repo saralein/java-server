@@ -17,6 +17,10 @@ public class FormStore implements DataStore {
        return dataStore.getOrDefault(id, new HashMap<>());
    }
 
+   public void deleteData(String id) {
+       dataStore.remove(id);
+   }
+
    public boolean dataExistsForID(String id) {
        return dataStore.containsKey(id);
    }

@@ -34,4 +34,11 @@ public class FormStoreTest {
         assertFalse(formStore.dataExistsForID("/stuff"));
         assertTrue(formStore.dataExistsForID("/form"));
     }
+
+    @Test
+    public void deletesDataForAnID() {
+        assertTrue(formStore.dataExistsForID("/form"));
+        formStore.deleteData("/form");
+        assertFalse(formStore.dataExistsForID("/form"));
+    }
 }
