@@ -39,10 +39,9 @@ public class Server implements Runnable {
                 ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
                 connectionHandler.run();
             }
+            serverSocket.close();
         } catch (IOException e) {
             logger.log(e.getMessage());
-        } finally {
-            serverSocket.close();
         }
     }
 

@@ -29,8 +29,8 @@ public class RequestParserTest {
             Request parsedRequest = requestParser.parse("GET / HTTP/1.1");
             assertEquals(request.getMethod(), parsedRequest.getMethod());
             assertEquals(request.getUri(), parsedRequest.getUri());
-        } catch(Exception e) {
-            fail("Exception was thrown.");
+        } catch (Exception e) {
+            fail("Failed to parse request for root.");
         }
     }
 
@@ -46,8 +46,8 @@ public class RequestParserTest {
             Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1");
             assertEquals(request.getMethod(), parsedRequest.getMethod());
             assertEquals(request.getUri(), parsedRequest.getUri());
-        } catch(Exception e) {
-            fail("Exception was thrown.");
+        } catch (Exception e) {
+            fail("Failed to parse request with no body.");
         }
     }
 
@@ -65,8 +65,16 @@ public class RequestParserTest {
             assertEquals(request.getMethod(), parsedRequest.getMethod());
             assertEquals(request.getUri(), parsedRequest.getUri());
             assertEquals(request.getBody(), parsedRequest.getBody());
-        } catch(Exception e) {
-            fail("Exception was thrown.");
+        } catch (Exception e) {
+            fail("Failed to parse request with body.");
         }
+    }
+
+    @Test
+    public void throwsErrorForBadRequest() {
+        try {
+            requestParser.parse("");
+            fail("Failed to throw error for bad request.");
+        } catch (Exception ignored) { }
     }
 }

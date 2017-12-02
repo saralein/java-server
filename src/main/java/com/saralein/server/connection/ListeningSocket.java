@@ -23,11 +23,7 @@ public class ListeningSocket implements ServerSocket {
         return new ConnectionSocket(serverSocket.accept(), logger);
     }
 
-    public void close() {
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            logger.log(e.getMessage());
-        }
+    public void close() throws IOException {
+        serverSocket.close();
     }
 }

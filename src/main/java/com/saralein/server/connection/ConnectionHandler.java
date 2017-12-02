@@ -28,10 +28,9 @@ public class ConnectionHandler implements Runnable {
             Request request = requestParser.parse(socket.read());
             Response response = router.resolveRequest(request);
             socket.write(responseSerializer.convertToBytes(response));
-        } catch (Exception e) {
-            logger.log(e.getLocalizedMessage());
-        } finally {
             socket.close();
+        } catch (Exception e) {
+            logger.log(e.getMessage());
         }
     }
 }

@@ -11,5 +11,5 @@ public class MockServerSocket implements ServerSocket {
         return new MockSocket();
     }
 
-    public void close() {}
+    public void close() throws IOException {}
 }
