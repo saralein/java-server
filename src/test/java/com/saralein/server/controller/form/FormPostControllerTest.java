@@ -1,6 +1,6 @@
 package com.saralein.server.controller.form;
 
-import com.saralein.server.Controller.form.FormController;
+import com.saralein.server.Controller.form.FormPostController;
 import com.saralein.server.data.FormStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
@@ -10,14 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FormControllerTest {
+public class FormPostControllerTest {
     private byte[] bodyArray;
     private Response formResponse;
+    private FormPostController formPostController;
     private FormStore formStore;
 
     @Before
     public void setUp() {
-        String body = "<h3>My: Data</h3><h3>More: Stuff</h3>";
+        String body = "<p>My=Data<br>More=Stuff<br></p>";
 
         bodyArray = body.getBytes();
 
@@ -29,8 +30,8 @@ public class FormControllerTest {
         }});
 
         formStore = new FormStore();
-        FormController formController = new FormController(formStore);
-        formResponse = formController.createResponse(request);
+        formPostController = new FormPostController(formStore);
+        formResponse = formPostController.createResponse(request);
     }
 
     @Test
@@ -54,5 +55,21 @@ public class FormControllerTest {
         assertTrue(data.containsKey("More"));
         assertEquals("Data", data.get("My"));
         assertEquals("Stuff", data.get("More"));
+    }
+
+    @Test
+    public void returnsCorrectResponseForBadRequests() {
+        Request request = new Request(new HashMap<String, String>(){{
+            put("method", "POST");
+            put("uri", "/form");
+            put("version", "HTTP/1.1");
+            put("body", "My=Data&MoreStuff");
+        }});
+
+        Response response = formPostController.createResponse(request);
+        Header header = response.getHeader();
+
+        assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("".getBytes(), response.getBody());
     }
 }

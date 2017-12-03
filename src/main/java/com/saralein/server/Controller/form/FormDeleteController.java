@@ -17,9 +17,9 @@ public class FormDeleteController implements Controller {
         dataStore.deleteData(request.getUri());
 
         return new ResponseBuilder()
-                   .addStatus(200)
-                   .addHeader("Content-Type", "text/html")
-                   .addBody("Form data has been deleted.")
-                   .build();
+                    .addStatus(200)
+                    .addHeader("Content-Type", "text/html")
+                    .addBody("Form data has been deleted.")
+                    .build();
     }
 }
