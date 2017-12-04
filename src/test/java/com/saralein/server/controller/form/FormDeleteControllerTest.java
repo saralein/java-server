@@ -68,6 +68,6 @@ public class FormDeleteControllerTest {
         Header header = datalessDeleteResponse.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("No form data available for deletion.".getBytes(), datalessDeleteResponse.getBody());
+        assertArrayEquals("Form data has been deleted.".getBytes(), datalessDeleteResponse.getBody());
     }
 }

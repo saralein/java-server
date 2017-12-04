@@ -14,18 +14,12 @@ public class FormDeleteController implements Controller {
     }
 
     public Response createResponse(Request request) {
-        boolean dataExisted = dataStore.dataExistsForID(request.getUri());
         dataStore.deleteData(request.getUri());
 
         return new ResponseBuilder()
                    .addStatus(200)
                    .addHeader("Content-Type", "text/html")
-                   .addBody(createBody(dataExisted))
+                   .addBody("Form data has been deleted.")
                    .build();
-    }
-
-    private String createBody(Boolean dataExisted) {
-        return dataExisted ? "Form data has been deleted." :
-                             "No form data available for deletion.";
     }
 }
