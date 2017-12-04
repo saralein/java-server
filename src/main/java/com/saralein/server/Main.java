@@ -2,6 +2,7 @@ package com.saralein.server;
 
 import com.saralein.server.Controller.*;
 import com.saralein.server.Controller.form.FormController;
+import com.saralein.server.Controller.form.FormDeleteController;
 import com.saralein.server.Controller.form.FormGetController;
 import com.saralein.server.data.FormStore;
 import com.saralein.server.logger.ConnectionLogger;
@@ -70,6 +71,7 @@ public class Main {
                 .addRoute("/form", "GET", new FormGetController(formStore))
                 .addRoute("/form", "POST", new FormController(formStore))
                 .addRoute("/form", "PUT", new FormController(formStore))
+                .addRoute("/form", "DELETE", new FormDeleteController(formStore))
                 .build();
     }
 }
