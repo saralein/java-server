@@ -70,11 +70,8 @@ public class RequestParserTest {
         }
     }
 
-    @Test
-    public void throwsErrorForBadRequest() {
-        try {
-            requestParser.parse("");
-            fail("Failed to throw error for bad request.");
-        } catch (Exception ignored) { }
+    @Test(expected = Exception.class)
+    public void throwsErrorForBadRequest() throws Exception {
+        requestParser.parse("");
     }
 }
