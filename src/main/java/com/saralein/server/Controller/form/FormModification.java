@@ -2,39 +2,19 @@ package com.saralein.server.Controller.form;
 
 import com.saralein.server.data.DataStore;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-abstract class FormModification extends FormController {
-    final DataStore dataStore;
-
-    FormModification(DataStore dataStore) {
-        this.dataStore = dataStore;
-    }
-
-    Response createResponseFromData(Request request, HashMap<String, String> data) {
+public class FormModification {
+    public boolean processFormData(Request request, HashMap<String, String> data, DataStore dataStore) {
         if (containsValidData(request)) {
             HashMap<String, String> formData = serializeRequestBodyToData(request, data);
-            sendFormDataToStore(request, formData);
-            return buildResponse(200, createBody(formData));
+            dataStore.addData(request.getUri(), formData);
+            return true;
         }
 
-        return buildResponse(400, "");
-    }
-
-    private Response buildResponse(Integer status, String body) {
-        return new ResponseBuilder()
-                    .addStatus(status)
-                    .addHeader("Content-Type", "text/html")
-                    .addBody(body)
-                    .build();
-    }
-
-    private String createBody(HashMap<String, String> formData) {
-        return formatDataToHtml(formData);
+        return false;
     }
 
     private HashMap<String, String> serializeRequestBodyToData(
@@ -54,9 +34,5 @@ abstract class FormModification extends FormController {
         return splitRequestBody(request).stream()
                                         .map(data -> data.contains("="))
                                         .reduce(true, (result, containsEqual) -> result && containsEqual);
-    }
-
-    private void sendFormDataToStore(Request request, HashMap<String, String> formData) {
-        dataStore.addData(request.getUri(), formData);
     }
 }

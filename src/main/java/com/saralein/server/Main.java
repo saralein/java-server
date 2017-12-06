@@ -63,12 +63,14 @@ public class Main {
 
     private static Routes setupRoutes(FileHelper fileHelper) {
         FormStore formStore = new FormStore();
+        FormBody formBody = new FormBody();
+        FormModification formModification = new FormModification();
 
         return new RoutesBuilder(new DirectoryController(fileHelper), new FileController(fileHelper), new NotFoundController())
                 .addRoute("/redirect", "GET", new RedirectController())
-                .addRoute("/form", "GET", new FormGetController(formStore))
-                .addRoute("/form", "POST", new FormPostController(formStore))
-                .addRoute("/form", "PUT", new FormPutController(formStore))
+                .addRoute("/form", "GET", new FormGetController(formStore, formBody))
+                .addRoute("/form", "POST", new FormPostController(formStore, formBody, formModification))
+                .addRoute("/form", "PUT", new FormPutController(formStore, formBody, formModification))
                 .addRoute("/form", "DELETE", new FormDeleteController(formStore))
                 .build();
     }

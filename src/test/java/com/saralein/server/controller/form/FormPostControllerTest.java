@@ -1,5 +1,7 @@
 package com.saralein.server.controller.form;
 
+import com.saralein.server.Controller.form.FormBody;
+import com.saralein.server.Controller.form.FormModification;
 import com.saralein.server.Controller.form.FormPostController;
 import com.saralein.server.data.FormStore;
 import com.saralein.server.request.Request;
@@ -30,7 +32,9 @@ public class FormPostControllerTest {
         }});
 
         formStore = new FormStore();
-        formPostController = new FormPostController(formStore);
+        FormBody formBody = new FormBody();
+        FormModification formModification = new FormModification();
+        formPostController = new FormPostController(formStore, formBody, formModification);
         formResponse = formPostController.createResponse(request);
     }
 

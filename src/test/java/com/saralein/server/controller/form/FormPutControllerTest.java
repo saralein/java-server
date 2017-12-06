@@ -1,5 +1,7 @@
 package com.saralein.server.controller.form;
 
+import com.saralein.server.Controller.form.FormBody;
+import com.saralein.server.Controller.form.FormModification;
 import com.saralein.server.Controller.form.FormPutController;
 import com.saralein.server.data.FormStore;
 import com.saralein.server.request.Request;
@@ -24,7 +26,9 @@ public class FormPutControllerTest {
             put("More", "Stuff");
         }});
 
-        formPutController = new FormPutController(formStore);
+        FormBody formBody = new FormBody();
+        FormModification formModification = new FormModification();
+        formPutController = new FormPutController(formStore, formBody, formModification);
     }
 
     @Test
