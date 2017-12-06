@@ -6,7 +6,6 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
-import java.io.IOException;
 
 public class ConnectionHandler implements Runnable {
     private final Logger logger;
@@ -30,7 +29,7 @@ public class ConnectionHandler implements Runnable {
             Response response = router.resolveRequest(request);
             socket.write(responseSerializer.convertToBytes(response));
             socket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.log(e.getMessage());
         }
     }
