@@ -1,7 +1,5 @@
 package com.saralein.server.connection;
 
-import com.saralein.server.logger.Logger;
-
 import static com.saralein.server.Constants.CRLF;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -11,11 +9,9 @@ import java.net.Socket;
 
 public class ConnectionSocket implements Connection {
     private final Socket socket;
-    private final Logger logger;
 
-    ConnectionSocket(Socket socket, Logger logger) {
+    ConnectionSocket(Socket socket) {
         this.socket = socket;
-        this.logger = logger;
     }
 
     public String read() throws IOException {
@@ -51,11 +47,7 @@ public class ConnectionSocket implements Connection {
         out.close();
     }
 
-    public void close() {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            logger.log(e.getMessage());
-        }
+    public void close() throws IOException {
+        socket.close();
     }
 }

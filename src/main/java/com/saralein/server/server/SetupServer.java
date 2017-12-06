@@ -31,7 +31,7 @@ public class SetupServer {
         ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new ListeningSocket(port, logger);
+            serverSocket = new ListeningSocket(port);
         } catch (IOException e) {
             logger.log(e.getMessage());
         }
