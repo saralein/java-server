@@ -2,10 +2,10 @@
 
 ## Requirements
 
-* Java
-* [Gradle](https://gradle.org/)
+* Java 1.8
+* [Gradle](https://gradle.org/) 4.3
 
-## Running
+## Running the Cob Spec Application
 
 Get the code from GitHub:
 
@@ -16,7 +16,7 @@ Get the code from GitHub:
 ### From Gradle:
 
 * For default parameters, `gradle -q run`.
-    * Server will run on port 1337.
+    * Server will run on port 5000.
     * Server will serve from the `Public` folder of your home directory.
 * To specify parameters, you may provide one or both of the following options:
     * To specify a port, you many use the `-p,port` option, where `port` is replaced with a number between 1 and 65535.
@@ -27,10 +27,10 @@ Get the code from GitHub:
 
 ### From a JAR:
 
-* First build the JAR with `gradle jar`.
-* This creates a JAR in `build/libs`.
-* For default parameters, run the JAR with `java -jar (JAR_NAME}.jar` in the `build/libs` directory.
-    * Server will run on port 1337.
+* First build the JAR with `gradle shadowJar`.
+* This creates a JAR in `cobspec/build/libs`.
+* For default parameters, run the JAR with `java -jar (JAR_NAME}.jar` in the `cobspec/build/libs` directory.
+    * Server will run on port 5000.
     * Server will serve from the `Public` folder of your home directory.
 * To specify parameters, you may provide one or both of the following options:
     * To specify a port, you may use the `-p port` option, where `port` is replaced with a number between 1 and 65535.
@@ -42,3 +42,7 @@ Get the code from GitHub:
 ## Stopping the Server
 
 For either run method, type `ctrl + c`.
+
+## Using your own Application
+
+[See the README](UsingTheServer.md)
