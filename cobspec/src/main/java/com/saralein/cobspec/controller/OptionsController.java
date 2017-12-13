@@ -5,12 +5,17 @@ import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
 
-public class NotFoundController implements Controller {
+public class OptionsController implements Controller {
+    private final String methods;
+
+    public OptionsController(String methods) {
+        this.methods = methods;
+    }
+
     public Response createResponse(Request request) {
         return new ResponseBuilder()
-                    .addStatus(404)
-                    .addHeader("Content-Type", "text/html")
-                    .addBody("<center><h1>404</h1>Page not found.</center>")
+                    .addStatus(200)
+                    .addHeader("Allow", methods)
                     .build();
     }
 }

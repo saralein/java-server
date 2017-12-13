@@ -20,7 +20,7 @@ public class MockServer extends Server {
                       new Routes(new HashMap<>(),
                                  new MockController(200, "Directory response"),
                                  new MockController(200, "File response"),
-                                 new MockController(404, "Not found response")),
+                                 new MockErrorController(404, "Not found response")),
                       Paths.get(System.getProperty("user.dir") + "/" + "public")),
               new RequestParser(),
               new ResponseSerializer());

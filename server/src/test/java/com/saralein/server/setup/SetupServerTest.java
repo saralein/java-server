@@ -1,7 +1,9 @@
 package com.saralein.server.setup;
 
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
@@ -32,7 +34,7 @@ public class SetupServerTest {
 
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
-        Controller notFoundController = new MockController(404, "Not found response");
+        ErrorController notFoundController = new MockErrorController(404, "Not found response");
 
         Routes routes = new Routes(new HashMap<>(), directoryController, fileController, notFoundController);
 

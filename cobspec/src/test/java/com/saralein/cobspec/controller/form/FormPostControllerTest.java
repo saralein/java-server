@@ -52,8 +52,6 @@ public class FormPostControllerTest {
         HashMap<String, String> data = formStore.retrieveData("/form");
 
         assertEquals(2, data.keySet().size());
-        assertTrue(data.containsKey("My"));
-        assertTrue(data.containsKey("More"));
         assertEquals("Data", data.get("My"));
         assertEquals("Stuff", data.get("More"));
     }

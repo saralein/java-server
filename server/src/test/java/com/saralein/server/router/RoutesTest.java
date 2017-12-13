@@ -2,6 +2,7 @@ package com.saralein.server.router;
 
 import com.saralein.server.controller.*;
 import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.mocks.MockRedirect;
 import java.util.HashMap;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import static org.junit.Assert.*;
 public class RoutesTest {
     private MockController directoryController = new MockController(200, "Directory response");
     private MockController fileController = new MockController(200, "File response");
-    private MockController notFoundController = new MockController(404, "Not found response");
+    private MockErrorController notFoundController = new MockErrorController(404, "Not found response");
 
     private HashMap<String, Controller> redirect = new HashMap<String, Controller>(){{
         put("GET", new MockRedirect());
@@ -22,9 +23,17 @@ public class RoutesTest {
     private Routes routes = new Routes(customRoutes, directoryController, fileController, notFoundController);
 
     @Test
-    public void checksIfRouteExists() {
-        assertFalse(routes.isRoute("/doggos", "GET"));
-        assertTrue(routes.isRoute("/redirect", "GET"));
+    public void checksForMatchingRouteAndMethod() {
+        assertFalse(routes.matchesRouteAndMethod("/doggos", "GET"));
+        assertFalse(routes.matchesRouteAndMethod("/redirect", "DELETE"));
+        assertTrue(routes.matchesRouteAndMethod("/redirect", "GET"));
+    }
+
+    @Test
+    public void checksForMatchingRouteWithoutMatchingMethod() {
+        assertFalse(routes.matchesRouteButNotMethod("/doggos", "GET"));
+        assertFalse(routes.matchesRouteButNotMethod("/redirect", "GET"));
+        assertTrue(routes.matchesRouteButNotMethod("/redirect", "DELETE"));
     }
 
     @Test
@@ -47,8 +56,8 @@ public class RoutesTest {
     }
 
     @Test
-    public void returns404Controller() {
-        MockController retrievedController = (MockController) routes.retrieve404Controller();
+    public void returnsErrorController() {
+        MockErrorController retrievedController = (MockErrorController) routes.retrieveErrorController(404);
 
         assertEquals(notFoundController.getBody(), retrievedController.getBody());
     }

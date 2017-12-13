@@ -1,26 +1,31 @@
 package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.ErrorController;
 import java.util.HashMap;
 
 public class Routes {
     private final Controller directoryController;
     private final Controller fileController;
-    private final Controller notFoundController;
+    private final ErrorController errorController;
     private HashMap<String, HashMap<String, Controller>> routes;
 
     public Routes(HashMap<String, HashMap<String, Controller>> routes,
                   Controller directoryController,
                   Controller fileController,
-                  Controller notFoundController) {
+                  ErrorController errorController) {
         this.routes = routes;
         this.directoryController = directoryController;
         this.fileController = fileController;
-        this.notFoundController = notFoundController;
+        this.errorController = errorController;
     }
 
-    public boolean isRoute(String route, String method) {
-        return routes.containsKey(route) && routes.get(route).containsKey(method);
+    public boolean matchesRouteAndMethod(String route, String method) {
+        return isRoute(route) && hasMethod(route, method);
+    }
+
+    public boolean matchesRouteButNotMethod(String route, String method) {
+        return isRoute(route) && !hasMethod(route, method);
     }
 
     Controller retrieveController(String route, String method) {
@@ -35,7 +40,15 @@ public class Routes {
         return fileController;
     }
 
-    Controller retrieve404Controller() {
-        return notFoundController;
+    Controller retrieveErrorController(int status) {
+        return errorController.updateStatus(status);
+    }
+
+    private boolean hasMethod(String route, String method) {
+        return routes.get(route).containsKey(method);
+    }
+
+    private boolean isRoute(String route) {
+        return routes.containsKey(route);
     }
 }

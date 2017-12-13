@@ -1,7 +1,9 @@
 package com.saralein.server.connection;
 
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
@@ -52,7 +54,7 @@ public class ConnectionHandlerTest {
             put("uri", "/snarf.jpg");
             put("version", "HTTP/1.1");
         }});
-        Controller notFoundController = new MockController(404, "Not found response");
+        ErrorController notFoundController = new MockErrorController(404, "Not found response");
         Response notFoundResponse = notFoundController.createResponse(notFoundRequest);
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
