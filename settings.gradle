@@ -1,2 +1,2 @@
-rootProject.name = 'server'
-include 'core', 'cobspec'
+rootProject.name = 'httpServer'
+include 'server', 'cobspec'

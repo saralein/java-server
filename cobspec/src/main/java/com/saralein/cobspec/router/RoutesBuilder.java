@@ -1,10 +1,10 @@
 package com.saralein.cobspec.router;
 
-import com.saralein.core.controller.Controller;
+import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.controller.DirectoryController;
 import com.saralein.cobspec.controller.FileController;
 import com.saralein.cobspec.controller.NotFoundController;
-import com.saralein.core.router.Routes;
+import com.saralein.server.router.Routes;
 import java.util.HashMap;
 
 public class RoutesBuilder {

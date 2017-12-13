@@ -1,7 +1,7 @@
 package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.DataStore;
-import com.saralein.core.request.Request;
+import com.saralein.server.request.Request;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

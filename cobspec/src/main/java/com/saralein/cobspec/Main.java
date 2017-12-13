@@ -3,14 +3,15 @@ package com.saralein.cobspec;
 import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.core.router.Routes;
 import com.saralein.cobspec.router.RoutesBuilder;
+import com.saralein.server.HttpServer;
+import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        com.saralein.core.Main.main(args, home, Main::setupRoutes);
+        HttpServer.start(args, home, Main::setupRoutes);
     }
 
     private static Routes setupRoutes(Path root) {

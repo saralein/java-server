@@ -4,7 +4,7 @@ import com.saralein.cobspec.controller.DirectoryController;
 import com.saralein.cobspec.controller.FileController;
 import com.saralein.cobspec.controller.NotFoundController;
 import com.saralein.cobspec.FileHelper;
-import com.saralein.core.router.Routes;
+import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import static org.junit.Assert.*;

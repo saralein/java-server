@@ -6,17 +6,17 @@ The server is currently set up to run with a default cobspec application.  This 
 
 Much like the cobspec application, your application should be added as a module to the project structure.
 
-server    
+httpServer    
 |_ cobspec      
-|_ core    
+|_ server   
 |_ YOUR_APPLICATION
 
 Set up your module with Gradle using GroupID `com.saralein` and ArtifactID `YOUR_APPLICATION`, where `YOUR_APPLICATION` is whatever name you choose.
 
 Your module should contain a build.gradle.  settings.gradle in the project root should be modified to include your application:
 
-`rootProject.name = 'server'`    
- `include 'core', 'cobspec', 'YOUR_APPLICATION'`    
+`rootProject.name = 'httpServer'`    
+ `include 'server', 'cobspec', 'YOUR_APPLICATION'`    
 
 ## Updating your application build.gradle
 
@@ -26,36 +26,34 @@ The build.gradle in your application module should be updated to include the fol
 group 'com.saralein'
 version '1.0'
    
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'application'
    
 mainClassName = 'com.saralein.YOUR_APPLICATION.Main'
 sourceCompatibility = 1.8
    
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
-    }
-}
-   
 dependencies {
-    compile project(':core')
+    compile project(':server')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
    
 repositories {
-    jcenter()
+    mavenCentral()
 }
    
 jar {
     manifest {
-        attributes(
-                'Main-Class': 'com.saralein.YOUR_APPLICATION.Main'
-        )
+        attributes 'Main-Class': 'com.saralein.YOUR_APPLICATION.Main'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+    
+run {
+    if (project.hasProperty("runArgs")) {
+        args(runArgs.split(','))
     }
 }
 ```
@@ -65,7 +63,7 @@ jar {
 Usage of the server requires some setup within your application.
 
 1. Within `main` in your application `Main` class, you should specify a base location from which you plan to server files. In the cobspec application, this location is `user.dir`.  Note that the specific directory from which you plan to serve is appended via the `args` passed into `main`.
-2. The server `main` method requires the following arguments:
+2. The server `HttpServer start` method requires the following arguments:
     
     `main(String[] args, String home, Function<Path, Routes> setupRoutes)`
     
@@ -116,7 +114,7 @@ With your function setup, simply pass `args`, `home`, and your function to the s
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        com.saralein.core.Main.main(args, home, Main::setupRoutes);
+        HttpServer.start(args, home, Main::setupRoutes);
     }
     
     private static Routes setupRoutes(Path root) {
@@ -138,19 +136,19 @@ public class Main {
 
 ## Building your application JAR
 
-With your application build.gradle updated and `main` set up, run `gradle shadowJar` to build your application JAR to `YOUR_APPLICATION/build/libs`.
+With your application build.gradle updated and `main` set up, run `gradle build` to build your application JAR to `YOUR_APPLICATION/build/libs`.
 
 ## Running your application JAR
 
-* For default parameters, run the JAR with `java -jar YOUR_APPLICATION-1.0-all.jar` in the `YOUR_APPLICATION/build/libs` directory.
+* For default parameters, run the JAR with `java -jar YOUR_APPLICATION/build/libs/YOUR_APPLICATION-1.0.jar` in the `YOUR_APPLICATION/build/libs` directory.
     * Server will run on port 5000.
     * Server will serve from the `Public` folder of your home directory.
 * To specify parameters, you may provide one or both of the following options:
     * To specify a port, you may use the `-p port` option, where `port` is replaced with a number between 1 and 65535.
-        * Example: `java -jar YOUR_APPLICATION-1.0-all.jar -p 5000`.
+        * Example: `java -jar YOUR_APPLICATION/build/libs/YOUR_APPLICATION-1.0.jar -p 5000`.
     * To specify a directory, you may use the `-d directory` option, where `directory` is replaced by the directory you wish to serve relative to your home directory.
-        * Example: `java -jar YOUR_APPLICATION-1.0-all.jar -d my-dir`.
-    * Example with both options: `java -jar YOUR_APPLICATION-1.0-all.jar -p 5000 -d my-dir`.
+        * Example: `java -jar YOUR_APPLICATION/build/libs/YOUR_APPLICATION-1.0.jar -d my-dir`.
+    * Example with both options: `java -jar YOUR_APPLICATION/build/libs/YOUR_APPLICATION-1.0.jar -p 5000 -d my-dir`.
     
 ## Stopping the Server
 

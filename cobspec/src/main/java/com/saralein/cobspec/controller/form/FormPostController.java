@@ -1,10 +1,10 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.core.controller.Controller;
+import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
-import com.saralein.core.request.Request;
-import com.saralein.core.response.Response;
-import com.saralein.core.response.ResponseBuilder;
+import com.saralein.server.request.Request;
+import com.saralein.server.response.Response;
+import com.saralein.server.response.ResponseBuilder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
