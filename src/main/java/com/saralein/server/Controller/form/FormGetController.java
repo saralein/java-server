@@ -8,18 +8,20 @@ import com.saralein.server.response.ResponseBuilder;
 import java.util.HashMap;
 
 public class FormGetController implements Controller {
+    private final FormBody formBody;
     private DataStore dataStore;
 
-    public FormGetController(DataStore dataStore) {
+    public FormGetController(DataStore dataStore, FormBody formBody) {
         this.dataStore = dataStore;
+        this.formBody = formBody;
     }
 
     public Response createResponse(Request request) {
         return new ResponseBuilder()
-                .addStatus(200)
-                .addHeader("Content-Type", "text/html")
-                .addBody(createBody(request))
-                .build();
+                    .addStatus(200)
+                    .addHeader("Content-Type", "text/html")
+                    .addBody(createBody(request))
+                    .build();
     }
 
     private String createBody(Request request) {
@@ -27,23 +29,9 @@ public class FormGetController implements Controller {
 
         if (dataStore.dataExistsForID(uri)) {
             HashMap<String, String> data = dataStore.retrieveData(uri);
-            return formatDataToHtml(data);
+            return formBody.formatDataToHtml(data);
         } else {
             return "";
         }
-    }
-
-    private String formatDataToHtml(HashMap<String, String> data) {
-        StringBuilder dataHtml = new StringBuilder();
-
-        dataHtml.append("<p>");
-
-        for (String key : data.keySet()) {
-            dataHtml.append(key + "=" + data.get(key) + "<br>");
-        }
-
-        dataHtml.append("</p>");
-
-        return dataHtml.toString();
     }
 }

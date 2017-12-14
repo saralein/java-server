@@ -3,6 +3,7 @@ package com.saralein.server.protocol;
 public enum StatusCodes {
     OK(200, "200 OK"),
     FOUND(302, "302 Found"),
+    BAD_REQUEST(400, "400 Bad Request"),
     NOT_FOUND(404, "404 Not Found");
 
     private final int code;

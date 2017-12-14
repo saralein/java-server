@@ -1,5 +1,6 @@
 package com.saralein.server.controller.form;
 
+import com.saralein.server.Controller.form.FormBody;
 import com.saralein.server.Controller.form.FormGetController;
 import com.saralein.server.data.DataStore;
 import com.saralein.server.data.FormStore;
@@ -36,7 +37,8 @@ public class FormGetControllerTest {
         }});
 
         DataStore dataStore = new FormStore();
-        FormGetController formGetController = new FormGetController(dataStore);
+        FormBody formBody = new FormBody();
+        FormGetController formGetController = new FormGetController(dataStore, formBody);
 
         formResponseWithoutBody = formGetController.createResponse(requestWithoutBody);
 
