@@ -5,7 +5,8 @@ public enum StatusCodes {
     FOUND(302, "302 Found"),
     BAD_REQUEST(400, "400 Bad Request"),
     NOT_FOUND(404, "404 Not Found"),
-    NOT_ALLOWED(405, "405 Method Not Allowed");
+    NOT_ALLOWED(405, "405 Method Not Allowed"),
+    TEAPOT(418, "418 I'm a teapot");
 
     private final int code;
     private final String status;
