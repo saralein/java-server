@@ -43,6 +43,8 @@ public class Main {
                     .addRoute("/method_options", Methods.HEAD.name(), new DefaultController())
                     .addRoute("/method_options2", Methods.OPTIONS.name(), new OptionsController(Methods.allowGetAndOptions()))
                     .addRoute("/method_options2", Methods.GET.name(), new DefaultController())
+                    .addRoute("/tea", Methods.GET.name(), new DefaultController())
+                    .addRoute("/coffee", Methods.GET.name(), new CoffeeController())
                     .build();
     }
 }
