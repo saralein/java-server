@@ -2,6 +2,7 @@ package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.FileHelper;
 import com.saralein.server.controller.Controller;
+import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
@@ -17,10 +18,13 @@ public class DirectoryController implements Controller {
     }
 
     public Response createResponse(Request request) {
+        String requestMethod = request.getMethod();
+        String body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : "";
+
         return new ResponseBuilder()
                     .addStatus(200)
                     .addHeader("Content-Type", "text/html")
-                    .addBody(createBody(request))
+                    .addBody(body)
                     .build();
     }
 

@@ -40,9 +40,8 @@ public class FormPutControllerTest {
         formPutController.createResponse(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
-        assertTrue(data.containsKey("My"));
+        assertEquals(2, data.keySet().size());
         assertEquals("Data", data.get("My"));
-        assertTrue(data.containsKey("More"));
         assertEquals("Stuff", data.get("More"));
     }
 
@@ -74,9 +73,8 @@ public class FormPutControllerTest {
         formPutController.createResponse(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
-        assertTrue(data.containsKey("My"));
+        assertEquals(2, data.keySet().size());
         assertEquals("Data", data.get("My"));
-        assertTrue(data.containsKey("More"));
         assertEquals("Things", data.get("More"));
     }
 

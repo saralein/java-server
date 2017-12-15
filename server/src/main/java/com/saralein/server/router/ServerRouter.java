@@ -1,9 +1,9 @@
 package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
+import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.*;
-
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +22,7 @@ public class ServerRouter implements Router {
 
     public Response resolveRequest(Request request) {
         resourceStatus(request);
-        Controller controller = route(request);
+        Controller controller = resourceExists ? routeResource(request) : routeUri(request);
 
         return controller.createResponse(request);
     }
@@ -35,18 +35,30 @@ public class ServerRouter implements Router {
         resourceIsDirectory = Files.isDirectory(resource);
     }
 
-    private Controller route(Request request) {
+    private Controller routeResource(Request request) {
+        String requestMethod = request.getMethod();
+        String allowedMethods = Methods.allowedFileSystemMethods();
+        boolean isAllowedMethod = allowedMethods.contains(requestMethod);
+
+        if (resourceIsDirectory && isAllowedMethod) {
+            return routes.retrieveDirectoryController();
+        } else if (isAllowedMethod) {
+            return routes.retrieveFileController();
+        } else {
+            return routes.retrieveErrorController(405);
+        }
+    }
+
+    private Controller routeUri(Request request) {
         String uri = request.getUri();
         String method = request.getMethod();
 
-        if (routes.isRoute(uri, method)) {
+        if (routes.matchesRouteAndMethod(uri, method)) {
             return routes.retrieveController(uri, method);
-        } else if (!resourceExists) {
-            return routes.retrieve404Controller();
-        } else if (resourceIsDirectory) {
-            return routes.retrieveDirectoryController();
+        } else if (routes.matchesRouteButNotMethod(uri, method)) {
+            return routes.retrieveErrorController(405);
         } else {
-            return routes.retrieveFileController();
+            return routes.retrieveErrorController(404);
         }
     }
 }

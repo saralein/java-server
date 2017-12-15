@@ -1,7 +1,9 @@
 package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
@@ -22,14 +24,14 @@ public class ServerRouterTest {
 
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
-        Controller notFoundController = new MockController(404, "Not found response");
-        Routes routes = new Routes(new HashMap<>(), directoryController, fileController, notFoundController);
+        ErrorController errorController = new MockErrorController(404, "404 Error response");
+        Routes routes = new Routes(new HashMap<>(), directoryController, fileController, errorController);
 
         router = new ServerRouter(routes, root);
     }
 
     @Test
-    public void returnsNullResponseForNonExistentResources() {
+    public void returnsNotFoundResponseForNonExistentResources() {
         Request notFoundRequest = new Request(new HashMap<String, String>(){{
             put("method", "GET");
             put("uri", "/snarf.jpg");
@@ -70,5 +72,19 @@ public class ServerRouterTest {
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
         assertArrayEquals("File response".getBytes(), response.getBody());
+    }
+
+    @Test
+    public void returnsNotAllowedForIncorrectMethodOnResource() {
+        Request directoryRequest = new Request(new HashMap<String, String>(){{
+            put("method", "DELETE");
+            put("uri", "/");
+            put("version", "HTTP/1.1");
+        }});
+
+        Response response = router.resolveRequest(directoryRequest);
+        Header header = response.getHeader();
+
+        assertEquals("HTTP/1.1 405 Method Not Allowed\r\n\r\n", header.formatToString());
     }
 }
