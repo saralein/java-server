@@ -1,14 +1,50 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
 group 'com.saralein'
 version '1.0'
 
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
 
+mainClassName = 'com.saralein.server.HttpServer'
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    pkg {
+        repo = 'server'
+        name = 'server'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/saralein/java-server'
+        version {
+            name = '1.0'
+            released = new Date()
+        }
+    }
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes (
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.saralein.server.HttpServer')
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it: zipTree(it) }
+    }
 }
