@@ -15,12 +15,10 @@ public class CoffeeControllerTest {
           put("uri", "coffee");
           put("version", "HTTP/1.1");
         }});
-
         Response response = new CoffeeController().createResponse(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 418 I'm a teapot\r\nContent-type: text/html\r\n\r\n", header.formatToString());
         assertArrayEquals("I'm a teapot.".getBytes(), response.getBody());
-
     }
 }
