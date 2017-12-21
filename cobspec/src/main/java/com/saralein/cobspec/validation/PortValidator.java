@@ -1,4 +1,4 @@
-package com.saralein.server.validation;
+package com.saralein.cobspec.validation;
 
 public class PortValidator extends Validator {
     public PortValidator() {

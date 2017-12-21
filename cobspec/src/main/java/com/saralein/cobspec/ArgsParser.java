@@ -1,4 +1,4 @@
-package com.saralein.server;
+package com.saralein.cobspec;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;

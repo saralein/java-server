@@ -1,4 +1,4 @@
-package com.saralein.server.validation;
+package com.saralein.cobspec.validation;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
