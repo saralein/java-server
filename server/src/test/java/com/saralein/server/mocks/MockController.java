@@ -20,8 +20,4 @@ public class MockController implements Controller {
                 .addBody(body)
                 .build();
     }
-
-    public String getBody() {
-        return body;
-    }
 }

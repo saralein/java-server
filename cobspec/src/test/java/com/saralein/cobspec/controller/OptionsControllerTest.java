@@ -1,6 +1,5 @@
-package com.saralein.cobspec;
+package com.saralein.cobspec.controller;
 
-import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;

@@ -5,7 +5,6 @@ import com.saralein.server.protocol.StatusCodes;
 import java.util.HashMap;
 
 public class Header {
-    private final String version = "HTTP/1.1";
     private HashMap<String, String> header;
 
     public Header() {
@@ -31,19 +30,21 @@ public class Header {
     }
 
     private String createStatusLine(int code) {
-        return  version + " " + StatusCodes.retrieve(code);
+        return  "HTTP/1.1 " + StatusCodes.retrieve(code);
     }
 
     private void addsStatusLine(StringBuilder headerBuilder) {
         if (header.containsKey("Status")) {
-            headerBuilder.append(header.get("Status") + CRLF);
+            String statusLine = header.get("Status") + CRLF;
+            headerBuilder.append(statusLine);
         }
     }
 
     private void addsHeaders(StringBuilder headerBuilder) {
         for (String key : header.keySet()) {
             if (!key.equals("Status")) {
-                headerBuilder.append(key + ": " + header.get(key) + CRLF);
+                String headerLine = key + ": " + header.get(key) + CRLF;
+                headerBuilder.append(headerLine);
             }
         }
     }

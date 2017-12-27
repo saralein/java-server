@@ -3,17 +3,15 @@ package com.saralein.server.setup;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
-import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
-import com.saralein.server.router.ServerRouter;
+import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +19,7 @@ import org.junit.Test;
 public class SetupServerTest {
     private MockLogger logger;
     private Runtime runtime;
-    private ServerRouter router;
+    private Router router;
     private RequestParser requestParser;
     private ResponseSerializer responseSerializer;
 
@@ -34,11 +32,11 @@ public class SetupServerTest {
 
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
-        ErrorController notFoundController = new MockErrorController(404, "Not found response");
+        ErrorController notFoundController = new ErrorController();
 
-        Routes routes = new Routes(new HashMap<>(), directoryController, fileController, notFoundController);
+        Routes routes = new Routes();
 
-        router = new ServerRouter(routes, root);
+        router = new Router(directoryController, fileController, notFoundController, routes, root);
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
     }

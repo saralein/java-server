@@ -3,7 +3,6 @@ package com.saralein.server.connection;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
-import com.saralein.server.mocks.MockErrorController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
@@ -11,7 +10,7 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
-import com.saralein.server.router.ServerRouter;
+import com.saralein.server.router.Router;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -54,14 +53,14 @@ public class ConnectionHandlerTest {
             put("uri", "/snarf.jpg");
             put("version", "HTTP/1.1");
         }});
-        ErrorController notFoundController = new MockErrorController(404, "Not found response");
+        ErrorController notFoundController = new ErrorController();
         Response notFoundResponse = notFoundController.createResponse(notFoundRequest);
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
         Controller fileController = new MockController(200, "File response");
-        Routes routes = new Routes(new HashMap<>(), directoryController, fileController, notFoundController);
+        Routes routes = new Routes();
 
-        ServerRouter router = new ServerRouter(routes, root);
+        Router router = new Router(directoryController, fileController, notFoundController, routes, root);
         connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
     }
 

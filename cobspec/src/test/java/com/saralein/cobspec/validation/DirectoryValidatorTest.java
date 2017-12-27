@@ -2,6 +2,7 @@ package com.saralein.cobspec.validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -12,7 +13,7 @@ public class DirectoryValidatorTest {
 
     @Test
     public void returnsEmptyErrorListIfFlagNotInArgs() {
-        List<String> args = Arrays.asList(new String[]{});
+        List<String> args = Collections.emptyList();
         ArrayList<String> errors = dirValidator.validate(args);
 
         assertTrue(errors.size() == 0);
@@ -20,7 +21,7 @@ public class DirectoryValidatorTest {
 
     @Test
     public void returnsCorrectErrorIfDirArgExcluded() {
-        List<String> args = Arrays.asList("-d");
+        List<String> args = Collections.singletonList("-d");
         ArrayList<String> errors = dirValidator.validate(args);
 
         assertTrue(errors.contains("Valid directory option not provided.  Please include '-d' followed by a valid directory."));

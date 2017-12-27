@@ -2,6 +2,7 @@ package com.saralein.cobspec.validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -11,7 +12,7 @@ public class PortValidatorTest {
 
     @Test
     public void returnsEmptyErrorListIfFlagNotInArgs() {
-        List<String> args = Arrays.asList(new String[]{});
+        List<String> args = Collections.emptyList();
         ArrayList<String> errors = portValidator.validate(args);
 
         assertTrue(errors.size() == 0);
@@ -19,7 +20,7 @@ public class PortValidatorTest {
 
     @Test
     public void returnsCorrectErrorIfPortArgExcluded() {
-        List<String> args = Arrays.asList("-p");
+        List<String> args = Collections.singletonList("-p");
         ArrayList<String> errors = portValidator.validate(args);
 
         assertTrue(errors.contains("Valid port option not provided. Please include '-p' followed by a valid port."));

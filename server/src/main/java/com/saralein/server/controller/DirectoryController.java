@@ -1,7 +1,6 @@
-package com.saralein.cobspec.controller;
+package com.saralein.server.controller;
 
-import com.saralein.cobspec.FileHelper;
-import com.saralein.server.controller.Controller;
+import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;

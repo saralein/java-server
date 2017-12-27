@@ -1,4 +1,4 @@
-package com.saralein.cobspec;
+package com.saralein.server;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;

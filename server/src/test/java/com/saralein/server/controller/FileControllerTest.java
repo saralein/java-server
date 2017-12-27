@@ -1,9 +1,9 @@
-package com.saralein.cobspec.controller;
+package com.saralein.server.controller;
 
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import com.saralein.cobspec.FileHelper;
+import com.saralein.server.FileHelper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

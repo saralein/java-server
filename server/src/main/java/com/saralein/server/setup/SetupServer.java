@@ -5,8 +5,9 @@ import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Router;
 import com.saralein.server.ShutdownHook;
+import com.saralein.server.router.Router;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
