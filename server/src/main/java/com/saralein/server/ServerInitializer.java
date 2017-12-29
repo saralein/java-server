@@ -32,7 +32,7 @@ public class ServerInitializer {
         try {
             serverSocket = new ListeningSocket(port);
         } catch (IOException e) {
-            logger.log(e.getMessage());
+            logger.exception(e);
         }
 
         Server server = new Server(findServerIP(), serverSocket, logger, router,
@@ -50,7 +50,7 @@ public class ServerInitializer {
             InetAddress address = InetAddress.getLocalHost();
             serverIP = address.getHostAddress();
         } catch (UnknownHostException e) {
-            logger.log(e.getMessage());
+            logger.exception(e);
         }
 
         return serverIP;
