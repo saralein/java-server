@@ -4,7 +4,7 @@ import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.logger.ConnectionLogger;
+import com.saralein.cobspec.logger.AppLogger;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.Application;
@@ -14,13 +14,15 @@ import com.saralein.cobspec.validation.DirectoryValidator;
 import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        Logger logger = new ConnectionLogger(System.out);
+        Path logTxt = Paths.get(home + "/log.txt");
+        Logger logger = new AppLogger(System.out, logTxt);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -47,10 +49,11 @@ public class Main {
                                 .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
                                 .get("/method_options2", new DefaultController())
                                 .get("/tea", new DefaultController())
-                                .get("/coffee", new CoffeeController()))
+                                .get("/coffee", new CoffeeController())
+                                .get("/logs", new LogController(logTxt, "admin", "hunter2")))
                     .start(port, root);
         } else {
-            logger.log(String.join("\n", validationErrors));
+            logger.info(String.join("\n", validationErrors));
         }
     }
 

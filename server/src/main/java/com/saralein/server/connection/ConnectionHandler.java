@@ -26,11 +26,12 @@ public class ConnectionHandler implements Runnable {
     public void run() {
         try {
             Request request = requestParser.parse(socket.read());
+            logger.request(request);
             Response response = router.resolveRequest(request);
             socket.write(responseSerializer.convertToBytes(response));
             socket.close();
         } catch (Exception e) {
-            logger.log(e.getMessage());
+            logger.exception(e);
         }
     }
 }

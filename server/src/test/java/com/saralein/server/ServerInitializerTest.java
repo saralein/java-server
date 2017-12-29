@@ -1,7 +1,5 @@
 package com.saralein.server;
 
-import com.saralein.server.Server;
-import com.saralein.server.ServerInitializer;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
@@ -51,7 +49,7 @@ public class ServerInitializerTest {
             fail("Test failed to createContents blocking socket.");
         } finally {
             new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
-            assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
+            assertEquals("Address already in use (Bind failed)", logger.getReceivedMessage());
         }
     }
 

@@ -7,7 +7,6 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
-
 import java.io.IOException;
 
 public class Server implements Runnable {
@@ -31,8 +30,7 @@ public class Server implements Runnable {
     }
 
     public void run() {
-        logger.log("Server is starting..." +
-                "\nServer is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
+        logger.info("Server is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
 
         try {
             while(listening) {
@@ -42,7 +40,7 @@ public class Server implements Runnable {
             }
             serverSocket.close();
         } catch (IOException e) {
-            logger.log(e.getMessage());
+            logger.exception(e);
         }
     }
 
