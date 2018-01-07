@@ -5,11 +5,7 @@ import com.saralein.server.protocol.Methods;
 import java.util.HashMap;
 
 public class Routes {
-    private final HashMap<String, HashMap<Methods, Controller>> routes;
-
-    public Routes() {
-        this.routes = new HashMap<>();
-    }
+    private final HashMap<String, HashMap<Methods, Controller>> routes = new HashMap<>();
 
     public Routes get(String uri, Controller controller) {
         addRoute(uri, Methods.GET, controller);

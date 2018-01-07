@@ -2,10 +2,10 @@ package com.saralein.server;
 
 import com.saralein.server.connection.ListeningSocket;
 import com.saralein.server.connection.ServerSocket;
+import com.saralein.server.controller.Controller;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,12 +13,12 @@ import java.net.UnknownHostException;
 public class ServerInitializer {
     private final Logger logger;
     private final Runtime runtime;
-    private final Router router;
+    private final Controller router;
     private final RequestParser requestParser;
     private final ResponseSerializer responseSerializer;
 
-    public ServerInitializer(Logger logger, Runtime runtime, Router router,
-                             RequestParser requestParser, ResponseSerializer responseSerializer) {
+    ServerInitializer(Logger logger, Runtime runtime, Controller router,
+                       RequestParser requestParser, ResponseSerializer responseSerializer) {
         this.logger = logger;
         this.runtime = runtime;
         this.router = router;
