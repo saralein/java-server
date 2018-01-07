@@ -1,5 +1,7 @@
 package com.saralein.server.response;
 
+import com.saralein.server.protocol.StatusCodes;
+
 public class ResponseBuilder {
     private byte[] body = new byte[]{};
     private Header header;
@@ -15,6 +17,11 @@ public class ResponseBuilder {
 
     public ResponseBuilder addBody(byte[] body) {
         this.body = body;
+        return this;
+    }
+
+    public ResponseBuilder addBodyByStatus(int code) {
+        this.body = StatusCodes.retrieve(code).getBytes();
         return this;
     }
 

@@ -1,8 +1,5 @@
 package com.saralein.server;
 
-import com.saralein.server.controller.Controller;
-import com.saralein.server.controller.ErrorController;
-import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
@@ -10,8 +7,6 @@ import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,16 +22,10 @@ public class ServerInitializerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        String rootPath = System.getProperty("user.dir") + "/" + "public";
-        Path root = Paths.get(rootPath);
-
-        Controller directoryController = new MockController(200, "Directory response");
-        Controller fileController = new MockController(200, "File response");
-        ErrorController notFoundController = new ErrorController();
 
         Routes routes = new Routes();
 
-        router = new Router(directoryController, fileController, notFoundController, routes, root);
+        router = new Router(routes);
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
     }

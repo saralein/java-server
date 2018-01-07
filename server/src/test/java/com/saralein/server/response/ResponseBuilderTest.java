@@ -38,8 +38,18 @@ public class ResponseBuilderTest {
     public void addsBodyToBuilder() {
         byte[] body = "Hello Builder".getBytes();
         Response response = responseBuilder
-                                .addBody(body)
-                                .build();
+                .addBody(body)
+                .build();
+
+        assertArrayEquals(body, response.getBody());
+    }
+
+    @Test
+    public void addsBodyToBuilderBasedOnStatus() {
+        byte[] body = "404 Not Found".getBytes();
+        Response response = responseBuilder
+                .addBodyByStatus(404)
+                .build();
 
         assertArrayEquals(body, response.getBody());
     }

@@ -17,39 +17,7 @@ public class LogControllerTest {
     @Before
     public void setUp() {
         Path logTxt = Paths.get(System.getProperty("user.dir") + "/src/test/controller-test.txt");
-        logController = new LogController(logTxt,"admin", "hunter2");
-    }
-
-    @Test
-    public void returns401ForUnauthorizedRequest() {
-        String auth = Base64.getEncoder().encodeToString("admin:password123".getBytes());
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-            put("Authorization", "Basic " + auth);
-        }});
-
-        Response response = logController.createResponse(request);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: " +
-                "Basic realm=\"ServerCity\"\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returns401ForNoCredentialsRequest() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = logController.createResponse(request);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: " +
-                "Basic realm=\"ServerCity\"\r\n\r\n", header.formatToString());
+        logController = new LogController(logTxt);
     }
 
     @Test
