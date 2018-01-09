@@ -40,14 +40,6 @@ Static middleware will not be included if `addStatic` is not set.
 
 A route-less router will be used if `router` is not set.
 
-### `.use(Middleware middleware)`
-
-`use` adds custom middleware to the server.  Requests will pass through custom middleware in the order in which they are applied by `use` before moving into the static middleware (if set) and finally the router.
-
-Custom middleware should implement the `Middleware` interface (see [Setting Up Middleware](#setting-up-middleware)). The server includes implementation for some custom middleware (such as basic authorization), but these must also be added with `use`.
-
-Custom middleware is not set by default.
-
 ### `.start(int port)`
 
 Once the above methods are used to configure the server, use `start` with a valid port number to start the server.
@@ -66,12 +58,11 @@ new HttpServer(logger)
                   .put("/form", new FormController())
                   .delete("/form", new FormController())
                   .get("/logs", new LogController()))
-     .use(new AuthMiddleware("admin", "hunter2", "ServerCity", authRoutes))
      .start(port);
 
 ```
 
-Notes: Controllers are application specific.  `authRoutes` is a list of routes which require authorization and is application specific.
+Notes: Controllers are application specific.
 
 ## Setting Up Routes
 
@@ -120,40 +111,6 @@ public class RedirectController implements Controller {
 Use of the `ResponseBuilder` is not required but is provided for convenience.
 
 Your `Controller` may contain whatever additional methods are needed to create contents of your response.
-
-## Setting Up Middleware
-
-Custom middleware must implement the `Middleware` interface.  `use` should return a function which takes a request and either returns a custom response or calls `createResponse` for the `controller` parameter, depending on chosen criteria.
-
-### Example Middleware
-
-Below is an example of basic authorization middleware, the full implementation of which comes with the server.
-
-```java
-public class AuthMiddleware implements Middleware {
-    ...
-
-    public Controller use(Controller controller) {
-        return (request) -> {
-            if (isAuthorized(request)) {
-                return controller.createResponse(request);
-            } else {
-                return createResponse();
-            }
-        };
-    }
-
-    public Response createResponse() {
-        String serverRealm = String.format("Basic realm=\"%s\"", realm);
-        return new ResponseBuilder()
-                .addStatus(401)
-                .addHeader("WWW-Authenticate", serverRealm)
-                .build();
-    }
-    
-    ...
-}
-```
 
 ## API
 
@@ -211,12 +168,6 @@ The following section provides additional details on the public API for the HTTP
 | `public void` | `addStatus(int code)` <br><br>Adds HTTP status code to header response line. |
 | `public void` | `addHeader(String title, String content)` <br><br>Adds individual headers to Header instance. For example, `addHeader(Content-Type, text/html)` adds Content-Type: text/html to the header. |
 | `public String` | `formatToString()` <br><br>Returns the full header formatted for HTTP. |
-
-**Interface Middleware**
-
-| Type                | Method                            |
-| ------------------- | --------------------------------- |
-| `public Controller` | `use(Controller controller)`      |
 
 **Interface Logger**
 

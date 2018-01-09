@@ -1,39 +1,34 @@
-package com.saralein.server.middleware;
+package com.saralein.cobspec.controller;
 
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
 import java.util.Base64;
-import java.util.List;
 
-public class AuthMiddleware implements Middleware {
+public class AuthController implements Controller {
     private final String username;
     private final String password;
     private final String realm;
-    private final List<String> routes;
+    private final Controller controller;
 
-    public AuthMiddleware(String username,
-                          String password,
-                          String realm,
-                          List<String> routes) {
+    public AuthController(String username, String password,
+                          String realm, Controller controller) {
         this.username = username;
         this.password = password;
         this.realm = realm;
-        this.routes = routes;
+        this.controller = controller;
     }
 
-    public Controller use(Controller controller) {
-        return (request) -> {
-            if (isAuthorized(request)) {
-                return controller.createResponse(request);
-            } else {
-                return createResponse();
-            }
-        };
+    public Response createResponse(Request request) {
+        if (isAuthorized(request)) {
+            return controller.createResponse(request);
+        } else {
+            return unauthorized();
+        }
     }
 
-    public Response createResponse() {
+    private Response unauthorized() {
         String serverRealm = String.format("Basic realm=\"%s\"", realm);
         return new ResponseBuilder()
                 .addStatus(401)
@@ -56,13 +51,8 @@ public class AuthMiddleware implements Middleware {
         return Base64.getEncoder().encodeToString(validAuthorization.getBytes());
     }
 
-    private boolean noAuthRequired(Request request) {
-        return !routes.contains(request.getUri());
-    }
-
     private boolean isAuthorized(Request request) {
-        return noAuthRequired(request) ||
-               (request.getAuthorization() != null &&
-                      encodeValidAuthorization().equals(parseRequestAuthorization(request)));
+        return (request.getAuthorization() != null &&
+                        encodeValidAuthorization().equals(parseRequestAuthorization(request)));
     }
 }
