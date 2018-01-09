@@ -5,8 +5,9 @@ import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.logger.AppLogger;
+import com.saralein.cobspec.controller.AuthController;
+import com.saralein.server.controller.Controller;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.middleware.AuthMiddleware;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.Application;
 import com.saralein.server.router.Routes;
@@ -48,32 +49,35 @@ public class Main {
     }
 
     private static void createServer(Path root, int port, Logger logger, Path logTxt) {
+        new Application(logger)
+                .addStatic(root)
+                .router(createRoutes(logTxt))
+                .start(port);
+    }
+
+    private static Routes createRoutes(Path logTxt) {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
-        List<String> authRoutes = new ArrayList<String>(){{
-            add("/logs");
-        }};
+        Controller basicAuthLogController = new AuthController(
+                "admin", "hunter2",
+                "ServerCity", new LogController(logTxt));
 
-        new Application(logger)
-                .addStatic(root)
-                .router(new Routes()
-                        .get("/redirect", new RedirectController())
-                        .get("/form", new FormGetController(formStore, formBody))
-                        .post("/form", new FormPostController(formStore, formBody, formModification))
-                        .put("/form", new FormPutController(formStore, formBody, formModification))
-                        .delete("/form", new FormDeleteController(formStore))
-                        .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
-                        .get("/method_options", new DefaultController())
-                        .put("/method_options", new DefaultController())
-                        .post("/method_options", new DefaultController())
-                        .head("/method_options", new DefaultController())
-                        .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
-                        .get("/method_options2", new DefaultController())
-                        .get("/tea", new DefaultController())
-                        .get("/coffee", new CoffeeController())
-                        .get("/logs", new LogController(logTxt)))
-                .use(new AuthMiddleware("admin", "hunter2", "ServerCity", authRoutes))
-                .start(port);
+        return new Routes()
+                .get("/redirect", new RedirectController())
+                .get("/form", new FormGetController(formStore, formBody))
+                .post("/form", new FormPostController(formStore, formBody, formModification))
+                .put("/form", new FormPutController(formStore, formBody, formModification))
+                .delete("/form", new FormDeleteController(formStore))
+                .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
+                .get("/method_options", new DefaultController())
+                .put("/method_options", new DefaultController())
+                .post("/method_options", new DefaultController())
+                .head("/method_options", new DefaultController())
+                .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
+                .get("/method_options2", new DefaultController())
+                .get("/tea", new DefaultController())
+                .get("/coffee", new CoffeeController())
+                .get("/logs", basicAuthLogController);
     }
 }

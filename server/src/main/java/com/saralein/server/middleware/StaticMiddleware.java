@@ -1,6 +1,9 @@
 package com.saralein.server.middleware;
 
+import com.saralein.server.FileHelper;
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.DirectoryController;
+import com.saralein.server.controller.FileController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
@@ -15,6 +18,10 @@ public class StaticMiddleware implements Middleware {
     private final Controller directoryController;
     private final Controller fileController;
 
+    public StaticMiddleware(Path root) {
+        this(root, new DirectoryController(new FileHelper(root)), new FileController(new FileHelper(root)));
+    }
+
     public StaticMiddleware(
             Path root,
             Controller directoryController,
@@ -27,14 +34,14 @@ public class StaticMiddleware implements Middleware {
     public Controller use(Controller controller) {
         return (request) -> {
             if (resourceExists(request)) {
-                return createResponse(request);
+                return staticResponse(request);
             } else {
                 return controller.createResponse(request);
             }
         };
     }
 
-    private Response createResponse(Request request) {
+    private Response staticResponse(Request request) {
         boolean isDirectory = isDirectory(request);
         boolean isAcceptedMethod = isAcceptedMethod(request);
 

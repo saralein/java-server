@@ -1,40 +1,26 @@
-package com.saralein.server.middleware;
+package com.saralein.cobspec.controller;
 
 import com.saralein.server.controller.Controller;
-import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import com.saralein.server.router.Router;
-import com.saralein.server.router.Routes;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AuthMiddlewareTest {
-    private Controller application;
+public class AuthControllerTest {
+    private Controller authController;
 
     @Before
     public void setUp() {
-        List<String> authRoutes = new ArrayList<String>(){{
-            add("/logs");
-        }};
-
-        Routes routes = new Routes()
-                .get("/logs", new MockController(200, "Hit logs"))
-                .get("/stuff", new MockController(200, "Hits stuff"));
-        Controller router = new Router(routes);
-
-        AuthMiddleware authMiddleware = new AuthMiddleware("admin", "hunter2", "ServerCity", authRoutes);
-        application = authMiddleware.use(router);
+        Controller controller = new DefaultController();
+        authController = new AuthController("admin", "hunter2", "ServerCity", controller);
     }
 
     @Test
-    public void requestWithCorrectAuthPassesToRouter() {
+    public void requestWithCorrectAuthReturns200() {
         String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
         Request request = new Request(new HashMap<String, String>(){{
             put("method", "GET");
@@ -42,9 +28,10 @@ public class AuthMiddlewareTest {
             put("version", "HTTP/1.1");
             put("Authorization", "Basic " + auth);
         }});
-        Response response = application.createResponse(request);
+        Response response = authController.createResponse(request);
+        Header header = response.getHeader();
 
-        assertArrayEquals("Hit logs".getBytes(), response.getBody());
+        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
     }
 
     @Test
@@ -56,11 +43,11 @@ public class AuthMiddlewareTest {
             put("version", "HTTP/1.1");
             put("Authorization", "Basic " + auth);
         }});
-        Response response = application.createResponse(request);
+        Response response = authController.createResponse(request);
         Header header = response.getHeader();
 
         String expected = "HTTP/1.1 401 Unauthorized\r\n" +
-                          "WWW-Authenticate: Basic realm=\"ServerCity\"\r\n\r\n";
+                "WWW-Authenticate: Basic realm=\"ServerCity\"\r\n\r\n";
 
         assertEquals(expected, header.formatToString());
     }
@@ -72,24 +59,12 @@ public class AuthMiddlewareTest {
             put("uri", "/logs");
             put("version", "HTTP/1.1");
         }});
-        Response response = application.createResponse(request);
+        Response response = authController.createResponse(request);
         Header header = response.getHeader();
 
         String expected = "HTTP/1.1 401 Unauthorized\r\n" +
-                          "WWW-Authenticate: Basic realm=\"ServerCity\"\r\n\r\n";
+                "WWW-Authenticate: Basic realm=\"ServerCity\"\r\n\r\n";
 
         assertEquals(expected, header.formatToString());
-    }
-
-    @Test
-    public void requestForRouteWithNoAuthPassesToRouter() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/stuff");
-            put("version", "HTTP/1.1");
-        }});
-        Response response = application.createResponse(request);
-
-        assertArrayEquals("Hits stuff".getBytes(), response.getBody());
     }
 }

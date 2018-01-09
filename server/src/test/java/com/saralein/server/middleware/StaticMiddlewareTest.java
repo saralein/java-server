@@ -5,12 +5,12 @@ import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class StaticMiddlewareTest {
     private Controller mockController;
