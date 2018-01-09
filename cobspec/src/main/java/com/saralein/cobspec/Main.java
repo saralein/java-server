@@ -7,7 +7,7 @@ import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.logger.ConnectionLogger;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.protocol.Methods;
-import com.saralein.server.HttpServer;
+import com.saralein.server.Application;
 import com.saralein.server.router.Routes;
 import com.saralein.cobspec.validation.ArgsValidation;
 import com.saralein.cobspec.validation.DirectoryValidator;
@@ -32,7 +32,7 @@ public class Main {
             FormBody formBody = new FormBody();
             FormModification formModification = new FormModification();
 
-            new HttpServer(logger)
+            new Application(logger)
                     .config(new Routes()
                                 .get("/redirect", new RedirectController())
                                 .get("/form", new FormGetController(formStore, formBody))

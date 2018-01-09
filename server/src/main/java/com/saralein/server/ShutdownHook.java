@@ -1,7 +1,6 @@
 package com.saralein.server;
 
 import com.saralein.server.logger.Logger;
-import com.saralein.server.setup.Server;
 
 public class ShutdownHook extends Thread {
     private final Server server;

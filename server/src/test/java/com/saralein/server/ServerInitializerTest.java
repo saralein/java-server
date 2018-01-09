@@ -1,5 +1,7 @@
-package com.saralein.server.setup;
+package com.saralein.server;
 
+import com.saralein.server.Server;
+import com.saralein.server.ServerInitializer;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
@@ -16,7 +18,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SetupServerTest {
+public class ServerInitializerTest {
     private MockLogger logger;
     private Runtime runtime;
     private Router router;
@@ -48,14 +50,14 @@ public class SetupServerTest {
         } catch (IOException e) {
             fail("Test failed to createContents blocking socket.");
         } finally {
-            new SetupServer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
+            new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
         }
     }
 
     @Test
     public void setsUpAndReturnsNewServer() {
-        Server server = new SetupServer(logger, runtime, router, requestParser, responseSerializer).setup(1337);
+        Server server = new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(1337);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());

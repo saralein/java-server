@@ -1,4 +1,4 @@
-package com.saralein.server.setup;
+package com.saralein.server;
 
 import com.saralein.server.connection.Connection;
 import com.saralein.server.connection.ConnectionHandler;

@@ -8,20 +8,19 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import com.saralein.server.setup.Server;
-import com.saralein.server.setup.SetupServer;
+
 import java.nio.file.Path;
 
-public class HttpServer {
+public class Application {
     private final Logger logger;
     private Routes routes;
 
-    public HttpServer(Logger logger) {
+    public Application(Logger logger) {
         this.logger = logger;
         this.routes = new Routes();
     }
 
-    public HttpServer config(Routes routes) {
+    public Application config(Routes routes) {
         this.routes = routes;
         return this;
     }
@@ -38,7 +37,7 @@ public class HttpServer {
         Router router = new Router(directoryController, fileController, errorController, routes, root);
         RequestParser requestParser = new RequestParser();
         ResponseSerializer responseSerializer = new ResponseSerializer();
-        Server server = new SetupServer(logger, runtime, router, requestParser, responseSerializer).setup(port);
+        Server server = new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(port);
 
         server.run();
     }

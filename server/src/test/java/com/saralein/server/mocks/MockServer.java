@@ -8,7 +8,7 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import com.saralein.server.setup.Server;
+import com.saralein.server.Server;
 import java.nio.file.Paths;
 
 public class MockServer extends Server {
