@@ -1,0 +1,33 @@
+group 'com.saralein'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.saralein.cobspec.Main'
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(':server')
+    testCompile 'junit:junit:4.12'
+}
+
+repositories {
+    jcenter()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.saralein.cobspec.Main'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+run {
+    if (project.hasProperty("runArgs")) {
+        args(runArgs.split(','))
+    }
+}
