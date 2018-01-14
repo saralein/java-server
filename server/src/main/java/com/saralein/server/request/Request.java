@@ -20,4 +20,12 @@ public class Request {
     public String getBody() {
         return request.getOrDefault("body", "");
     }
+  
+    public String getAuthorization() {
+        return request.getOrDefault("Authorization", "");
+    }
+
+    public String getRequestLine() {
+        return String.format("%s %s HTTP/1.1", getMethod(), getUri());
+    }
 }
