@@ -25,6 +25,7 @@ public class Main {
         String home = System.getProperty("user.dir");
         Path logTxt = Paths.get(home + "/log.txt");
         Logger logger = new AppLogger(System.out, logTxt);
+
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -47,7 +48,7 @@ public class Main {
 
         return new ArgsValidation(validators).validate(args);
     }
-
+ 
     private static void createServer(Path root, int port, Logger logger, Path logTxt) {
         new Application(logger)
                 .addStatic(root)

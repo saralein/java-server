@@ -136,7 +136,7 @@ The following section provides additional details on the public API for the HTTP
 | `public Routes` | `head(String uri, Controller controller)`                     |
 | `public Routes` | `options(String uri, Controller controller)`                  |
 | `public Routes` | `delete(String uri, Controller controller)`                   |
- 
+
 **Interface Controller**
 
 | Type              | Method                            |

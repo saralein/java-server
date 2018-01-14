@@ -7,9 +7,9 @@ import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.ServerSocket;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class ServerInitializerTest {
     private MockLogger logger;
@@ -22,9 +22,7 @@ public class ServerInitializerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-
         Routes routes = new Routes();
-
         router = new Router(routes);
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
