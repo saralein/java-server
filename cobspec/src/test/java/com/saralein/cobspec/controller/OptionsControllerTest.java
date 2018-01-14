@@ -4,21 +4,19 @@ import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class OptionsControllerTest {
     private Request request;
 
     @Before
     public void setUp() {
-        request = new Request(new HashMap<String, String>(){{
-            put("method", "OPTIONS");
-            put("uri", "/method_options");
-            put("version", "HTTP/1.1");
-        }});
+        request = new Request.Builder()
+                .method("OPTIONS")
+                .uri("/method_options")
+                .build();
     }
 
     @Test

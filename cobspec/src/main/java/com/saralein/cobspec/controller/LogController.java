@@ -3,7 +3,6 @@ package com.saralein.cobspec.controller;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,9 +15,9 @@ public class LogController implements Controller {
     }
 
     public Response respond(Request request) {
-        return new ResponseBuilder()
-                .addStatus(200)
-                .addBody(createBody())
+        return new Response.Builder()
+                .status(200)
+                .body(createBody())
                 .build();
     }
 

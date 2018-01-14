@@ -4,7 +4,6 @@ import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,10 +20,10 @@ public class FileController implements Controller {
         String requestMethod = request.getMethod();
         byte[] body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : new byte[]{};
 
-        return new ResponseBuilder()
-                    .addStatus(200)
+        return new Response.Builder()
+                    .status(200)
                     .addHeader("Content-Type", getMimeType(request))
-                    .addBody(body)
+                    .body(body)
                     .build();
     }
 

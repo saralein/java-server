@@ -2,7 +2,7 @@ package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.*;
+import com.saralein.server.response.Response;
 
 public class Router {
     private final Routes routes;
@@ -28,10 +28,10 @@ public class Router {
     private Response routeError(int code) {
         String body = code == 404 ? "404: Page not found." : "";
 
-        return new ResponseBuilder()
-                .addStatus(code)
+        return new Response.Builder()
+                .status(code)
                 .addHeader("Content-Type", "text/html")
-                .addBody(body)
+                .body(body)
                 .build();
     }
 }

@@ -1,31 +1,74 @@
 package com.saralein.server.request;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Request {
-    private final HashMap<String, String> request;
+    private final Map<String, String> request;
+    private String method;
+    private String uri;
+    private String body;
 
-    public Request(HashMap<String, String> request) {
-        this.request = request;
+    public Request(String method, String uri, String body, Map<String, String> headers) {
+        this.method = method;
+        this.uri = uri;
+        this.body = body;
+        this.request = headers;
     }
 
     public String getMethod() {
-        return request.get("method");
+        return method;
     }
 
     public String getUri() {
-        return request.get("uri");
+        return uri;
     }
 
     public String getBody() {
-        return request.getOrDefault("body", "");
+        return body;
     }
 
-    public String getAuthorization() {
-        return request.getOrDefault("Authorization", "");
+    public String getHeader(String key) {
+        return request.getOrDefault(key, "");
     }
 
     public String getRequestLine() {
         return String.format("%s %s HTTP/1.1", getMethod(), getUri());
+    }
+
+    public static class Builder {
+        private String method = "";
+        private String uri = "";
+        private String body = "";
+        private Map<String, String> headers = new HashMap<>();
+
+        public Builder method(String method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder uri(String uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder body(String body) {
+            this.body = body;
+            return this;
+        }
+
+        public Builder addHeader(String key, String value) {
+            headers.put(key, value);
+            return this;
+        }
+
+        public Builder addHeaders(Map<String, String> headers) {
+            this.headers.putAll(headers);
+            return this;
+        }
+
+        public Request build() {
+            return new Request(method, uri, body, headers);
+        }
     }
 }

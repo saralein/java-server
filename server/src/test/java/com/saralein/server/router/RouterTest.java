@@ -4,10 +4,9 @@ import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RouterTest {
     private Router router;
@@ -18,14 +17,16 @@ public class RouterTest {
         router = new Router(routes);
     }
 
+    private Request createRequest(String method, String uri) {
+        return new Request.Builder()
+                .method(method)
+                .uri(uri)
+                .build();
+    }
+
     @Test
     public void returns200ResponseForMatchingRoute() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/stuff");
-            put("version", "HTTP/1.1");
-        }});
-
+        Request request = createRequest("GET", "/stuff");
         Response response = router.respond(request);
         Header header = response.getHeader();
 
@@ -35,12 +36,7 @@ public class RouterTest {
 
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
-
+        Request request = createRequest("GET", "/snarf.jpg");
         Response response = router.respond(request);
         Header header = response.getHeader();
 
@@ -50,12 +46,7 @@ public class RouterTest {
 
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "DELETE");
-            put("uri", "/stuff");
-            put("version", "HTTP/1.1");
-        }});
-
+        Request request = createRequest("DELETE", "/stuff");
         Response response = router.respond(request);
         Header header = response.getHeader();
 

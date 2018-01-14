@@ -9,7 +9,6 @@ import com.saralein.server.response.Response;
 import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,16 +25,16 @@ public class ApplicationTest {
         root = Paths.get(rootPath);
         logger = new MockLogger();
         middleware = new MockMiddleware();
-        request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/route");
-        }});
+        request = new Request.Builder()
+                .method("GET")
+                .uri("/route")
+                .build();
     }
 
     @Test
     public void callRunsApplicationMiddleware() {
         Application application = new Application(middleware);
-        Request request = new Request(new HashMap<>());
+        Request request = new Request.Builder().build();
         Response response = application.call(request);
         assertArrayEquals("Middleware response".getBytes(), response.getBody());
     }

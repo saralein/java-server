@@ -6,9 +6,9 @@ import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class FormPutControllerTest {
     private FormStore formStore;
@@ -17,26 +17,26 @@ public class FormPutControllerTest {
     @Before
     public void setUp() {
         formStore = new FormStore();
-
         formStore.addData("/form", new LinkedHashMap<String, String>(){{
             put("My", "Cat");
             put("More", "Stuff");
         }});
-
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
         formPutController = new FormPutController(formStore, formBody, formModification);
     }
 
+    private Request createRequest(String body) {
+        return new Request.Builder()
+                .method("PUT")
+                .uri("/form")
+                .body(body)
+                .build();
+    }
+
     @Test
     public void updatesExistingDataForSingleData() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "PUT");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data");
-        }});
-
+        Request request = createRequest("My=Data");
         formPutController.respond(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
@@ -47,13 +47,7 @@ public class FormPutControllerTest {
 
     @Test
     public void returnsCorrectResponseForSingleData() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "PUT");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data");
-        }});
-
+        Request request = createRequest("My=Data");
         Response response = formPutController.respond(request);
         Header header = response.getHeader();
 
@@ -63,13 +57,7 @@ public class FormPutControllerTest {
 
     @Test
     public void updatesExistingDataForMultipleData() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "PUT");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&More=Things");
-        }});
-
+        Request request = createRequest("My=Data&More=Things");
         formPutController.respond(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
@@ -80,13 +68,7 @@ public class FormPutControllerTest {
 
     @Test
     public void returnsCorrectResponseForMultipleData() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "PUT");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&More=Things");
-        }});
-
+        Request request = createRequest("My=Data&More=Things");
         Response response = formPutController.respond(request);
         Header header = response.getHeader();
 
@@ -96,13 +78,7 @@ public class FormPutControllerTest {
 
     @Test
     public void returnsCorrectResponseForBadRequests() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "PUT");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&MoreStuff");
-        }});
-
+        Request request = createRequest("My=Data&MoreStuff");
         Response response = formPutController.respond(request);
         Header header = response.getHeader();
 

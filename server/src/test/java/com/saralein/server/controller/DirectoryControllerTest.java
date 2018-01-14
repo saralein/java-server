@@ -6,10 +6,9 @@ import com.saralein.server.response.Response;
 import com.saralein.server.FileHelper;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class DirectoryControllerTest {
     private byte[] bodyArray;
@@ -28,11 +27,10 @@ public class DirectoryControllerTest {
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
         FileHelper fileHelper = new FileHelper(root);
-        Request request = new Request(new HashMap<String, String>() {{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
 
         DirectoryController directoryController = new DirectoryController(fileHelper);
         directoryResponse = directoryController.respond(request);

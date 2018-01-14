@@ -5,7 +5,6 @@ import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import java.util.Base64;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -23,12 +22,11 @@ public class AuthMiddlewareTest {
     @Test
     public void authorizedRequestPassesToNextMiddleware() {
         String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-            put("Authorization", "Basic " + auth);
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/logs")
+                .addHeader("Authorization", "Basic " + auth)
+                .build();
         Response response = authMiddleware.call(request);
 
         assertArrayEquals("Middleware response".getBytes(), response.getBody());
@@ -37,12 +35,11 @@ public class AuthMiddlewareTest {
     @Test
     public void requestWithIncorrectAuthReturns401(){
         String auth = Base64.getEncoder().encodeToString("admin:password123".getBytes());
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-            put("Authorization", "Basic " + auth);
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/logs")
+                .addHeader("Authorization", "Basic " + auth)
+                .build();
         Response response = authMiddleware.call(request);
         Header header = response.getHeader();
 
@@ -54,11 +51,10 @@ public class AuthMiddlewareTest {
 
     @Test
     public void requestWithNoAuthReturns401ForAuthRoute() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/logs")
+                .build();
         Response response = authMiddleware.call(request);
         Header header = response.getHeader();
 
