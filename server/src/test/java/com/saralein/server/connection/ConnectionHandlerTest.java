@@ -10,16 +10,14 @@ import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
@@ -46,11 +44,11 @@ public class ConnectionHandlerTest {
     @Test
     public void handlesValidRequestFromSocket() {
         String directoryString = "GET / HTTP/1.1";
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/")
+                .build();
+
         Response directoryResponse = directoryController.createResponse(request);
         byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
@@ -63,11 +61,11 @@ public class ConnectionHandlerTest {
     @Test
     public void handlesInvalidRequestFromSocket() {
         String notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Response response = new ResponseBuilder()
-                                .addStatus(404)
-                                .addHeader("Content-Type", "text/html")
-                                .addBody(StatusCodes.retrieve(404))
-                                .build();
+        Response response = new Response.Builder()
+                .addStatus(404)
+                .addHeader("Content-Type", "text/html")
+                .addBody(StatusCodes.retrieve(404))
+                .build();
         byte[] notFoundBytes = responseSerializer.convertToBytes(response);
 
         socket.setRequest(notFoundString);

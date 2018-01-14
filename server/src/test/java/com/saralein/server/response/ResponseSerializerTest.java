@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ResponseSerializerTest {
-    private Response response = new ResponseBuilder()
+    private Response response = new Response.Builder()
                                       .addStatus(200)
                                       .addHeader("Content-Type", "text/html")
                                       .addBody("<h1>I AM A HEADER</h1>")

@@ -7,10 +7,9 @@ import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class StaticMiddlewareTest {
     private Controller mockController;
@@ -32,13 +31,12 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsDirectoryResponseForDirectory() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/")
+                .build();
 
-        Response response = application.createResponse(directoryRequest);
+        Response response = application.createResponse(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -47,13 +45,12 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsFileResponseForFile() {
-        Request fileRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/cheetara.jpg")
+                .build();
 
-        Response response = application.createResponse(fileRequest);
+        Response response = application.createResponse(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());

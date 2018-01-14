@@ -2,7 +2,7 @@ package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.*;
+import com.saralein.server.response.Response;
 
 public class Router implements Controller {
     private final Routes routes;
@@ -26,7 +26,7 @@ public class Router implements Controller {
     }
 
     private Response routeError(int code) {
-        return new ResponseBuilder()
+        return new Response.Builder()
                 .addStatus(code)
                 .addHeader("Content-Type", "text/html")
                 .addBodyByStatus(code)

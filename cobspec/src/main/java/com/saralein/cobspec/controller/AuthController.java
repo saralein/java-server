@@ -3,7 +3,6 @@ package com.saralein.cobspec.controller;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.Base64;
 
 public class AuthController implements Controller {
@@ -30,14 +29,14 @@ public class AuthController implements Controller {
 
     private Response unauthorized() {
         String serverRealm = String.format("Basic realm=\"%s\"", realm);
-        return new ResponseBuilder()
+        return new Response.Builder()
                 .addStatus(401)
                 .addHeader("WWW-Authenticate", serverRealm)
                 .build();
     }
 
     private String parseRequestAuthorization(Request request) {
-        String encodedAuthorization = request.getAuthorization();
+        String encodedAuthorization = request.getHeader("Authorization");
         if (encodedAuthorization.isEmpty()) {
             return null;
         } else {
@@ -52,7 +51,7 @@ public class AuthController implements Controller {
     }
 
     private boolean isAuthorized(Request request) {
-        return (request.getAuthorization() != null &&
+        return (request.getHeader("Authorization") != null &&
                         encodeValidAuthorization().equals(parseRequestAuthorization(request)));
     }
 }

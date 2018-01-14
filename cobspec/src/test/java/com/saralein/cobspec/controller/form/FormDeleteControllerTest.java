@@ -4,10 +4,10 @@ import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.HashMap;
+import static org.junit.Assert.*;
 
 public class FormDeleteControllerTest {
     private FormStore formStore;
@@ -16,17 +16,19 @@ public class FormDeleteControllerTest {
     @Before
     public void setUp() {
         formStore = new FormStore();
-
         formStore.addData("/form", new HashMap<String, String>(){{
             put("My", "Data");
             put("Your", "Stuff");
         }});
-
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "DELETE");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
+        formStore.addData("/more", new HashMap<String, String>(){{
+            put("More", "Things");
+            put("Dill", "Pickles");
         }});
+
+        Request request = new Request.Builder()
+                .addMethod("DELETE")
+                .addUri("/form")
+                .build();
 
         formDeleteResponse = new FormDeleteController(formStore).createResponse(request);
     }
@@ -38,11 +40,6 @@ public class FormDeleteControllerTest {
 
     @Test
     public void doesNotDeleteDataForOtherURI() {
-        formStore.addData("/more", new HashMap<String, String>(){{
-            put("More", "Things");
-            put("Dill", "Pickles");
-        }});
-
         assertTrue(formStore.retrieveData("/form").isEmpty());
         assertFalse(formStore.retrieveData("/more").isEmpty());
     }
@@ -57,16 +54,15 @@ public class FormDeleteControllerTest {
 
     @Test
     public void returnsCorrectResponseIfDataDidNotExist() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "DELETE");
-            put("uri", "/pickles");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("DELETE")
+                .addUri("/pickles")
+                .build();
 
-        Response datalessDeleteResponse = new FormDeleteController(formStore).createResponse(request);
-        Header header = datalessDeleteResponse.getHeader();
+        Response response = new FormDeleteController(formStore).createResponse(request);
+        Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("Form data has been deleted.".getBytes(), datalessDeleteResponse.getBody());
+        assertArrayEquals("Form data has been deleted.".getBytes(), response.getBody());
     }
 }

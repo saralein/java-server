@@ -1,9 +1,9 @@
 package com.saralein.server.request;
 
-import static org.junit.Assert.*;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.HashMap;
+import static org.junit.Assert.*;
 
 public class RequestTest {
     private Request request;
@@ -11,19 +11,68 @@ public class RequestTest {
 
     @Before
     public void setUp() {
-        request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-            put("body", "Hello");
-            put("Authorization", "encodedCredentials");
-        }});
+        request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/cheetara.jpg")
+                .addBody("Hello")
+                .addHeader("Authorization", "encodedCredentials")
+                .build();
 
-        requestLineOnly= new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        requestLineOnly = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/cheetara.jpg")
+                .build();
+    }
+
+    @Test
+    public void addsMethodToRequest() {
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .build();
+
+        assertEquals("GET", request.getMethod());
+    }
+
+    @Test
+    public void addsUriToRequest() {
+        Request request = new Request.Builder()
+                .addUri("/")
+                .build();
+
+        assertEquals("/", request.getUri());
+    }
+
+    @Test
+    public void addsBodyToRequest() {
+        Request request = new Request.Builder()
+                .addBody("Hi")
+                .build();
+
+        assertEquals("Hi", request.getBody());
+    }
+
+    @Test
+    public void addsHeaderToRequest() {
+        Request request = new Request.Builder()
+                .addHeader("Header", "text")
+                .build();
+
+        assertEquals("text", request.getHeader("Header"));
+    }
+
+    @Test
+    public void addsMapOfHeadersToRequest() {
+        HashMap<String, String> headers = new HashMap<String, String>(){{
+            put("Header1", "text");
+            put("Header2", "more text");
+        }};
+
+        Request request = new Request.Builder()
+                .addHeaders(headers)
+                .build();
+
+        assertEquals("text", request.getHeader("Header1"));
+        assertEquals("more text", request.getHeader("Header2"));
     }
 
     @Test
@@ -43,9 +92,9 @@ public class RequestTest {
     }
 
     @Test
-    public void returnsAuthCredentials() {
-        assertEquals("encodedCredentials", request.getAuthorization());
-        assertEquals("", requestLineOnly.getAuthorization());
+    public void returnsHeader() {
+        assertEquals("encodedCredentials", request.getHeader("Authorization"));
+        assertEquals("", requestLineOnly.getHeader("Authorization"));
     }
 
     @Test

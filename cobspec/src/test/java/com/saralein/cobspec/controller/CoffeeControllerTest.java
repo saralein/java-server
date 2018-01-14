@@ -3,18 +3,16 @@ package com.saralein.cobspec.controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class CoffeeControllerTest {
     @Test
     public void returns418ResponseWithBody() {
-        Request request = new Request(new HashMap<String, String>(){{
-          put("method", "GET");
-          put("uri", "coffee");
-          put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("coffee")
+                .build();
         Response response = new CoffeeController().createResponse(request);
         Header header = response.getHeader();
 

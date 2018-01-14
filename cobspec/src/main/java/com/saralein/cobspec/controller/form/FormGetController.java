@@ -4,7 +4,6 @@ import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.HashMap;
 
 public class FormGetController implements Controller {
@@ -17,7 +16,7 @@ public class FormGetController implements Controller {
     }
 
     public Response createResponse(Request request) {
-        return new ResponseBuilder()
+        return new Response.Builder()
                     .addStatus(200)
                     .addHeader("Content-Type", "text/html")
                     .addBody(createBody(request))
@@ -30,8 +29,8 @@ public class FormGetController implements Controller {
         if (dataStore.dataExistsForID(uri)) {
             HashMap<String, String> data = dataStore.retrieveData(uri);
             return formBody.formatDataToHtml(data);
-        } else {
-            return "";
         }
+
+        return "";
     }
 }

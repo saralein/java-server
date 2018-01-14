@@ -18,15 +18,13 @@ public class FormPostControllerTest {
     @Before
     public void setUp() {
         String body = "<p>My=Data<br>More=Stuff<br></p>";
-
         bodyArray = body.getBytes();
 
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "POST");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&More=Stuff");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("POST")
+                .addUri("/form")
+                .addBody("My=Data&More=Stuff")
+                .build();
 
         formStore = new FormStore();
         FormBody formBody = new FormBody();
@@ -58,12 +56,11 @@ public class FormPostControllerTest {
 
     @Test
     public void returnsCorrectResponseForBadRequests() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "POST");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&MoreStuff");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("POST")
+                .addUri("/form")
+                .addBody("My=Data&MoreStuff")
+                .build();
 
         Response response = formPostController.createResponse(request);
         Header header = response.getHeader();

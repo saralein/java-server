@@ -9,10 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class AppLoggerTest {
     private Path logTxt;
@@ -46,49 +45,39 @@ public class AppLoggerTest {
     }
 
     @Test
-    public void logsExceptionsToFile() {
+    public void logsExceptionsToFile() throws IOException {
         output.reset();
         Exception exception = new Exception("Writing exception");
+        Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+        logger.exception(exception);
+        String logged = String.join("", Files.readAllLines(logTxt));
 
-        try {
-            Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-            logger.exception(exception);
-            String logged = String.join("", Files.readAllLines(logTxt));
-            assertTrue(logged.contains("Writing exception"));
-        } catch (IOException e) {
-            fail("Failed to read exception from log file.");
-        }
+        assertTrue(logged.contains("Writing exception"));
     }
 
     @Test
     public void logsRequestsToStream() {
         output.reset();
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/cheetara.jpg")
+                .build();
         logger.request(request);
 
         assertTrue(output.toString().contains("GET /cheetara.jpg HTTP/1.1"));
     }
 
     @Test
-    public void logsRequestToFile() {
+    public void logsRequestToFile() throws IOException {
         output.reset();
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/snarf.jpg")
+                .build();
+        Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+        logger.request(request);
+        String logged = String.join("", Files.readAllLines(logTxt));
 
-        try {
-            Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-            logger.request(request);
-            String logged = String.join("", Files.readAllLines(logTxt));
-            assertTrue(logged.contains("GET /snarf.jpg HTTP/1.1"));
-        } catch (IOException e) {
-            fail("Failed to read request from log file.");
-        }
+        assertTrue(logged.contains("GET /snarf.jpg HTTP/1.1"));
     }
 }

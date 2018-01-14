@@ -1,58 +1,55 @@
 package com.saralein.server.request;
 
-import static com.saralein.server.Constants.CRLF;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import static com.saralein.server.Constants.CRLF;
 
 public class RequestParser {
-    public Request parse(String request) throws Exception {
+    public Request parse(String rawRequest) throws Exception {
         try {
-            List<String> fullRequest = Arrays.asList(split(request, CRLF));
-            HashMap<String, String> parsedRequest = createRequestMap(fullRequest);
-            return new Request(parsedRequest);
+            List<String> request = Arrays.asList(split(rawRequest, CRLF));
+            String[] requestLine = parseRequestLine(request);
+
+            return new Request.Builder()
+                    .addMethod(parseMethod(requestLine))
+                    .addUri(parseUri(requestLine))
+                    .addBody(parseBody(request))
+                    .addHeaders(parseHeaders(request))
+                    .build();
+
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new Exception("Bad request. Connection closed.");
         }
     }
 
-    private HashMap<String, String> createRequestMap(List<String> fullRequest) {
-        HashMap<String, String> parsedRequest = addRequestLine(fullRequest);
+    private String[] parseRequestLine(List<String> request) {
+        return split(request.get(0), " ");
+    }
 
-        if (fullRequest.size() > 0) {
-            parsedRequest.putAll(addHeadersAndBody(fullRequest));
+    private String parseBody(List<String> request) {
+        for (String line: request) {
+            if (line.startsWith("body")) {
+                return split(line, ":")[1].trim();
+            }
         }
 
-        return parsedRequest;
+        return "";
     }
 
-    private HashMap<String, String> addRequestLine(List<String> fullRequest) {
-        String[] requestLine = splitRequestLine(fullRequest);
+    private HashMap<String, String> parseHeaders(List<String> request) {
+        HashMap<String, String> headers = new HashMap<>();
 
-        return new HashMap<String, String>(){{
-            put("method", parseMethod(requestLine));
-            put("uri", parseUri(requestLine));
-            put("version", parseVersion(requestLine));
-        }};
-    }
-
-    private HashMap<String, String> addHeadersAndBody(List<String> fullRequest) {
-        HashMap<String, String> headersAndBody = new HashMap<>();
-
-        fullRequest.stream()
-                .filter(line -> line.contains(":"))
+        request.stream()
+                .filter(line -> line.contains(":") && !line.startsWith("body"))
                 .map(line -> split(line, ":"))
-                .forEach(line -> headersAndBody.put(line[0].trim(), line[1].trim()));
+                .forEach(line -> headers.put(line[0].trim(), line[1].trim()));
 
-        return headersAndBody;
+        return headers;
     }
 
     private String[] split(String request, String splitter) {
         return request.split(splitter);
-    }
-
-    private String[] splitRequestLine(List<String> fullRequest) {
-        return split(fullRequest.get(0), " ");
     }
 
     private String parseMethod(String[] requestLine) {
@@ -61,9 +58,5 @@ public class RequestParser {
 
     private String parseUri(String[] requestLine) {
         return requestLine[1];
-    }
-
-    private String parseVersion(String[] requestLine) {
-        return requestLine[2];
     }
 }

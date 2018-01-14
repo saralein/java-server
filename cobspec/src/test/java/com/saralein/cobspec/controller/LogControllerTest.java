@@ -5,11 +5,10 @@ import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.HashMap;
+import static org.junit.Assert.*;
 
 public class LogControllerTest {
     private LogController logController;
@@ -23,13 +22,11 @@ public class LogControllerTest {
     @Test
     public void returns200ForAuthorizedRequest() {
         String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/logs");
-            put("version", "HTTP/1.1");
-            put("Authorization", "Basic " + auth);
-        }});
-
+        Request request = new Request.Builder()
+                .addMethod("GET")
+                .addUri("/logs")
+                .addHeader("Authorization", "Basic " + auth)
+                .build();
         Response response = logController.createResponse(request);
         Header header = response.getHeader();
 
