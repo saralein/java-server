@@ -13,7 +13,7 @@ public class ShutdownHook extends Thread {
 
     @Override
     public void run() {
-        logger.info("\nServer is shutting down...");
+        logger.info("Server is shutting down...");
         server.stop();
     }
 }

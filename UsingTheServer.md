@@ -26,7 +26,7 @@ repositories {
 
 Usage of the server requires some setup within your application.
 
-Begin by creating an instance of the HttpServer (see [API](#api) below for `Logger` information): `HttpServer(Logger logger)`. From here, you can being configuring your server.
+Begin by creating an instance of the Application (see [API](#api) below for `Logger` information): `Application(Logger logger)`. From here, you can being configuring your server.
 
 ### `.addStatic(Path root)`
 
@@ -49,7 +49,7 @@ Once the above methods are used to configure the server, use `start` with a vali
 Below is a simple example of how server setup might look:
 
 ```java
-new HttpServer(logger)
+new Application(logger)
      .addStatic(root)
      .router(new Routes()
                   .get("/redirect", new RedirectController())
@@ -116,14 +116,13 @@ Your `Controller` may contain whatever additional methods are needed to create c
 
 The following section provides additional details on the public API for the HTTP server.
 
-**Class HttpServer**
+**Class Application**
 
 | Type                 | Method                                                     |
 | -------------------- | ---------------------------------------------------------- |
 | `constructor`        | `HttpServer(Logger logger)`                                |
-| `public HttpServer`  | `addStatic(Path root)`                                     |
-| `public HttpServer`  | `router(Routes routes)`                                    |
-| `public HttpServer`  | `use(Middleware middleware)`                               |
+| `public Application` | `addStatic(Path root)`                                     |
+| `public Application` | `router(Routes routes)`                                    |
 | `public static void` | `start(int port)`                                          |
 
 **Class Routes**
@@ -173,6 +172,7 @@ The following section provides additional details on the public API for the HTTP
 
 | Type          | Method                     |
 | ------------- | -------------------------- |
-| `public void` | `info(String status)`      |
-| `public void` | `exception(Exception e)`   |
-| `public void` | `request(Request request)` |
+| `public void` | `error(Exception e)`       |
+| `public void` | `fatal(String message)`    |
+| `public void` | `info(String message)`     |
+| `public void` | `trace(Request request)`   |

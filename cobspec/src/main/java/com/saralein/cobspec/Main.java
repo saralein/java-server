@@ -4,7 +4,7 @@ import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.cobspec.logger.AppLogger;
+import com.saralein.cobspec.logger.ApplicationLogger;
 import com.saralein.cobspec.controller.AuthController;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.logger.Logger;
@@ -24,7 +24,7 @@ public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
         Path logTxt = Paths.get(home + "/log.txt");
-        Logger logger = new AppLogger(System.out, logTxt);
+        Logger logger = new ApplicationLogger(System.out, logTxt);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -34,7 +34,7 @@ public class Main {
 
             createServer(root, port, logger, logTxt);
         } else {
-            logger.info(String.join("\n", validationErrors));
+            logger.fatal(String.join("\n", validationErrors));
             System.exit(1);
         }
     }

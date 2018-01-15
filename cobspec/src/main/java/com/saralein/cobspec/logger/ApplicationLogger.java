@@ -9,27 +9,31 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 
-public class AppLogger implements Logger {
+public class ApplicationLogger implements Logger {
     private final Path log;
     private PrintStream printer;
 
-    public AppLogger(PrintStream printer, Path log) {
+    public ApplicationLogger(PrintStream printer, Path log) {
         this.printer = printer;
         this.log = log;
     }
 
-    public void exception(Exception e) {
-        String message = formatMessage("EXCEPTION", e.getMessage());
+    public void error(Exception e) {
+        String message = formatMessage("ERROR", e.getMessage());
         writeToFile(message);
         printer.print(message);
     }
 
-    public void info(String info) {
-        printer.print(formatMessage("INFO", info));
+    public void fatal(String message) {
+        printer.print(formatMessage("FATAL", message));
     }
 
-    public void request(Request request) {
-        String message = formatMessage("REQUEST", request.getRequestLine());
+    public void info(String message) {
+        printer.print(formatMessage("INFO", message));
+    }
+
+    public void trace(Request request) {
+        String message = formatMessage("TRACE", request.getRequestLine());
         writeToFile(message);
         printer.print(message);
     }

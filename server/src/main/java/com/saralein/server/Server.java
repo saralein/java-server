@@ -40,7 +40,7 @@ public class Server implements Runnable {
             }
             serverSocket.close();
         } catch (IOException e) {
-            logger.exception(e);
+            logger.error(e);
         }
     }
 

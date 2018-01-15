@@ -10,15 +10,19 @@ public class MockLogger implements Logger {
         return received;
     }
 
-    public void exception(Exception e) {
+    public void error(Exception e) {
         received = e.getMessage();
     }
 
-    public void info(String info) {
-        received = info;
+    public void fatal(String message) {
+        received = message;
     }
 
-    public void request(Request request) {
+    public void info(String message) {
+        received = message;
+    }
+
+    public void trace(Request request) {
         received = request.getRequestLine();
     }
 }
