@@ -44,7 +44,7 @@ public class FileControllerTest {
 
         return new Pair<>(
             getFileBytes("src/test/public" + request.getUri()),
-            new FileController(fileHelper).createResponse(request)
+            new FileController(fileHelper).respond(request)
         );
     }
 

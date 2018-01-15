@@ -5,9 +5,10 @@ import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.logger.ApplicationLogger;
-import com.saralein.cobspec.controller.AuthController;
-import com.saralein.server.controller.Controller;
+import com.saralein.server.Server;
+import com.saralein.server.ServerInitializer;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.middleware.AuthMiddleware;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.Application;
 import com.saralein.server.router.Routes;
@@ -32,7 +33,9 @@ public class Main {
             Integer port = argsParser.parsePort();
             Path root = argsParser.parseRoot(home);
 
-            createServer(root, port, logger, logTxt);
+            Application application = configureApplication(logger, root, logTxt);
+            Server server = new ServerInitializer(logger, application).setup(port);
+            server.run();
         } else {
             logger.fatal(String.join("\n", validationErrors));
             System.exit(1);
@@ -48,20 +51,17 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static void createServer(Path root, int port, Logger logger, Path logTxt) {
-        new Application(logger)
-                .addStatic(root)
+    private static Application configureApplication(Logger logger, Path root, Path logTxt) {
+        return new Application.Builder(logger, root)
                 .router(createRoutes(logTxt))
-                .start(port);
+                .use(new AuthMiddleware("admin", "hunter2", "ServerCity"))
+                .build();
     }
 
     private static Routes createRoutes(Path logTxt) {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
-        Controller basicAuthLogController = new AuthController(
-                "admin", "hunter2",
-                "ServerCity", new LogController(logTxt));
 
         return new Routes()
                 .get("/redirect", new RedirectController())
@@ -78,6 +78,6 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", basicAuthLogController);
+                .get("/logs", new LogController(logTxt));
     }
 }

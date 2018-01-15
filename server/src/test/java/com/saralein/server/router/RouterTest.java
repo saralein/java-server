@@ -26,7 +26,7 @@ public class RouterTest {
             put("version", "HTTP/1.1");
         }});
 
-        Response response = router.createResponse(request);
+        Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -41,11 +41,11 @@ public class RouterTest {
             put("version", "HTTP/1.1");
         }});
 
-        Response response = router.createResponse(request);
+        Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("404 Not Found".getBytes(), response.getBody());
+        assertArrayEquals("404: Page not found.".getBytes(), response.getBody());
     }
 
     @Test
@@ -56,10 +56,10 @@ public class RouterTest {
             put("version", "HTTP/1.1");
         }});
 
-        Response response = router.createResponse(request);
+        Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("405 Method Not Allowed".getBytes(), response.getBody());
+        assertArrayEquals("".getBytes(), response.getBody());
     }
 }

@@ -15,7 +15,7 @@ public class LogController implements Controller {
         this.log = log;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         return new ResponseBuilder()
                 .addStatus(200)
                 .addBody(createBody())

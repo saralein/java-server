@@ -1,6 +1,7 @@
 package com.saralein.server;
 
 import com.saralein.server.mocks.MockLogger;
+import com.saralein.server.mocks.MockMiddleware;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
@@ -14,7 +15,7 @@ import org.junit.Test;
 public class ServerInitializerTest {
     private MockLogger logger;
     private Runtime runtime;
-    private Router router;
+    private Application application;
     private RequestParser requestParser;
     private ResponseSerializer responseSerializer;
 
@@ -22,10 +23,7 @@ public class ServerInitializerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-
-        Routes routes = new Routes();
-
-        router = new Router(routes);
+        application = new Application(new MockMiddleware());
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
     }
@@ -37,14 +35,14 @@ public class ServerInitializerTest {
         } catch (IOException e) {
             fail("Test failed to createContents blocking socket.");
         } finally {
-            new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
+            new ServerInitializer(logger, runtime, application, requestParser, responseSerializer).setup(6066);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedMessage());
         }
     }
 
     @Test
     public void setsUpAndReturnsNewServer() {
-        Server server = new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(1337);
+        Server server = new ServerInitializer(logger, runtime, application, requestParser, responseSerializer).setup(1337);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());

@@ -17,7 +17,7 @@ public class FileController implements Controller {
         this.fileHelper = fileHelper;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         String requestMethod = request.getMethod();
         byte[] body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : new byte[]{};
 

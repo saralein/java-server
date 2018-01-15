@@ -45,16 +45,6 @@ public class ResponseBuilderTest {
     }
 
     @Test
-    public void addsBodyToBuilderBasedOnStatus() {
-        byte[] body = "404 Not Found".getBytes();
-        Response response = responseBuilder
-                .addBodyByStatus(404)
-                .build();
-
-        assertArrayEquals(body, response.getBody());
-    }
-
-    @Test
     public void returnsResponseWithAllPieces() {
         byte[] fullResponse = "HTTP/1.1 200 OK\r\nContent-Type: image/gif\r\n\r\nHello Builder".getBytes();
         Response response = responseBuilder

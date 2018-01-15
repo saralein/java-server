@@ -18,7 +18,7 @@ public class FormPutController implements Controller {
         this.formModification = formModification;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         String uri = request.getUri();
         HashMap<String, String> formData = dataStore.retrieveData(request.getUri());
 

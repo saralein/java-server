@@ -1,49 +1,70 @@
 package com.saralein.server;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.middleware.Middleware;
-import com.saralein.server.middleware.StaticMiddleware;
-import com.saralein.server.request.RequestParser;
-import com.saralein.server.response.ResponseSerializer;
+import com.saralein.server.middleware.*;
+import com.saralein.server.request.Request;
+import com.saralein.server.response.Response;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
-    private final Logger logger;
-    private Routes routes;
-    private Router router;
-    private Path root = null;
+    private final Caller middleware;
 
-    public Application(Logger logger) {
-        this.logger = logger;
-        this.routes = new Routes();
-        this.router = new Router(routes);
+    public Application(Caller middleware) {
+        this.middleware = middleware;
     }
 
-    public Application router(Routes routes) {
-        this.routes = routes;
-        this.router = new Router(routes);
-        return this;
+    public Response call(Request request) {
+        return middleware.call(request);
     }
 
-    public Application addStatic(Path root) {
-        this.root = root;
-        return this;
-    }
+    public static class Builder {
+        private final Logger logger;
+        private Path root;
+        private Routes routes;
+        private List<Middleware> middlewares;
 
-    public void start(int port) {
-        Runtime runtime = Runtime.getRuntime();
-        Controller application = configureStaticMiddleware();
-        RequestParser requestParser = new RequestParser();
-        ResponseSerializer responseSerializer = new ResponseSerializer();
-        Server server = new ServerInitializer(logger, runtime, application, requestParser, responseSerializer).setup(port);
-        server.run();
-    }
+        public Builder(Logger logger, Path root) {
+            this.logger = logger;
+            this.root = root;
+            this.middlewares = new ArrayList<>();
+        }
 
-    private Controller configureStaticMiddleware() {
-        Middleware staticMiddleware = new StaticMiddleware(root);
-        return root != null ? staticMiddleware.use(router) : router;
+        public Builder router(Routes routes) {
+            this.routes = routes;
+            return this;
+        }
+
+        public Builder use(Middleware middleware) {
+            middlewares.add(middleware);
+            return this;
+        }
+
+        public Application build() {
+            Caller middleware = applyMiddlewares();
+
+            return new Application(middleware);
+        }
+
+        private Caller applyMiddlewares() {
+            Router router = configureRouter();
+            middlewares.add(new LoggingMiddleware(logger));
+            Caller finalMiddleware = new StaticMiddleware(root, router);
+
+            for (Middleware middleware : middlewares) {
+                finalMiddleware = middleware.apply(finalMiddleware);
+            }
+
+            return finalMiddleware;
+        }
+
+        private Router configureRouter() {
+            return this.routes == null
+                    ? new Router(new Routes())
+                    : new Router(routes);
+        }
     }
 }

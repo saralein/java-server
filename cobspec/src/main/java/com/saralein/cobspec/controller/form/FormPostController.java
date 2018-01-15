@@ -19,7 +19,7 @@ public class FormPostController implements Controller {
         this.formModification = formModification;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         HashMap<String, String> formData = new LinkedHashMap<>();
 
         boolean succeeded = formModification.processFormData(request, formData, dataStore);

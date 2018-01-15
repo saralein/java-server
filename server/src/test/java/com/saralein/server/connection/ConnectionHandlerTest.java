@@ -1,12 +1,11 @@
 package com.saralein.server.connection;
 
-import com.saralein.server.controller.Controller;
-import com.saralein.server.middleware.Middleware;
+import com.saralein.server.Application;
+import com.saralein.server.middleware.Caller;
 import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
-import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
@@ -17,9 +16,9 @@ import com.saralein.server.router.Router;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
@@ -36,10 +35,9 @@ public class ConnectionHandlerTest {
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryController = new MockController(200, "Directory response");
-        Routes routes = new Routes();
-        Router router = new Router(routes);
-        Middleware staticMiddleware = new StaticMiddleware(root, directoryController, directoryController);
-        Controller application = staticMiddleware.use(router);
+        Router router = new Router(new Routes());
+        Caller staticMiddleware = new StaticMiddleware(root, router, directoryController, directoryController);
+        Application application = new Application(staticMiddleware);
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
 
@@ -51,7 +49,7 @@ public class ConnectionHandlerTest {
             put("uri", "/");
             put("version", "HTTP/1.1");
         }});
-        Response directoryResponse = directoryController.createResponse(request);
+        Response directoryResponse = directoryController.respond(request);
         byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
         socket.setRequest(directoryString);
@@ -66,7 +64,7 @@ public class ConnectionHandlerTest {
         Response response = new ResponseBuilder()
                                 .addStatus(404)
                                 .addHeader("Content-Type", "text/html")
-                                .addBody(StatusCodes.retrieve(404))
+                                .addBody("404: Page not found.")
                                 .build();
         byte[] notFoundBytes = responseSerializer.convertToBytes(response);
 

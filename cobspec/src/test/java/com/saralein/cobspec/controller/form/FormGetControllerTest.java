@@ -38,14 +38,14 @@ public class FormGetControllerTest {
         FormBody formBody = new FormBody();
         FormGetController formGetController = new FormGetController(dataStore, formBody);
 
-        formResponseWithoutBody = formGetController.createResponse(requestWithoutBody);
+        formResponseWithoutBody = formGetController.respond(requestWithoutBody);
 
         dataStore.addData("/form", new LinkedHashMap<String, String>(){{
             put("My", "Data");
             put("More", "Stuff");
         }});
 
-        formResponseWithBody = formGetController.createResponse(requestWithBody);
+        formResponseWithBody = formGetController.respond(requestWithBody);
     }
 
     @Test

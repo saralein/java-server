@@ -1,28 +1,26 @@
-package com.saralein.cobspec.controller;
+package com.saralein.server.middleware;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
 import java.util.Base64;
 
-public class AuthController implements Controller {
+public class AuthMiddleware extends Middleware {
     private final String username;
     private final String password;
     private final String realm;
-    private final Controller controller;
 
-    public AuthController(String username, String password,
-                          String realm, Controller controller) {
+    public AuthMiddleware(String username, String password, String realm) {
+        super();
         this.username = username;
         this.password = password;
         this.realm = realm;
-        this.controller = controller;
     }
 
-    public Response createResponse(Request request) {
+    @Override
+    public Response call(Request request) {
         if (isAuthorized(request)) {
-            return controller.createResponse(request);
+            return middleware.call(request);
         } else {
             return unauthorized();
         }
@@ -52,7 +50,7 @@ public class AuthController implements Controller {
     }
 
     private boolean isAuthorized(Request request) {
-        return (request.getAuthorization() != null &&
-                        encodeValidAuthorization().equals(parseRequestAuthorization(request)));
+        return !request.getUri().equals("/logs") ||
+                encodeValidAuthorization().equals(parseRequestAuthorization(request));
     }
 }

@@ -6,7 +6,7 @@ import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
 
 public class RedirectController implements Controller {
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         return new ResponseBuilder()
                     .addStatus(302)
                     .addHeader("Location", "/")

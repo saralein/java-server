@@ -1,26 +1,27 @@
-package com.saralein.cobspec.controller;
+package com.saralein.server.middleware;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.mocks.MockMiddleware;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import java.util.Base64;
 import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class AuthControllerTest {
-    private Controller authController;
+public class AuthMiddlewareTest {
+    private Middleware authMiddleware;
 
     @Before
     public void setUp() {
-        Controller controller = new DefaultController();
-        authController = new AuthController("admin", "hunter2", "ServerCity", controller);
+        MockMiddleware mockMiddleware = new MockMiddleware();
+        authMiddleware = new AuthMiddleware("admin", "hunter2", "ServerCity");
+        authMiddleware.apply(mockMiddleware);
     }
 
     @Test
-    public void requestWithCorrectAuthReturns200() {
+    public void authorizedRequestPassesToNextMiddleware() {
         String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
         Request request = new Request(new HashMap<String, String>(){{
             put("method", "GET");
@@ -28,10 +29,9 @@ public class AuthControllerTest {
             put("version", "HTTP/1.1");
             put("Authorization", "Basic " + auth);
         }});
-        Response response = authController.createResponse(request);
-        Header header = response.getHeader();
+        Response response = authMiddleware.call(request);
 
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
+        assertArrayEquals("Middleware response".getBytes(), response.getBody());
     }
 
     @Test
@@ -43,7 +43,7 @@ public class AuthControllerTest {
             put("version", "HTTP/1.1");
             put("Authorization", "Basic " + auth);
         }});
-        Response response = authController.createResponse(request);
+        Response response = authMiddleware.call(request);
         Header header = response.getHeader();
 
         String expected = "HTTP/1.1 401 Unauthorized\r\n" +
@@ -59,7 +59,7 @@ public class AuthControllerTest {
             put("uri", "/logs");
             put("version", "HTTP/1.1");
         }});
-        Response response = authController.createResponse(request);
+        Response response = authMiddleware.call(request);
         Header header = response.getHeader();
 
         String expected = "HTTP/1.1 401 Unauthorized\r\n" +

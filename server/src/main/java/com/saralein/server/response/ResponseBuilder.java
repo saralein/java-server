@@ -20,11 +20,6 @@ public class ResponseBuilder {
         return this;
     }
 
-    public ResponseBuilder addBodyByStatus(int code) {
-        this.body = StatusCodes.retrieve(code).getBytes();
-        return this;
-    }
-
     public ResponseBuilder addStatus(int code) {
         header.addStatus(code);
         return this;

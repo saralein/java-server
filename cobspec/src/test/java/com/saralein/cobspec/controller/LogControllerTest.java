@@ -30,7 +30,7 @@ public class LogControllerTest {
             put("Authorization", "Basic " + auth);
         }});
 
-        Response response = logController.createResponse(request);
+        Response response = logController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());

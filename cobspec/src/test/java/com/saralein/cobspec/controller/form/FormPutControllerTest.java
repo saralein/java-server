@@ -37,7 +37,7 @@ public class FormPutControllerTest {
             put("body", "My=Data");
         }});
 
-        formPutController.createResponse(request);
+        formPutController.respond(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
         assertEquals(2, data.keySet().size());
@@ -54,7 +54,7 @@ public class FormPutControllerTest {
             put("body", "My=Data");
         }});
 
-        Response response = formPutController.createResponse(request);
+        Response response = formPutController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -70,7 +70,7 @@ public class FormPutControllerTest {
             put("body", "My=Data&More=Things");
         }});
 
-        formPutController.createResponse(request);
+        formPutController.respond(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
         assertEquals(2, data.keySet().size());
@@ -87,7 +87,7 @@ public class FormPutControllerTest {
             put("body", "My=Data&More=Things");
         }});
 
-        Response response = formPutController.createResponse(request);
+        Response response = formPutController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -103,7 +103,7 @@ public class FormPutControllerTest {
             put("body", "My=Data&MoreStuff");
         }});
 
-        Response response = formPutController.createResponse(request);
+        Response response = formPutController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

@@ -24,7 +24,7 @@ public class OptionsControllerTest {
     @Test
     public void returnsResponseWithAllAllowedMethods() {
         OptionsController optionsController = new OptionsController(Methods.allowNonDestructiveMethods());
-        Response response = optionsController.createResponse(request);
+        Response response = optionsController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nAllow: GET,OPTIONS,HEAD,POST,PUT\r\n\r\n", header.formatToString());
@@ -34,7 +34,7 @@ public class OptionsControllerTest {
     @Test
     public void returnsResponseWithGetOptionsMethods() {
         OptionsController optionsController = new OptionsController(Methods.allowGetAndOptions());
-        Response response = optionsController.createResponse(request);
+        Response response = optionsController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nAllow: GET,OPTIONS\r\n\r\n", header.formatToString());

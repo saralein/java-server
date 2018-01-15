@@ -5,40 +5,39 @@ import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
+import com.saralein.server.router.Router;
+import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class StaticMiddlewareTest {
-    private Controller mockController;
-    private Controller application;
+    private StaticMiddleware staticMiddleware;
 
     @Before
     public void setUp() {
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
-
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
+        Routes routes = new Routes().get("/router", new MockController(200, "Router response"));
+        Router router = new Router(routes);
 
-        StaticMiddleware staticMiddleware = new StaticMiddleware(root, directoryController, fileController);
-        application = staticMiddleware.use(mockController);
-
-        mockController = new MockController(200, "Router response");
+        staticMiddleware = new StaticMiddleware(root, router, directoryController, fileController);
     }
 
     @Test
     public void returnsDirectoryResponseForDirectory() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
+        Request request = new Request(new HashMap<String, String>(){{
             put("method", "GET");
             put("uri", "/");
             put("version", "HTTP/1.1");
         }});
 
-        Response response = application.createResponse(directoryRequest);
+        Response response = staticMiddleware.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -47,16 +46,29 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsFileResponseForFile() {
-        Request fileRequest = new Request(new HashMap<String, String>(){{
+        Request request = new Request(new HashMap<String, String>(){{
             put("method", "GET");
             put("uri", "/cheetara.jpg");
             put("version", "HTTP/1.1");
         }});
 
-        Response response = application.createResponse(fileRequest);
+        Response response = staticMiddleware.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
         assertArrayEquals("File response".getBytes(), response.getBody());
+    }
+
+    @Test
+    public void returnsResponseFromRouterIfNotStaticResource() {
+        Request request = new Request(new HashMap<String, String>(){{
+            put("method", "GET");
+            put("uri", "/router");
+            put("version", "HTTP/1.1");
+        }});
+
+        Response response = staticMiddleware.call(request);
+
+        assertArrayEquals("Router response".getBytes(), response.getBody());
     }
 }

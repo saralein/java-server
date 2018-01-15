@@ -16,7 +16,7 @@ public class DirectoryController implements Controller {
         this.fileHelper = fileHelper;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         String requestMethod = request.getMethod();
         String body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : "";
 

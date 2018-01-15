@@ -14,7 +14,7 @@ public class MockController implements Controller {
         this.body = body;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         return new ResponseBuilder()
                 .addStatus(status)
                 .addBody(body)

@@ -8,37 +8,40 @@ import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseBuilder;
+import com.saralein.server.router.Router;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class StaticMiddleware implements Middleware {
-    private Path root;
+public class StaticMiddleware implements Caller {
+    private final Path root;
+    private final Router router;
     private final Controller directoryController;
     private final Controller fileController;
 
-    public StaticMiddleware(Path root) {
-        this(root, new DirectoryController(new FileHelper(root)), new FileController(new FileHelper(root)));
+    public StaticMiddleware(Path root, Router router) {
+        this(root, router, new DirectoryController(new FileHelper(root)), new FileController(new FileHelper(root)));
     }
 
     public StaticMiddleware(
             Path root,
+            Router router,
             Controller directoryController,
             Controller fileController) {
         this.root = root;
+        this.router = router;
         this.directoryController = directoryController;
         this.fileController = fileController;
     }
 
-    public Controller use(Controller controller) {
-        return (request) -> {
-            if (resourceExists(request)) {
-                return staticResponse(request);
-            } else {
-                return controller.createResponse(request);
-            }
-        };
+    @Override
+    public Response call(Request request) {
+        if (resourceExists(request)) {
+            return staticResponse(request);
+        } else {
+            return router.respond(request);
+        }
     }
 
     private Response staticResponse(Request request) {
@@ -46,9 +49,9 @@ public class StaticMiddleware implements Middleware {
         boolean isAcceptedMethod = isAcceptedMethod(request);
 
         if (isDirectory&& isAcceptedMethod) {
-            return directoryController.createResponse(request);
+            return directoryController.respond(request);
         } else if (isAcceptedMethod) {
-            return fileController.createResponse(request);
+            return fileController.respond(request);
         } else {
             return accessNotAllowed();
         }

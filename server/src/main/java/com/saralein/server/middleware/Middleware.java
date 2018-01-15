@@ -1,7 +1,10 @@
 package com.saralein.server.middleware;
 
-import com.saralein.server.controller.Controller;
+public abstract class Middleware implements Caller {
+    protected Caller middleware;
 
-public interface Middleware {
-    Controller use(Controller controller);
+    public final Middleware apply(Caller caller) {
+        this.middleware = caller;
+        return this;
+    }
 }

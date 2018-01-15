@@ -24,15 +24,7 @@ repositories {
 
 ## Using the Server
 
-Usage of the server requires some setup within your application.
-
-Begin by creating an instance of the Application (see [API](#api) below for `Logger` information): `Application(Logger logger)`. From here, you can being configuring your server.
-
-### `.addStatic(Path root)`
-
-`addStatic` sets up built-in middleware for serving static files.  The `root` parameter specifics the root directory from which static resources will be served.  If a resource matching the requested resource is not found in the root directory, the request passes to the router to check for matching routes before returning a 404.
-
-Static middleware will not be included if `addStatic` is not set.
+Usage of the server requires some setup within your application.  Begin by creating an instance of the `Application` using the `Application.Builder`, which includes the following methods:
 
 ### `.router(Routes routes)` 
 
@@ -40,17 +32,20 @@ Static middleware will not be included if `addStatic` is not set.
 
 A route-less router will be used if `router` is not set.
 
-### `.start(int port)`
+### `.use(Middleware middleware)`
 
-Once the above methods are used to configure the server, use `start` with a valid port number to start the server.
+`use` adds middleware to your application, which is applied over the default static middleware and router.
+
+## `.build()`
+
+`build` builds an instance of `Application` using the specified router/middleware configuration.
 
 ## Example Setup
 
-Below is a simple example of how server setup might look:
+Below is a simple example of how application setup might look:
 
 ```java
-new Application(logger)
-     .addStatic(root)
+new Application.Builder(logger, root)
      .router(new Routes()
                   .get("/redirect", new RedirectController())
                   .get("/form", new FormController())
@@ -58,8 +53,8 @@ new Application(logger)
                   .put("/form", new FormController())
                   .delete("/form", new FormController())
                   .get("/logs", new LogController()))
-     .start(port);
-
+     .use(middelware)
+     .build();
 ```
 
 Notes: Controllers are application specific.
@@ -112,18 +107,65 @@ Use of the `ResponseBuilder` is not required but is provided for convenience.
 
 Your `Controller` may contain whatever additional methods are needed to create contents of your response.
 
+## Setting Up Middleware
+
+You may choose to create your own middleware for your application. In order to do so, your middleware should extend the `Middleware` abstract class.
+
+`Middleware` provides the implementation for the `apply` method, which applies your middleware over the server default middleware.
+
+In turn, `Middleware` implements the `Caller` interface.  You middleware will need to provide implementation for the `call` method.
+
+## Example Middleware
+
+```java
+public class AuthMiddleware extends Middleware {
+    ...
+
+    @Override
+    public Response call(Request request) {
+        if (isAuthorized(request)) {
+            return middleware.call(request);
+        } else {
+            return unauthorized();
+        }
+    }
+
+    ...
+}
+```
+
+`middleware` (the cumulative application of middlewares over the server default middleware) is set in the `apply` method of `Middleware`.
+
+The above authorization middleware (which comes with the server for application use) checks if an incoming request is authorized to access a route.  If not, it returns a 401 response.  If so, it calls the cumulative middleware and sends the request in to eventually be handled by the router.
+
+## After You Create Your Application
+
+After your application instance is created, use the `ServerInitialzer` `setup` method to create an instance of the server which uses your application.
+
+```
+Server server = new ServerInitializer(logger, application).setup(port);
+```
+
+From here, you can call `server.run()` to run your application on the server.
+
 ## API
 
 The following section provides additional details on the public API for the HTTP server.
+
+**Class Application.Builder**
+
+| Type                 | Method                                                     |
+| -------------------- | ---------------------------------------------------------- |
+| `constructor`        | `Application.Builder(Logger logger, Path roo)`             |
+| `public Builder`     | `router(Routes routes)`                                    |
+| `public Builder`     | `use(Middleware middleware)`                               |
+| `public Application` | `build()`                                                  |
 
 **Class Application**
 
 | Type                 | Method                                                     |
 | -------------------- | ---------------------------------------------------------- |
-| `constructor`        | `HttpServer(Logger logger)`                                |
-| `public Application` | `addStatic(Path root)`                                     |
-| `public Application` | `router(Routes routes)`                                    |
-| `public static void` | `start(int port)`                                          |
+| `public Response`    | `call(Request request)`                                    |
 
 **Class Routes**
 
@@ -167,6 +209,31 @@ The following section provides additional details on the public API for the HTTP
 | `public void` | `addStatus(int code)` <br><br>Adds HTTP status code to header response line. |
 | `public void` | `addHeader(String title, String content)` <br><br>Adds individual headers to Header instance. For example, `addHeader(Content-Type, text/html)` adds Content-Type: text/html to the header. |
 | `public String` | `formatToString()` <br><br>Returns the full header formatted for HTTP. |
+
+**Class Middleware**
+
+| Type                 | Method                                 |
+| -------------------- | -------------------------------------- |
+| `final Middleware`   | `apply(Caller caller)`                 |
+
+**Interface Caller**
+
+| Type                 | Method                                 |
+| -------------------- | -------------------------------------- |
+| `public Response`    | `call(Request request)`                |
+
+**Class ServerInitializer**
+
+| Type                 | Method                                                                     |
+| -------------------- | -------------------------------------------------------------------------- |
+| `constructor`        | `ServerInitializer(Logger logger, Application application)`                |
+| `public Server`      | `setup(int port)`                                                          |
+
+**Class Server**
+
+| Type                 | Method       |
+| -------------------- | ------------ |
+| `public void`        | `run()`      | 
 
 **Interface Logger**
 

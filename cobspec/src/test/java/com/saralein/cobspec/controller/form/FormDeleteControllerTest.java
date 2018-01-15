@@ -28,7 +28,7 @@ public class FormDeleteControllerTest {
             put("version", "HTTP/1.1");
         }});
 
-        formDeleteResponse = new FormDeleteController(formStore).createResponse(request);
+        formDeleteResponse = new FormDeleteController(formStore).respond(request);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FormDeleteControllerTest {
             put("version", "HTTP/1.1");
         }});
 
-        Response datalessDeleteResponse = new FormDeleteController(formStore).createResponse(request);
+        Response datalessDeleteResponse = new FormDeleteController(formStore).respond(request);
         Header header = datalessDeleteResponse.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

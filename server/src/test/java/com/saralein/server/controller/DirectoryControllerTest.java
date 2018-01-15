@@ -35,7 +35,7 @@ public class DirectoryControllerTest {
         }});
 
         DirectoryController directoryController = new DirectoryController(fileHelper);
-        directoryResponse = directoryController.createResponse(request);
+        directoryResponse = directoryController.respond(request);
     }
 
     @Test
