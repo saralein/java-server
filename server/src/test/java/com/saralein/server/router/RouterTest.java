@@ -1,89 +1,56 @@
 package com.saralein.server.router;
 
-import com.saralein.server.controller.Controller;
-import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RouterTest {
     private Router router;
 
     @Before
     public void setUp() {
-        String rootPath = System.getProperty("user.dir") + "/src/test/public";
-        Path root = Paths.get(rootPath);
+        Routes routes = new Routes().get("/stuff", new MockController(200, "Some stuff!"));
+        router = new Router(routes);
+    }
 
-        Controller directoryController = new MockController(200, "Directory response");
-        Controller fileController = new MockController(200, "File response");
-        ErrorController errorController = new ErrorController();
-        Routes routes = new Routes();
+    private Request createRequest(String method, String uri) {
+        return new Request.Builder()
+                .addMethod(method)
+                .addUri(uri)
+                .build();
+    }
 
-        router = new Router(directoryController, fileController, errorController, routes, root);
+    @Test
+    public void returns200ResponseForMatchingRoute() {
+        Request request = createRequest("GET", "/stuff");
+        Response response = router.createResponse(request);
+        Header header = response.getHeader();
+
+        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
+        assertArrayEquals("Some stuff!".getBytes(), response.getBody());
     }
 
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
-        Request notFoundRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = router.resolveRequest(notFoundRequest);
+        Request request = createRequest("GET", "/snarf.jpg");
+        Response response = router.createResponse(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returnsDirectoryResponseForDirectory() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = router.resolveRequest(directoryRequest);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertArrayEquals("Directory response".getBytes(), response.getBody());
-    }
-
-    @Test
-    public void returnsFileResponseForFile() {
-        Request fileRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = router.resolveRequest(fileRequest);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertArrayEquals("File response".getBytes(), response.getBody());
+        assertArrayEquals("404 Not Found".getBytes(), response.getBody());
     }
 
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "DELETE");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = router.resolveRequest(directoryRequest);
+        Request request = createRequest("DELETE", "/stuff");
+        Response response = router.createResponse(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("405 Method Not Allowed".getBytes(), response.getBody());
     }
 }
