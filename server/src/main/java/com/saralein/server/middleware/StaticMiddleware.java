@@ -7,7 +7,6 @@ import com.saralein.server.controller.FileController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import com.saralein.server.router.Router;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -78,8 +77,8 @@ public class StaticMiddleware implements Caller {
     }
 
     private Response accessNotAllowed() {
-        return new ResponseBuilder()
-                .addStatus(405)
+        return new Response.Builder()
+                .status(405)
                 .addHeader("Content-Type", "text/html")
                 .build();
     }

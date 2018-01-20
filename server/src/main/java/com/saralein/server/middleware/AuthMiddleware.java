@@ -2,7 +2,6 @@ package com.saralein.server.middleware;
 
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.Base64;
 
 public class AuthMiddleware extends Middleware {
@@ -28,14 +27,14 @@ public class AuthMiddleware extends Middleware {
 
     private Response unauthorized() {
         String serverRealm = String.format("Basic realm=\"%s\"", realm);
-        return new ResponseBuilder()
-                .addStatus(401)
+        return new Response.Builder()
+                .status(401)
                 .addHeader("WWW-Authenticate", serverRealm)
                 .build();
     }
 
     private String parseRequestAuthorization(Request request) {
-        String encodedAuthorization = request.getAuthorization();
+        String encodedAuthorization = request.getHeader("Authorization");
         if (encodedAuthorization.isEmpty()) {
             return null;
         } else {

@@ -9,7 +9,6 @@ import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -31,11 +30,10 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsDirectoryResponseForDirectory() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
 
         Response response = staticMiddleware.call(request);
         Header header = response.getHeader();
@@ -46,11 +44,10 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsFileResponseForFile() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/cheetara.jpg")
+                .build();
 
         Response response = staticMiddleware.call(request);
         Header header = response.getHeader();
@@ -61,12 +58,10 @@ public class StaticMiddlewareTest {
 
     @Test
     public void returnsResponseFromRouterIfNotStaticResource() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/router");
-            put("version", "HTTP/1.1");
-        }});
-
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/router")
+                .build();
         Response response = staticMiddleware.call(request);
 
         assertArrayEquals("Router response".getBytes(), response.getBody());

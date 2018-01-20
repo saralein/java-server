@@ -95,15 +95,15 @@ An example `Controller` from the cobspec application is provided below:
 ```java
 public class RedirectController implements Controller {
     public Response createResponse(Request request) {
-        return new ResponseBuilder()
-                    .addStatus(302)
+        return new Response.Builder()
+                    .status(302)
                     .addHeader("Location", "/")
                     .build();
     }
 }
 ```
 
-Use of the `ResponseBuilder` is not required but is provided for convenience.
+Use of the `Response.Builder` is not required but is provided for convenience.
 
 Your `Controller` may contain whatever additional methods are needed to create contents of your response.
 
@@ -192,21 +192,21 @@ The following section provides additional details on the public API for the HTTP
 | `public Header` | `getHeader()`                          |
 | `public byte[]` | `getBody()`                            |
 
-**ResponseBuilder**
+**Response.Builder**
 
 | Type                     | Method                                   |
 | ------------------------ | ---------------------------------------- |
-| `public ResponseBuilder` | `addBody(String body)`                   |
-|                          | `addBody(byte[] body)` <br><br>Add body to response.  Overloaded string variation will convert body to a byte array. |
-| `public ResponseBuilder` | `addStatus(int code)` <br><br> Adds HTTP status code to header response line. |
-| `public ResponseBuilder` | `addHeader(String title, String content` <br><br> Adds individual headers to Header instance. For example, `addHeader(Content-Type, text/html)` adds Content-Type: text/html to the header. |
-| `public Response`        | `build()` <br><br>Creates a `Response` instance with information added via other `ResponseBuilder` methods. |
+| `public Builder`         | `body(String body)`                   |
+|                          | `body(byte[] body)` <br><br>Add body to response.  Overloaded string variation will convert body to a byte array. |
+| `public Builder`         | `status(int code)` <br><br> Adds HTTP status code to header response line. |
+| `public Builder`         | `addHeader(String title, String content)` <br><br> Adds individual headers to Header instance. For example, `addHeader(Content-Type, text/html)` adds Content-Type: text/html to the header.                  |
+| `public Response`        | `build()` <br><br>Creates a `Response` instance with information added via other `Builder` methods. |
 
 **Header**
 
 | Type | Method |
 | ---- | ------ |
-| `public void` | `addStatus(int code)` <br><br>Adds HTTP status code to header response line. |
+| `public void` | `status(int code)` <br><br>Adds HTTP status code to header response line. |
 | `public void` | `addHeader(String title, String content)` <br><br>Adds individual headers to Header instance. For example, `addHeader(Content-Type, text/html)` adds Content-Type: text/html to the header. |
 | `public String` | `formatToString()` <br><br>Returns the full header formatted for HTTP. |
 

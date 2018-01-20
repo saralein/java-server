@@ -4,7 +4,6 @@ import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.HashMap;
 
 public class FormPutController implements Controller {
@@ -26,10 +25,10 @@ public class FormPutController implements Controller {
         Integer status = succeeded ? 200 : 400;
         String body = succeeded ? formBody.formatDataToHtml(dataStore.retrieveData(uri)) : "";
 
-        return new ResponseBuilder()
-                    .addStatus(status)
+        return new Response.Builder()
+                    .status(status)
                     .addHeader("Content-Type", "text/html")
-                    .addBody(body)
+                    .body(body)
                     .build();
     }
 }

@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -27,7 +26,7 @@ public class ApplicationLoggerTest {
     }
 
     @Test
-    public void logsExceptionsToStream() {
+    public void logsErrorToStream() {
         output.reset();
         Exception exception = new Exception("Test error");
         logger.error(exception);
@@ -36,7 +35,7 @@ public class ApplicationLoggerTest {
     }
 
     @Test
-    public void logsExceptionsToFile() throws IOException {
+    public void logsErrorToFile() throws IOException {
         output.reset();
         Exception exception = new Exception("Writing error");
         Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
@@ -67,24 +66,22 @@ public class ApplicationLoggerTest {
     @Test
     public void logsRequestTraceToStream() {
         output.reset();
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/cheetara.jpg")
+                .build();
         logger.trace(request);
 
         assertTrue(output.toString().contains("GET /cheetara.jpg HTTP/1.1"));
     }
 
     @Test
-    public void logsRequestTraceToFile() throws IOException {
+    public void logsRequestToFile() throws IOException {
         output.reset();
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/snarf.jpg")
+                .build();
         Files.write(logTxt, "".getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         logger.trace(request);
         String logged = String.join("", Files.readAllLines(logTxt));

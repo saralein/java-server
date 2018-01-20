@@ -9,13 +9,11 @@ import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
@@ -44,11 +42,11 @@ public class ConnectionHandlerTest {
     @Test
     public void handlesValidRequestFromSocket() {
         String directoryString = "GET / HTTP/1.1";
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
+
         Response directoryResponse = directoryController.respond(request);
         byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
@@ -61,11 +59,12 @@ public class ConnectionHandlerTest {
     @Test
     public void handlesInvalidRequestFromSocket() {
         String notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Response response = new ResponseBuilder()
-                                .addStatus(404)
+        Response response = new Response.Builder()
+                                .status(404)
                                 .addHeader("Content-Type", "text/html")
-                                .addBody("404: Page not found.")
+                                .body("404: Page not found.")
                                 .build();
+
         byte[] notFoundBytes = responseSerializer.convertToBytes(response);
 
         socket.setRequest(notFoundString);

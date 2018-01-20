@@ -5,59 +5,47 @@ import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class FormGetControllerTest {
-    private byte[] formWithBodyArray;
-    private Response formResponseWithBody;
-    private Response formResponseWithoutBody;
+    private Request request;
+    private FormGetController formGetController;
+    private DataStore dataStore;
 
     @Before
     public void setUp() {
-        String formWithBody = "<p>My=Data<br>More=Stuff<br></p>";
-        formWithBodyArray = formWithBody.getBytes();
+        request = new Request.Builder()
+                .method("GET")
+                .uri("/form")
+                .build();
 
-        Request requestWithBody = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-        }});
-
-        Request requestWithoutBody = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-        }});
-
-        DataStore dataStore = new FormStore();
+        dataStore = new FormStore();
         FormBody formBody = new FormBody();
-        FormGetController formGetController = new FormGetController(dataStore, formBody);
+        formGetController = new FormGetController(dataStore, formBody);
+    }
 
-        formResponseWithoutBody = formGetController.respond(requestWithoutBody);
+    @Test
+    public void returnsCorrectResponseWhenStoreIsEmpty() {
+        Response response = formGetController.respond(request);
+        Header header = response.getHeader();
 
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("".getBytes(), response.getBody());
+    }
+
+    @Test
+    public void returnsCorrectResponseWhenStoreHasData() {
         dataStore.addData("/form", new LinkedHashMap<String, String>(){{
             put("My", "Data");
             put("More", "Stuff");
         }});
-
-        formResponseWithBody = formGetController.respond(requestWithBody);
-    }
-
-    @Test
-    public void returnsResponseWithCorrectHeader() {
-        Header header = formResponseWithBody.getHeader();
+        Response response = formGetController.respond(request);
+        Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returnsResponseWithCorrectBody() {
-        assertArrayEquals("".getBytes(), formResponseWithoutBody.getBody());
-        assertArrayEquals(formWithBodyArray, formResponseWithBody.getBody());
+        assertArrayEquals("<p>My=Data<br>More=Stuff<br></p>".getBytes(), response.getBody());
     }
 }
