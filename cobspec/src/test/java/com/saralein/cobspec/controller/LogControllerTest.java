@@ -1,13 +1,14 @@
 package com.saralein.cobspec.controller;
 
+import com.saralein.server.mocks.MockIO;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import org.junit.Before;
-import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class LogControllerTest {
@@ -15,8 +16,8 @@ public class LogControllerTest {
 
     @Before
     public void setUp() {
-        Path logTxt = Paths.get(System.getProperty("user.dir") + "/src/test/controller-test.txt");
-        logController = new LogController(logTxt);
+        Path logTxt = Paths.get(System.getProperty("user.dir"), "src/test/test.txt");
+        logController = new LogController(logTxt, new MockIO());
     }
 
     @Test
@@ -30,7 +31,7 @@ public class LogControllerTest {
         Response response = logController.respond(request);
         Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertTrue(new String(response.getBody()).contains("GET /logs HTTP/1.1"));
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("readFullFile called".getBytes(), response.getBody());
     }
 }

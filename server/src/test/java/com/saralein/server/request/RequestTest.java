@@ -1,6 +1,8 @@
 package com.saralein.server.request;
 
 import java.util.HashMap;
+
+import com.saralein.server.protocol.Methods;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -25,9 +27,18 @@ public class RequestTest {
     }
 
     @Test
-    public void addsMethodToRequest() {
+    public void addsMethodToRequestWithString() {
         Request request = new Request.Builder()
                 .method("GET")
+                .build();
+
+        assertEquals("GET", request.getMethod());
+    }
+
+    @Test
+    public void addsMethodToRequestWithEnum() {
+        Request request = new Request.Builder()
+                .method(Methods.GET)
                 .build();
 
         assertEquals("GET", request.getMethod());

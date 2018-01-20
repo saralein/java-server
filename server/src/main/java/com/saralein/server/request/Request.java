@@ -1,5 +1,7 @@
 package com.saralein.server.request;
 
+import com.saralein.server.protocol.Methods;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +46,11 @@ public class Request {
 
         public Builder method(String method) {
             this.method = method;
+            return this;
+        }
+
+        public Builder method(Methods method) {
+            this.method = method.toString();
             return this;
         }
 

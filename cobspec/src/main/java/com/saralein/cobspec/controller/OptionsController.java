@@ -11,6 +11,7 @@ public class OptionsController implements Controller {
         this.methods = methods;
     }
 
+    @Override
     public Response respond(Request request) {
         return new Response.Builder()
                     .status(200)

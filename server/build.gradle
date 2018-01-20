@@ -10,7 +10,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
-mainClassName = 'com.saralein.server.HttpServer'
+mainClassName = 'com.saralein.server.Application'
 sourceCompatibility = 1.8
 
 repositories {
@@ -37,11 +37,23 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+configurations {
+    testArtifacts.extendsFrom testRuntime
+}
+task testJar(type: Jar) {
+    classifier "test"
+    from sourceSets.test.output
+}
+
+artifacts {
+    testArtifacts testJar
+}
+
 jar {
     manifest {
         attributes (
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-                'Main-Class': 'com.saralein.server.HttpServer')
+                'Main-Class': 'com.saralein.server.Application')
     }
 
     from {

@@ -9,6 +9,7 @@ sourceCompatibility = 1.8
 
 dependencies {
     compile project(':server')
+    testCompile project(path: ':server', configuration: 'testArtifacts')
     testCompile 'junit:junit:4.12'
 }
 
