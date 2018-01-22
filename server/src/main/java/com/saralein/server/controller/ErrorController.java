@@ -3,7 +3,6 @@ package com.saralein.server.controller;
 import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 
 public class ErrorController implements Controller {
     private int status;
@@ -12,11 +11,11 @@ public class ErrorController implements Controller {
         this.status = 404;
     }
 
-    public Response createResponse(Request request) {
-        return new ResponseBuilder()
-                    .addStatus(status)
+    public Response respond(Request request) {
+        return new Response.Builder()
+                    .status(status)
                     .addHeader("Content-Type", "text/html")
-                    .addBody(selectBodyByError())
+                    .body(selectBodyByError())
                     .build();
     }
 

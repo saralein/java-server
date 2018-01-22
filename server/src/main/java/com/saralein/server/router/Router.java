@@ -35,7 +35,7 @@ public class Router {
         resourceStatus(request);
         Controller controller = resourceExists ? routeResource(request) : routeUri(request);
 
-        return controller.createResponse(request);
+        return controller.respond(request);
     }
 
     private void resourceStatus(Request request) {

@@ -4,7 +4,6 @@ import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,14 +15,14 @@ public class DirectoryController implements Controller {
         this.fileHelper = fileHelper;
     }
 
-    public Response createResponse(Request request) {
+    public Response respond(Request request) {
         String requestMethod = request.getMethod();
         String body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : "";
 
-        return new ResponseBuilder()
-                    .addStatus(200)
+        return new Response.Builder()
+                    .status(200)
                     .addHeader("Content-Type", "text/html")
-                    .addBody(body)
+                    .body(body)
                     .build();
     }
 

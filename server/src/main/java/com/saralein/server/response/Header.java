@@ -11,7 +11,7 @@ public class Header {
         this.header = new HashMap<>();
     }
 
-    public void addStatus(int code) {
+    public void status(int code) {
         header.put("Status", createStatusLine(code));
     }
 
@@ -22,9 +22,9 @@ public class Header {
     public String formatToString() {
         StringBuilder headerBuilder = new StringBuilder();
 
-        addsStatusLine(headerBuilder);
-        addsHeaders(headerBuilder);
-        addsBlankLine(headerBuilder);
+        appendStatusLine(headerBuilder);
+        appendHeaders(headerBuilder);
+        appendBlankLine(headerBuilder);
 
         return headerBuilder.toString();
     }
@@ -33,14 +33,14 @@ public class Header {
         return  "HTTP/1.1 " + StatusCodes.retrieve(code);
     }
 
-    private void addsStatusLine(StringBuilder headerBuilder) {
+    private void appendStatusLine(StringBuilder headerBuilder) {
         if (header.containsKey("Status")) {
             String statusLine = header.get("Status") + CRLF;
             headerBuilder.append(statusLine);
         }
     }
 
-    private void addsHeaders(StringBuilder headerBuilder) {
+    private void appendHeaders(StringBuilder headerBuilder) {
         for (String key : header.keySet()) {
             if (!key.equals("Status")) {
                 String headerLine = key + ": " + header.get(key) + CRLF;
@@ -49,7 +49,7 @@ public class Header {
         }
     }
 
-    private void addsBlankLine(StringBuilder headerBuilder) {
+    private void appendBlankLine(StringBuilder headerBuilder) {
         if (headerBuilder.length() != 0) {
             headerBuilder.append(CRLF);
         }
