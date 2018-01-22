@@ -7,6 +7,8 @@ import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.logger.ApplicationLogger;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
+import com.saralein.server.filesystem.ServerFileIO;
+import com.saralein.server.filesystem.FileIO;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.middleware.AuthMiddleware;
 import com.saralein.server.protocol.Methods;
@@ -25,8 +27,9 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        Path logTxt = Paths.get(home + "/log.txt");
-        Logger logger = new ApplicationLogger(System.out, logTxt);
+        Path logTxt = Paths.get(home, "log.txt");
+        FileIO fileIO = new ServerFileIO();
+        Logger logger = new ApplicationLogger(System.out, logTxt, fileIO);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -34,7 +37,7 @@ public class Main {
             Integer port = argsParser.parsePort();
             Path root = argsParser.parseRoot(home);
 
-            Application application = configureApplication(logger, root, logTxt);
+            Application application = configureApplication(logger, root, logTxt, fileIO);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
         } else {
@@ -52,8 +55,8 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static Application configureApplication(Logger logger, Path root, Path logTxt) {
-        Routes routes = createRoutes(logTxt);
+    private static Application configureApplication(Logger logger, Path root, Path logTxt, FileIO fileIO) {
+        Routes routes = configureRoutes(logTxt, fileIO);
 
         return new Application.Builder(logger, root)
                 .router(routes)
@@ -61,7 +64,7 @@ public class Main {
                 .build();
     }
 
-    private static Routes createRoutes(Path logTxt) {
+    private static Routes configureRoutes(Path logTxt, FileIO fileIO) {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
@@ -84,7 +87,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logTxt))
+                .get("/logs", new LogController(logTxt, fileIO))
                 .use("/logs", logConfig);
     }
 }

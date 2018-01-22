@@ -12,6 +12,7 @@ public class FormDeleteController implements Controller {
         this.dataStore = dataStore;
     }
 
+    @Override
     public Response respond(Request request) {
         dataStore.deleteData(request.getUri());
 

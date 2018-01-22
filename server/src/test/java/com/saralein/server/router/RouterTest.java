@@ -1,6 +1,7 @@
 package com.saralein.server.router;
 
 import com.saralein.server.mocks.MockController;
+import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
@@ -17,7 +18,7 @@ public class RouterTest {
         router = new Router(routes);
     }
 
-    private Request createRequest(String method, String uri) {
+    private Request createRequest(Methods method, String uri) {
         return new Request.Builder()
                 .method(method)
                 .uri(uri)
@@ -26,7 +27,7 @@ public class RouterTest {
 
     @Test
     public void returns200ResponseForMatchingRoute() {
-        Request request = createRequest("GET", "/stuff");
+        Request request = createRequest(Methods.GET, "/stuff");
         Response response = router.respond(request);
         Header header = response.getHeader();
 
@@ -36,7 +37,7 @@ public class RouterTest {
 
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
-        Request request = createRequest("GET", "/snarf.jpg");
+        Request request = createRequest(Methods.GET, "/snarf.jpg");
         Response response = router.respond(request);
         Header header = response.getHeader();
 
@@ -46,11 +47,10 @@ public class RouterTest {
 
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
-        Request request = createRequest("DELETE", "/stuff");
+        Request request = createRequest(Methods.DELETE, "/stuff");
         Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("".getBytes(), response.getBody());
     }
 }

@@ -1,4 +1,4 @@
-package com.saralein.server;
+package com.saralein.server.filesystem;
 
 import java.io.IOException;
 import java.net.FileNameMap;
@@ -9,27 +9,27 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FileHelper {
-    private Path root;
-    private String separator = FileSystems.getDefault().getSeparator();
+public class ServerFiles implements FilesInfo {
+    private String separator;
+    private String emptyString;
 
-    public FileHelper(Path root) {
-        this.root = root;
+    public ServerFiles() {
+        this.separator = FileSystems.getDefault().getSeparator();
+        this.emptyString = "";
     }
 
-    public String createAbsolutePath(String name) {
-        return root.toString() + separator + name;
-    }
-
-    public String createRelativeFilePath(String name, Path resource) {
-        return removeRootPortionOfPath(resource) + separator + name;
-    }
-
+    @Override
     public String determineMimeType(String file) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         return fileNameMap.getContentTypeFor(file);
     }
 
+    @Override
+    public int getFileLength(Path file) throws IOException {
+        return (int) Files.size(file);
+    }
+
+    @Override
     public List<String> listFileNames(Path directory) throws IOException {
         return Files.list(directory)
                 .filter(this::isNotHidden)
@@ -38,12 +38,8 @@ public class FileHelper {
                 .collect(Collectors.toList());
     }
 
-    private String removeRootPortionOfPath(Path resource) {
-        return resource.toString().replace(root.toString(), "");
-    }
-
     private String formatName(Path path) {
-        String nameEnding = Files.isDirectory(path) ? "/" : "";
+        String nameEnding = Files.isDirectory(path) ? separator : emptyString;
         return path.getFileName().toString() + nameEnding;
     }
 
