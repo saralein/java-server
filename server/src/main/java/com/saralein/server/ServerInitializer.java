@@ -5,7 +5,6 @@ import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,15 +12,19 @@ import java.net.UnknownHostException;
 public class ServerInitializer {
     private final Logger logger;
     private final Runtime runtime;
-    private final Router router;
+    private final Application application;
     private final RequestParser requestParser;
     private final ResponseSerializer responseSerializer;
 
-    public ServerInitializer(Logger logger, Runtime runtime, Router router,
-                             RequestParser requestParser, ResponseSerializer responseSerializer) {
+    public ServerInitializer(Logger logger, Application application) {
+        this(logger, Runtime.getRuntime(), application, new RequestParser(), new ResponseSerializer());
+    }
+
+    ServerInitializer(Logger logger, Runtime runtime, Application application,
+                       RequestParser requestParser, ResponseSerializer responseSerializer) {
         this.logger = logger;
         this.runtime = runtime;
-        this.router = router;
+        this.application = application;
         this.requestParser =requestParser;
         this.responseSerializer = responseSerializer;
     }
@@ -32,10 +35,10 @@ public class ServerInitializer {
         try {
             serverSocket = new ListeningSocket(port);
         } catch (IOException e) {
-            logger.log(e.getMessage());
+            logger.error(e);
         }
 
-        Server server = new Server(findServerIP(), serverSocket, logger, router,
+        Server server = new Server(findServerIP(), serverSocket, logger, application,
                                    requestParser, responseSerializer);
 
         runtime.addShutdownHook(new ShutdownHook(server, logger));
@@ -50,7 +53,7 @@ public class ServerInitializer {
             InetAddress address = InetAddress.getLocalHost();
             serverIP = address.getHostAddress();
         } catch (UnknownHostException e) {
-            logger.log(e.getMessage());
+            logger.error(e);
         }
 
         return serverIP;
