@@ -4,7 +4,7 @@ import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.logger.ConnectionLogger;
+import com.saralein.cobspec.logger.ApplicationLogger;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.Application;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        Logger logger = new ConnectionLogger(System.out);
+        Logger logger = new ApplicationLogger(System.out);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -50,7 +50,7 @@ public class Main {
                                 .get("/coffee", new CoffeeController()))
                     .start(port, root);
         } else {
-            logger.log(String.join("\n", validationErrors));
+            logger.fatal(String.join("\n", validationErrors));
         }
     }
 

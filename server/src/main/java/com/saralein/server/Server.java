@@ -31,8 +31,7 @@ public class Server implements Runnable {
     }
 
     public void run() {
-        logger.log("Server is starting..." +
-                "\nServer is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
+        logger.info("Server is listening at http://" + serverIP + ":" + serverSocket.getPort() + "...");
 
         try {
             while(listening) {
@@ -42,7 +41,7 @@ public class Server implements Runnable {
             }
             serverSocket.close();
         } catch (IOException e) {
-            logger.log(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
