@@ -30,7 +30,7 @@ public class ConnectionHandler implements Runnable {
             socket.write(responseSerializer.convertToBytes(response));
             socket.close();
         } catch (Exception e) {
-            logger.log(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 }
