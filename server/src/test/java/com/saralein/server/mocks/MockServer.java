@@ -4,6 +4,7 @@ import com.saralein.server.FileHelper;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.DirectoryController;
 import com.saralein.server.controller.FileController;
+import com.saralein.server.controller.PartialContentController;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Routes;
@@ -20,8 +21,11 @@ public class MockServer extends Server {
               new MockServerSocket(),
               new MockLogger(),
               new Router(
-                      new DirectoryController(new FileHelper(Paths.get(System.getProperty("user.dir") + "/" + "public"))),
-                      new FileController(new FileHelper(Paths.get(System.getProperty("user.dir") + "/" + "public"))),
+                      new DirectoryController(new FileHelper(Paths.get(System.getProperty("user.dir"), "public"))),
+                      new FileController(new FileHelper(Paths.get(System.getProperty("user.dir"), "public"))),
+                      new PartialContentController(
+                              new FileHelper(Paths.get(System.getProperty("user.dir"), "public")),
+                              new MockFileIO()),
                       new ErrorController(),
                       new Routes(),
                       Paths.get(System.getProperty("user.dir") + "/" + "public")),

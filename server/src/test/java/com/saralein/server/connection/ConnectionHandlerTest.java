@@ -56,9 +56,11 @@ public class ConnectionHandlerTest {
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
         Controller fileController = new MockController(200, "File response");
+        Controller partialContentController = new MockController(200, "Partial content response");
         Routes routes = new Routes();
 
-        Router router = new Router(directoryController, fileController, notFoundController, routes, root);
+        Router router = new Router(directoryController, fileController,
+                partialContentController, notFoundController, routes, root);
         connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
     }
 

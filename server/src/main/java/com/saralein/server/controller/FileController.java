@@ -7,7 +7,6 @@ import com.saralein.server.response.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FileController implements Controller {
     private final FileHelper fileHelper;
@@ -28,8 +27,7 @@ public class FileController implements Controller {
     }
 
     private byte[] createBody(Request request) {
-        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
-        Path resource = Paths.get(resourceUri);
+        Path resource = fileHelper.createAbsolutePath(request.getUri());
 
         byte[] fileByte = new byte[]{};
 
