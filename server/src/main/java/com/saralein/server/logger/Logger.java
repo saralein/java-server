@@ -5,5 +5,4 @@ public interface Logger {
     void fatal(String message);
     void info(String message);
     void trace(String message);
-    String retrieveLog();
 }

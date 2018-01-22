@@ -1,5 +1,7 @@
 package com.saralein.cobspec.logger;
 
+import com.saralein.cobspec.data.Log;
+import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -9,20 +11,22 @@ import static org.junit.Assert.*;
 
 public class ApplicationLoggerTest {
     private ByteArrayOutputStream output;
+    private LogStore logStore;
     private Logger logger;
 
     @Before
     public void setUp() {
         output = new ByteArrayOutputStream();
-        logger = new ApplicationLogger(new PrintStream(output));
+        logStore = new Log();
+        logger = new ApplicationLogger(new PrintStream(output), logStore);
     }
 
     @Test
     public void logsErrorToStreamAndLog() {
         logger.error("Test error");
 
-        assertTrue(output.toString().contains("Test error"));
-        assertTrue(logger.retrieveLog().contains("Test error\n"));
+        assertTrue(output.toString().contains("Test error\n"));
+        assertTrue(logStore.retrieveLog().contains("Test error\n"));
     }
 
     @Test
@@ -48,6 +52,6 @@ public class ApplicationLoggerTest {
         logger.trace(message);
 
         assertTrue(output.toString().contains(message));
-        assertTrue(logger.retrieveLog().contains(message));
+        assertTrue(logStore.retrieveLog().contains(message));
     }
 }

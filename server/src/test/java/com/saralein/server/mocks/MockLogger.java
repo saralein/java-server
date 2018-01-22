@@ -28,9 +28,4 @@ public class MockLogger implements Logger {
     public void trace(String message) {
         received = message;
     }
-
-    @Override
-    public String retrieveLog() {
-        return received;
-    }
 }

@@ -4,6 +4,8 @@ import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.controller.OptionsController;
 import com.saralein.cobspec.data.FormStore;
+import com.saralein.cobspec.data.Log;
+import com.saralein.cobspec.data.LogStore;
 import com.saralein.cobspec.logger.ApplicationLogger;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.protocol.Methods;
@@ -20,7 +22,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
-        Logger logger = new ApplicationLogger(System.out);
+        LogStore logStore = new Log();
+        Logger logger = new ApplicationLogger(System.out, logStore);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {

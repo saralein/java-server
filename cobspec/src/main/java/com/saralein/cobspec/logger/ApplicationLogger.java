@@ -1,24 +1,23 @@
 package com.saralein.cobspec.logger;
 
+import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
 import java.io.PrintStream;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ApplicationLogger implements Logger {
     private PrintStream printer;
-    private List<String> log;
+    private LogStore logStore;
 
-    public ApplicationLogger(PrintStream printer) {
+    public ApplicationLogger(PrintStream printer, LogStore logStore) {
         this.printer = printer;
-        this.log = new ArrayList<>();
+        this.logStore = logStore;
     }
 
     @Override
     public void error(String error) {
         String message = formatMessage("ERROR", error);
-        log.add(message);
+        logStore.add(message);
         printer.print(message);
     }
 
@@ -35,13 +34,8 @@ public class ApplicationLogger implements Logger {
     @Override
     public void trace(String message) {
         String formattedMessage = formatMessage("TRACE", message);
-        log.add(formattedMessage);
+        logStore.add(formattedMessage);
         printer.print(formattedMessage);
-    }
-
-    @Override
-    public String retrieveLog() {
-        return String.join("", log);
     }
 
     private String formatMessage(String category, String message) {
