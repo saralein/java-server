@@ -14,18 +14,17 @@ public class ErrorControllerTest {
 
     @Before
     public void setUp() {
-        request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        request = new Request.Builder()
+                .method("GET")
+                .uri("/snarf.jpg")
+                .build();
 
         errorController = new ErrorController();
     }
 
     @Test
     public void returnsCorrectResponseForNotFound() {
-        Response notFoundResponse = errorController.createResponse(request);
+        Response notFoundResponse = errorController.respond(request);
 
         Header header = notFoundResponse.getHeader();
 
@@ -36,7 +35,7 @@ public class ErrorControllerTest {
     @Test
     public void returnsCorrectResponseForNotAllowed() {
         ErrorController notAllowedController =  errorController.updateStatus(405);
-        Response notAllowedResponse = notAllowedController.createResponse(request);
+        Response notAllowedResponse = notAllowedController.respond(request);
 
         Header header = notAllowedResponse.getHeader();
 

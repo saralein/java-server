@@ -3,7 +3,6 @@ package com.saralein.server.mocks;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 
 public class MockController implements Controller {
     private int status;
@@ -14,10 +13,10 @@ public class MockController implements Controller {
         this.body = body;
     }
 
-    public Response createResponse(Request request) {
-        return new ResponseBuilder()
-                .addStatus(status)
-                .addBody(body)
+    public Response respond(Request request) {
+        return new Response.Builder()
+                .status(status)
+                .body(body)
                 .build();
     }
 }

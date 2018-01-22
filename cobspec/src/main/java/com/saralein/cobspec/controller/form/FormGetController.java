@@ -4,7 +4,6 @@ import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseBuilder;
 import java.util.HashMap;
 
 public class FormGetController implements Controller {
@@ -16,11 +15,11 @@ public class FormGetController implements Controller {
         this.formBody = formBody;
     }
 
-    public Response createResponse(Request request) {
-        return new ResponseBuilder()
-                    .addStatus(200)
+    public Response respond(Request request) {
+        return new Response.Builder()
+                    .status(200)
                     .addHeader("Content-Type", "text/html")
-                    .addBody(createBody(request))
+                    .body(createBody(request))
                     .build();
     }
 

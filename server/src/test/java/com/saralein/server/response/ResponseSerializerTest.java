@@ -4,10 +4,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ResponseSerializerTest {
-    private Response response = new ResponseBuilder()
-                                      .addStatus(200)
+    private Response response = new Response.Builder()
+                                      .status(200)
                                       .addHeader("Content-Type", "text/html")
-                                      .addBody("<h1>I AM A HEADER</h1>")
+                                      .body("<h1>I AM A HEADER</h1>")
                                       .build();
     private String responseString = "HTTP/1.1 200 OK\r\n" +
                                     "Content-Type: text/html\r\n\r\n" +

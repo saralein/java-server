@@ -37,24 +37,22 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
 
         directoryString = "GET / HTTP/1.1";
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request directoryRequest = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
         Controller directoryController = new MockController(200, "Directory response");
 
-        Response directoryResponse = directoryController.createResponse(directoryRequest);
+        Response directoryResponse = directoryController.respond(directoryRequest);
         directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
         notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Request notFoundRequest = new Request(new HashMap<String, String>() {{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request notFoundRequest = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
         ErrorController notFoundController = new ErrorController();
-        Response notFoundResponse = notFoundController.createResponse(notFoundRequest);
+        Response notFoundResponse = notFoundController.respond(notFoundRequest);
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
         Controller fileController = new MockController(200, "File response");

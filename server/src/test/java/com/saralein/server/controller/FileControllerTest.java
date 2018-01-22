@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import javafx.util.Pair;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class FileControllerTest {
     private FileHelper fileHelper;
@@ -24,41 +22,31 @@ public class FileControllerTest {
         fileHelper = new FileHelper(root);
     }
 
-    private byte[] getFileBytes(String filePath) {
-        byte[] fileByte = null;
-
-        try {
-            Path file = Paths.get(filePath);
-            fileByte = Files.readAllBytes(file);
-        } catch (IOException e) {
-            fail("Failed to createContents file bytes in test.");
-        }
-
-        return fileByte;
+    private byte[] getFileBytes(String filePath) throws IOException {
+        Path file = Paths.get(filePath);
+        return Files.readAllBytes(file);
     }
 
-    private Pair<byte[], Response> createResponse(Request request, String mimeType) {
+    private Request createRequest(String uri) {
+        return new Request.Builder()
+                .method("GET")
+                .uri(uri)
+                .build();
+    }
+
+    private Response createResponse(Request request, String mimeType) {
         Header header = new Header();
-        header.addStatus(200);
+        header.status(200);
         header.addHeader("Content-Type", mimeType);
 
-        return new Pair<>(
-            getFileBytes("src/test/public" + request.getUri()),
-            new FileController(fileHelper).createResponse(request)
-        );
+        return new FileController(fileHelper).respond(request);
     }
 
     @Test
-    public void returnsResponseForJPG() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
-
-        Pair<byte[], Response> jpgPair = createResponse(request, "image/jpeg");
-        byte[] body = jpgPair.getKey();
-        Response response = jpgPair.getValue();
+    public void returnsResponseForJPG() throws IOException {
+        Request request = createRequest("/cheetara.jpg");
+        Response response = createResponse(request, "image/jpeg");
+        byte[] body = getFileBytes("src/test/public/cheetara.jpg");
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n", header.formatToString());
@@ -66,17 +54,10 @@ public class FileControllerTest {
     }
 
     @Test
-    public void returnsResponseForGIF() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/marshmallow.gif");
-            put("version", "HTTP/1.1");
-        }});
-
-
-        Pair<byte[], Response> gifPair = createResponse(request, "image/gif");
-        byte[] body = gifPair.getKey();
-        Response response = gifPair.getValue();
+    public void returnsResponseForGIF() throws IOException {
+        Request request = createRequest("/marshmallow.gif");
+        Response response = createResponse(request, "image/gif");
+        byte[] body = getFileBytes("src/test/public/marshmallow.gif");
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: image/gif\r\n\r\n", header.formatToString());
@@ -84,16 +65,10 @@ public class FileControllerTest {
     }
 
     @Test
-    public void returnsResponseForTXT() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/recipe.txt");
-            put("version", "HTTP/1.1");
-        }});
-
-        Pair<byte[], Response> txtPair = createResponse(request, "text/plain");
-        byte[] body = txtPair.getKey();
-        Response response = txtPair.getValue();
+    public void returnsResponseForTXT() throws IOException {
+        Request request = createRequest("/recipe.txt");
+        Response response = createResponse(request, "text/plain");
+        byte[] body = getFileBytes("src/test/public/recipe.txt");
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n", header.formatToString());
@@ -101,16 +76,10 @@ public class FileControllerTest {
     }
 
     @Test
-    public void returnsResponseForPDF() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cake.pdf");
-            put("version", "HTTP/1.1");
-        }});
-
-        Pair<byte[], Response> pdfPair = createResponse(request, "application/pdf");
-        byte[] body = pdfPair.getKey();
-        Response response = pdfPair.getValue();
+    public void returnsResponseForPDF() throws IOException {
+        Request request = createRequest("/cake.pdf");
+        Response response = createResponse(request, "application/pdf");
+        byte[] body = getFileBytes("src/test/public/cake.pdf");
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: application/pdf\r\n\r\n", header.formatToString());

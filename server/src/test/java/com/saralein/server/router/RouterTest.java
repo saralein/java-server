@@ -31,13 +31,11 @@ public class RouterTest {
 
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
-        Request notFoundRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/snarf.jpg");
-            put("version", "HTTP/1.1");
-        }});
-
-        Response response = router.resolveRequest(notFoundRequest);
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/snarf.jpg")
+                .build();
+        Response response = router.resolveRequest(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -45,13 +43,12 @@ public class RouterTest {
 
     @Test
     public void returnsDirectoryResponseForDirectory() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
 
-        Response response = router.resolveRequest(directoryRequest);
+        Response response = router.resolveRequest(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -60,13 +57,12 @@ public class RouterTest {
 
     @Test
     public void returnsFileResponseForFile() {
-        Request fileRequest = new Request(new HashMap<String, String>(){{
-            put("method", "GET");
-            put("uri", "/cheetara.jpg");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/cheetara.jpg")
+                .build();
 
-        Response response = router.resolveRequest(fileRequest);
+        Response response = router.resolveRequest(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -75,13 +71,12 @@ public class RouterTest {
 
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
-        Request directoryRequest = new Request(new HashMap<String, String>(){{
-            put("method", "DELETE");
-            put("uri", "/");
-            put("version", "HTTP/1.1");
-        }});
+        Request request = new Request.Builder()
+                .method("DELETE")
+                .uri("/")
+                .build();
 
-        Response response = router.resolveRequest(directoryRequest);
+        Response response = router.resolveRequest(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

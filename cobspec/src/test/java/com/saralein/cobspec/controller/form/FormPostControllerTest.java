@@ -18,21 +18,19 @@ public class FormPostControllerTest {
     @Before
     public void setUp() {
         String body = "<p>My=Data<br>More=Stuff<br></p>";
-
         bodyArray = body.getBytes();
 
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "POST");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&More=Stuff");
-        }});
+        Request request = new Request.Builder()
+                .method("POST")
+                .uri("/form")
+                .body("My=Data&More=Stuff")
+                .build();
 
         formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
         formPostController = new FormPostController(formStore, formBody, formModification);
-        formResponse = formPostController.createResponse(request);
+        formResponse = formPostController.respond(request);
     }
 
     @Test
@@ -58,14 +56,13 @@ public class FormPostControllerTest {
 
     @Test
     public void returnsCorrectResponseForBadRequests() {
-        Request request = new Request(new HashMap<String, String>(){{
-            put("method", "POST");
-            put("uri", "/form");
-            put("version", "HTTP/1.1");
-            put("body", "My=Data&MoreStuff");
-        }});
+        Request request = new Request.Builder()
+                .method("POST")
+                .uri("/form")
+                .body("My=Data&MoreStuff")
+                .build();
 
-        Response response = formPostController.createResponse(request);
+        Response response = formPostController.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
