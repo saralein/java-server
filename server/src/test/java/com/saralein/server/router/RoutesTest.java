@@ -41,4 +41,12 @@ public class RoutesTest {
     public void returnsControllerForRoute() {
         assertEquals(MockRedirect.class, routes.retrieveController("/redirect", "GET").getClass());
     }
+
+    @Test
+    public void addsRouteConfigToSpecifiedRoute() {
+        RouteConfig routeConfig = new RouteConfig().add("test", "value");
+        routes.use("/logs", routeConfig);
+
+        assertEquals(routeConfig, routes.getConfig("/logs"));
+    }
 }

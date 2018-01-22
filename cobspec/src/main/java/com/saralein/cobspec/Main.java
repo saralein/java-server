@@ -11,6 +11,7 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.middleware.AuthMiddleware;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.Application;
+import com.saralein.server.router.RouteConfig;
 import com.saralein.server.router.Routes;
 import com.saralein.cobspec.validation.ArgsValidation;
 import com.saralein.cobspec.validation.DirectoryValidator;
@@ -52,9 +53,11 @@ public class Main {
     }
 
     private static Application configureApplication(Logger logger, Path root, Path logTxt) {
+        Routes routes = createRoutes(logTxt);
+
         return new Application.Builder(logger, root)
-                .router(createRoutes(logTxt))
-                .use(new AuthMiddleware("admin", "hunter2", "ServerCity"))
+                .router(routes)
+                .use(new AuthMiddleware(routes, "ServerCity"))
                 .build();
     }
 
@@ -62,6 +65,9 @@ public class Main {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
+        RouteConfig logConfig = new RouteConfig()
+                .add("username", "admin")
+                .add("password", "hunter2");
 
         return new Routes()
                 .get("/redirect", new RedirectController())
@@ -78,6 +84,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logTxt));
+                .get("/logs", new LogController(logTxt))
+                .use("/logs", logConfig);
     }
 }

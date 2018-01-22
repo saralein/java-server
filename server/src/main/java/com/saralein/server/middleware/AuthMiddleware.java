@@ -2,18 +2,18 @@ package com.saralein.server.middleware;
 
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
+import com.saralein.server.router.RouteConfig;
+import com.saralein.server.router.Routes;
 import java.util.Base64;
 
 public class AuthMiddleware extends Middleware {
-    private final String username;
-    private final String password;
     private final String realm;
+    private final Routes routes;
 
-    public AuthMiddleware(String username, String password, String realm) {
+    public AuthMiddleware(Routes routes, String realm) {
         super();
-        this.username = username;
-        this.password = password;
         this.realm = realm;
+        this.routes = routes;
     }
 
     @Override
@@ -43,13 +43,29 @@ public class AuthMiddleware extends Middleware {
         }
     }
 
-    private String encodeValidAuthorization() {
+    private String encodeValidAuthorization(String username, String password) {
         String validAuthorization = username + ":" + password;
         return Base64.getEncoder().encodeToString(validAuthorization.getBytes());
     }
 
     private boolean isAuthorized(Request request) {
-        return !request.getUri().equals("/logs") ||
-                encodeValidAuthorization().equals(parseRequestAuthorization(request));
+        return !requiresAuth(request) ||
+                hasValidCredentials(request);
+    }
+
+    private boolean requiresAuth(Request request) {
+        RouteConfig configuration = getConfiguration(request);
+        return configuration.getValue("username") != null && configuration.getValue("password") != null;
+    }
+
+    private boolean hasValidCredentials(Request request) {
+        RouteConfig configuration = getConfiguration(request);
+        String username = configuration.getValue("username");
+        String password = configuration.getValue("password");
+        return encodeValidAuthorization(username, password).equals(parseRequestAuthorization(request));
+    }
+
+    private RouteConfig getConfiguration(Request request) {
+        return routes.getConfig(request.getUri());
     }
 }

@@ -3,12 +3,15 @@ package com.saralein.server.router;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.protocol.Methods;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Routes {
-    private final HashMap<String, HashMap<Methods, Controller>> routes;
+    private final Map<String, HashMap<Methods, Controller>> routes;
+    private final Map<String, RouteConfig> configuration;
 
     public Routes() {
         this.routes = new HashMap<>();
+        this.configuration = new HashMap<>();
     }
 
     public Routes get(String uri, Controller controller) {
@@ -39,6 +42,15 @@ public class Routes {
     public Routes delete(String uri, Controller controller) {
         addRoute(uri, Methods.DELETE, controller);
         return this;
+    }
+
+    public Routes use(String uri, RouteConfig routeConfig) {
+        configuration.put(uri, routeConfig);
+        return this;
+    }
+
+    public RouteConfig getConfig(String uri) {
+        return configuration.getOrDefault(uri, new RouteConfig());
     }
 
     boolean matchesRouteAndMethod(String route, String method) {

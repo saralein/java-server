@@ -52,7 +52,8 @@ new Application.Builder(logger, root)
                   .post("/form", new FormController())
                   .put("/form", new FormController())
                   .delete("/form", new FormController())
-                  .get("/logs", new LogController()))
+                  .get("/logs", new LogController())
+                  .use("/logs", routeConfig))
      .use(middelware)
      .build();
 ```
@@ -73,6 +74,10 @@ Specific routes can be added to the routes instance using the following methods:
 `.delete(String uri, Controller controller)`    
 
 Methods correspond to their respective HTTP method: GET, POST, PUT, HEAD, OPTIONS, DELETE.
+
+Route configuration for use with middleware can be added using `use`:
+
+`.use(String uri, RouteConfig routeConfig)`
 
 ### Example Routes
 
@@ -136,7 +141,7 @@ public class AuthMiddleware extends Middleware {
 
 `middleware` (the cumulative application of middlewares over the server default middleware) is set in the `apply` method of `Middleware`.
 
-The above authorization middleware (which comes with the server for application use) checks if an incoming request is authorized to access a route.  If not, it returns a 401 response.  If so, it calls the cumulative middleware and sends the request in to eventually be handled by the router.
+The above authorization middleware (which comes with the server for application use) checks if an incoming request is authorized to access a route. (It checks username/password set in the `RouteConfig` for that route.)  If not authorized, it returns a 401 response.  If so, it calls the cumulative middleware and sends the request in to eventually be handled by the router.
 
 ## After You Create Your Application
 
@@ -171,12 +176,22 @@ The following section provides additional details on the public API for the HTTP
 
 | Type            | Method                                                        |
 | --------------- | ------------------------------------------------------------- |
-| `public Routes` | `get(String uri, Controller controller)`                      |
-| `public Routes` | `post(String uri, Controller controller)`                     |
-| `public Routes` | `put(String uri, Controller controller)`                      |
-| `public Routes` | `head(String uri, Controller controller)`                     |
-| `public Routes` | `options(String uri, Controller controller)`                  |
-| `public Routes` | `delete(String uri, Controller controller)`                   |
+| `public Routes`      | `get(String uri, Controller controller)`                 |
+| `public Routes`      | `post(String uri, Controller controller)`                |
+| `public Routes`      | `put(String uri, Controller controller)`                 |
+| `public Routes`      | `head(String uri, Controller controller)`                |
+| `public Routes`      | `options(String uri, Controller controller)`             |
+| `public Routes`      | `delete(String uri, Controller controller)`              |
+| `public Routes`      | `use(String uri, RouteConfig routeConfig)`               |
+| `public RouteConfig` | `getConfig(String uri)`                                  |
+
+**Class RouteConfig**
+
+| Type                 | Method                                                   |
+| -------------------- | -------------------------------------------------------- |
+| `public RouteConfig` | `add(String key, String value)`                          |
+| `public String`      | `getValue(String key)`                                   |
+
  
 **Interface Controller**
 

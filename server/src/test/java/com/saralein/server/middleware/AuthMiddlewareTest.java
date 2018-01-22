@@ -1,9 +1,12 @@
 package com.saralein.server.middleware;
 
+import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockMiddleware;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
+import com.saralein.server.router.RouteConfig;
+import com.saralein.server.router.Routes;
 import java.util.Base64;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +17,14 @@ public class AuthMiddlewareTest {
 
     @Before
     public void setUp() {
+        RouteConfig routeConfig = new RouteConfig()
+                .add("username", "admin")
+                .add("password", "hunter2");
+        Routes routes = new Routes()
+                .get("/logs", new MockController(200, "Log response"))
+                .use("/logs", routeConfig);
         MockMiddleware mockMiddleware = new MockMiddleware();
-        authMiddleware = new AuthMiddleware("admin", "hunter2", "ServerCity");
+        authMiddleware = new AuthMiddleware(routes, "ServerCity");
         authMiddleware.apply(mockMiddleware);
     }
 
