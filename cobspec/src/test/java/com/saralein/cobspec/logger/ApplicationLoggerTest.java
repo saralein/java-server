@@ -46,4 +46,13 @@ public class ApplicationLoggerTest {
         assertTrue(result.contains("I am logging!\n"));
         assertTrue(result.contains("I am still logging!\n"));
     }
+
+    @Test
+    public void logsRequestTraceToStreamAndLog() {
+        String message = "GET /cheetara.jpg HTTP/1.1";
+        logger.trace(message);
+
+        assertTrue(output.toString().contains(message));
+        assertTrue(logStore.retrieveLog().contains(message));
+    }
 }

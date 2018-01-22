@@ -32,6 +32,13 @@ public class ApplicationLogger implements Logger {
         printer.print(formatMessage("INFO", message));
     }
 
+    @Override
+    public void trace(String message) {
+        String formattedMessage = formatMessage("TRACE", message);
+        logStore.add(formattedMessage);
+        printer.print(formattedMessage);
+    }
+
     private String formatMessage(String category, String message) {
         return String.format("%s [%s] %s\n", category, Instant.now(), message);
     }
