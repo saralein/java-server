@@ -1,9 +1,6 @@
 package com.saralein.cobspec;
 
-import com.saralein.cobspec.controller.CoffeeController;
-import com.saralein.cobspec.controller.DefaultController;
-import com.saralein.cobspec.controller.OptionsController;
-import com.saralein.cobspec.controller.RedirectController;
+import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.data.LogStore;
@@ -13,6 +10,8 @@ import com.saralein.cobspec.validation.DirectoryValidator;
 import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
+import com.saralein.server.authorization.Authorizer;
+import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.router.Routes;
@@ -37,6 +36,9 @@ public class Main {
             FormBody formBody = new FormBody();
             FormModification formModification = new FormModification();
 
+            Authorizer authorizer = new Authorizer("admin", "hunter2");
+            UnauthorizedController unauthorizedController = new UnauthorizedController("ServerCity");
+
             new Application(logger)
                     .config(new Routes()
                                 .get("/redirect", new RedirectController())
@@ -52,7 +54,8 @@ public class Main {
                                 .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
                                 .get("/method_options2", new DefaultController())
                                 .get("/tea", new DefaultController())
-                                .get("/coffee", new CoffeeController()))
+                                .get("/coffee", new CoffeeController())
+                            .get("/logs", new LogController(logStore, authorizer, unauthorizedController)))
                     .start(port, root);
         } else {
             logger.fatal(String.join("\n", validationErrors));

@@ -26,6 +26,7 @@ public class ConnectionHandler implements Runnable {
     public void run() {
         try {
             Request request = requestParser.parse(socket.read());
+            logger.trace(request.getRequestLine());
             Response response = router.resolveRequest(request);
             socket.write(responseSerializer.convertToBytes(response));
             socket.close();
