@@ -1,84 +1,56 @@
 package com.saralein.server.router;
 
-import com.saralein.server.controller.Controller;
-import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RouterTest {
     private Router router;
 
     @Before
     public void setUp() {
-        String rootPath = System.getProperty("user.dir") + "/src/test/public";
-        Path root = Paths.get(rootPath);
+        Routes routes = new Routes().get("/stuff", new MockController(200, "Some stuff!"));
+        router = new Router(routes);
+    }
 
-        Controller directoryController = new MockController(200, "Directory response");
-        Controller fileController = new MockController(200, "File response");
-        ErrorController errorController = new ErrorController();
-        Routes routes = new Routes();
+    private Request createRequest(String method, String uri) {
+        return new Request.Builder()
+                .method(method)
+                .uri(uri)
+                .build();
+    }
 
-        router = new Router(directoryController, fileController, errorController, routes, root);
+    @Test
+    public void returns200ResponseForMatchingRoute() {
+        Request request = createRequest("GET", "/stuff");
+        Response response = router.respond(request);
+        Header header = response.getHeader();
+
+        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
+        assertArrayEquals("Some stuff!".getBytes(), response.getBody());
     }
 
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/snarf.jpg")
-                .build();
-        Response response = router.resolveRequest(request);
+        Request request = createRequest("GET", "/snarf.jpg");
+        Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returnsDirectoryResponseForDirectory() {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/")
-                .build();
-
-        Response response = router.resolveRequest(request);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertArrayEquals("Directory response".getBytes(), response.getBody());
-    }
-
-    @Test
-    public void returnsFileResponseForFile() {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/cheetara.jpg")
-                .build();
-
-        Response response = router.resolveRequest(request);
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertArrayEquals("File response".getBytes(), response.getBody());
+        assertArrayEquals("404: Page not found.".getBytes(), response.getBody());
     }
 
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
-        Request request = new Request.Builder()
-                .method("DELETE")
-                .uri("/")
-                .build();
-
-        Response response = router.resolveRequest(request);
+        Request request = createRequest("DELETE", "/stuff");
+        Response response = router.respond(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("".getBytes(), response.getBody());
     }
 }

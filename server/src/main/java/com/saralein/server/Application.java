@@ -1,48 +1,47 @@
 package com.saralein.server;
 
-import com.saralein.server.controller.ErrorController;
-import com.saralein.server.controller.DirectoryController;
-import com.saralein.server.controller.FileController;
-import com.saralein.server.logger.Logger;
-import com.saralein.server.request.RequestParser;
-import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
+import com.saralein.server.middleware.StaticMiddleware;
+import com.saralein.server.request.Request;
+import com.saralein.server.response.Response;
 import com.saralein.server.router.Router;
+import com.saralein.server.router.Routes;
 
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Application {
-    private final Logger logger;
-    private Routes routes;
+    private final StaticMiddleware staticMiddleware;
 
-    public Application(Logger logger) {
-        this.logger = logger;
-        this.routes = new Routes();
+    public Application(StaticMiddleware staticMiddleware) {
+        this.staticMiddleware = staticMiddleware;
     }
 
-    public Application config(Routes routes) {
-        this.routes = routes;
-        return this;
+    public Response call(Request request) {
+        return staticMiddleware.call(request);
     }
 
-    public void start(int port, Path root) {
-        Runtime runtime = Runtime.getRuntime();
-        FileHelper fileHelper = new FileHelper(root);
+    public static class Builder {
+        private Path root;
+        private Routes routes;
 
-        DirectoryController directoryController = new DirectoryController(fileHelper);
-        FileController fileController = new FileController(fileHelper);
+        public Builder(Path root) {
+            this.root = root;
+        }
 
-        ErrorController errorController = new ErrorController();
+        public Builder router(Routes routes) {
+            this.routes = routes;
+            return this;
+        }
 
-        Router router = new Router(directoryController, fileController, errorController, routes, root);
-        RequestParser requestParser = new RequestParser();
-        ResponseSerializer responseSerializer = new ResponseSerializer();
-        ExecutorService threadPool = Executors.newFixedThreadPool(10);
-        Server server = new ServerInitializer(
-                logger, runtime, router, requestParser, responseSerializer, threadPool).setup(port);
+        public Application build() {
+            Router router = configureRouter();
+            StaticMiddleware staticMiddleware = new StaticMiddleware(root, router);
+            return new Application(staticMiddleware);
+        }
 
-        server.run();
+        private Router configureRouter() {
+            return this.routes == null
+                    ? new Router(new Routes())
+                    : new Router(routes);
+        }
     }
 }

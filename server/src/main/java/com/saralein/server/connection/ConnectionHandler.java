@@ -1,24 +1,24 @@
 package com.saralein.server.connection;
 
+import com.saralein.server.Application;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Router;
 
 public class ConnectionHandler implements Runnable {
     private final Logger logger;
     private final Connection socket;
-    private final Router router;
+    private final Application application;
     private final RequestParser requestParser;
     private final ResponseSerializer responseSerializer;
 
-    public ConnectionHandler(Connection socket, Logger logger, Router router,
+    public ConnectionHandler(Connection socket, Logger logger, Application application,
                              RequestParser requestParser, ResponseSerializer responseSerializer) {
         this.socket = socket;
         this.logger = logger;
-        this.router = router;
+        this.application = application;
         this.requestParser = requestParser;
         this.responseSerializer = responseSerializer;
     }
@@ -28,7 +28,7 @@ public class ConnectionHandler implements Runnable {
         try {
             Request request = requestParser.parse(socket.read());
             logger.trace(request.getRequestLine());
-            Response response = router.resolveRequest(request);
+            Response response = application.call(request);
             socket.write(responseSerializer.convertToBytes(response));
             socket.close();
         } catch (Exception e) {

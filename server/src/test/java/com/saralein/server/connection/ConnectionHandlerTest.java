@@ -1,7 +1,8 @@
 package com.saralein.server.connection;
 
-import com.saralein.server.controller.Controller;
-import com.saralein.server.controller.ErrorController;
+import com.saralein.server.Application;
+import com.saralein.server.FileHelper;
+import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
@@ -13,61 +14,58 @@ import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
     private ConnectionHandler connectionHandler;
-    private String directoryString;
-    private String notFoundString;
-    private byte[] directoryBytes;
-    private byte[] notFoundBytes;
+    private MockController directoryController;
+    private ResponseSerializer responseSerializer;
 
     @Before
     public void setUp() {
-        String rootPath = System.getProperty("user.dir") + "/src/test/public";
-        Path root = Paths.get(rootPath);
+        Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         MockLogger logger = new MockLogger();
         RequestParser requestParser = new RequestParser();
-        ResponseSerializer responseSerializer = new ResponseSerializer();
-
+        responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
-
-        directoryString = "GET / HTTP/1.1";
-        Request directoryRequest = new Request.Builder()
-                .method("GET")
-                .uri("/")
-                .build();
-        Controller directoryController = new MockController(200, "Directory response");
-
-        Response directoryResponse = directoryController.respond(directoryRequest);
-        directoryBytes = responseSerializer.convertToBytes(directoryResponse);
-
-        notFoundString = "GET /snarf.jpg HTTP/1.1";
-        Request notFoundRequest = new Request.Builder()
-                .method("GET")
-                .uri("/")
-                .build();
-        ErrorController notFoundController = new ErrorController();
-        Response notFoundResponse = notFoundController.respond(notFoundRequest);
-        notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
-
-        Controller fileController = new MockController(200, "File response");
-        Routes routes = new Routes();
-
-        Router router = new Router(directoryController, fileController, notFoundController, routes, root);
-        connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
+        directoryController = new MockController(200, "Directory response");
+        Router router = new Router(new Routes());
+        StaticMiddleware staticMiddleware = new StaticMiddleware(
+                new FileHelper(root), router, directoryController, directoryController);
+        Application application = new Application(staticMiddleware);
+        connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
 
     @Test
-    public void getsRequestFromSocketAndSendsResponse() {
+    public void handlesValidRequestFromSocket() {
+        String directoryString = "GET / HTTP/1.1";
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/")
+                .build();
+
+        Response directoryResponse = directoryController.respond(request);
+        byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
+
         socket.setRequest(directoryString);
         connectionHandler.run();
 
         assertArrayEquals(directoryBytes, socket.getResponseReceived());
+    }
+
+    @Test
+    public void handlesInvalidRequestFromSocket() {
+        String notFoundString = "GET /snarf.jpg HTTP/1.1";
+        Response response = new Response.Builder()
+                .status(404)
+                .addHeader("Content-Type", "text/html")
+                .body("404: Page not found.")
+                .build();
+
+        byte[] notFoundBytes = responseSerializer.convertToBytes(response);
 
         socket.setRequest(notFoundString);
         connectionHandler.run();
