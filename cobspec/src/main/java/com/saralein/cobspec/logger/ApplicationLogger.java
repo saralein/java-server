@@ -2,6 +2,7 @@ package com.saralein.cobspec.logger;
 
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
+
 import java.io.PrintStream;
 import java.time.Instant;
 
@@ -29,13 +30,6 @@ public class ApplicationLogger implements Logger {
     @Override
     public void info(String message) {
         printer.print(formatMessage("INFO", message));
-    }
-
-    @Override
-    public void trace(String message) {
-        String formattedMessage = formatMessage("TRACE", message);
-        logStore.add(formattedMessage);
-        printer.print(formattedMessage);
     }
 
     private String formatMessage(String category, String message) {

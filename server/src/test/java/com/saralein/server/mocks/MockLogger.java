@@ -23,9 +23,4 @@ public class MockLogger implements Logger {
     public void info(String message) {
         received = message;
     }
-
-    @Override
-    public void trace(String message) {
-        received = message;
-    }
 }

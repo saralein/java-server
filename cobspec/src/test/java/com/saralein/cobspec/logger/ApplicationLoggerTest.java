@@ -3,11 +3,13 @@ package com.saralein.cobspec.logger;
 import com.saralein.cobspec.data.Log;
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import static org.junit.Assert.assertTrue;
 
 public class ApplicationLoggerTest {
     private ByteArrayOutputStream output;
@@ -44,14 +46,5 @@ public class ApplicationLoggerTest {
 
         assertTrue(result.contains("I am logging!\n"));
         assertTrue(result.contains("I am still logging!\n"));
-    }
-
-    @Test
-    public void logsRequestTraceToStreamAndLog() {
-        String message = "GET /cheetara.jpg HTTP/1.1";
-        logger.trace(message);
-
-        assertTrue(output.toString().contains(message));
-        assertTrue(logStore.retrieveLog().contains(message));
     }
 }
