@@ -1,6 +1,21 @@
 package com.saralein.cobspec.data;
 
-public interface LogStore {
-    void add(String message);
-    String retrieveLog();
+import java.util.ArrayList;
+import java.util.List;
+
+public class LogStore {
+    private final List<String> log;
+
+    public LogStore() {
+        this.log = new ArrayList<>();
+    }
+
+    public void add(String message) {
+        log.add(message);
+    }
+
+    public String retrieveLog() {
+        return String.join("", log);
+    }
+
 }

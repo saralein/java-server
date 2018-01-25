@@ -1,6 +1,5 @@
 package com.saralein.cobspec.logger;
 
-import com.saralein.cobspec.data.Log;
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
 import org.junit.Before;
@@ -19,7 +18,7 @@ public class ApplicationLoggerTest {
     @Before
     public void setUp() {
         output = new ByteArrayOutputStream();
-        logStore = new Log();
+        logStore = new LogStore();
         logger = new ApplicationLogger(new PrintStream(output), logStore);
     }
 

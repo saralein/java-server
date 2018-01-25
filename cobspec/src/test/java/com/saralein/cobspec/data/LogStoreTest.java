@@ -1,12 +1,13 @@
 package com.saralein.cobspec.data;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class LogTest {
+import static org.junit.Assert.assertEquals;
+
+public class LogStoreTest {
     @Test
     public void addLogMessagesToLog() {
-        LogStore logStore = new Log();
+        LogStore logStore = new LogStore();
         logStore.add("Message 1\n");
         logStore.add("Message 2\n");
 
