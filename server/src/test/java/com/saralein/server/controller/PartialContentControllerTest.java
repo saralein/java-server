@@ -2,18 +2,22 @@ package com.saralein.server.controller;
 
 import com.saralein.server.FileHelper;
 import com.saralein.server.mocks.MockFileIO;
+import com.saralein.server.partial_content.RangeParser;
+import com.saralein.server.partial_content.RangeValidator;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.junit.Assert.*;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class PartialContentControllerTest {
@@ -26,6 +30,16 @@ public class PartialContentControllerTest {
         this.range = range;
         this.start = start;
         this.end = end;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> getTestData() {
+        return Arrays.asList(new Object[][]{
+                {"bytes=0-9", 0, 9},
+                {"bytes=2-6", 2, 6},
+                {"bytes=2-", 2, 9},
+                {"bytes=-6", 4, 9}
+        });
     }
 
     private Request createRequest(String range) {
@@ -46,17 +60,8 @@ public class PartialContentControllerTest {
     public void setUp() {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         FileHelper fileHelper = new FileHelper(root);
-        partialContentController = new PartialContentController(fileHelper, new MockFileIO());
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> getTestData() {
-        return Arrays.asList(new Object[][]{
-                {"bytes=0-9", 0, 9},
-                {"bytes=2-6", 2, 6},
-                {"bytes=2-", 2, 9},
-                {"bytes=-6", 4, 9}
-        });
+        partialContentController = new PartialContentController(
+                fileHelper, new MockFileIO(), new RangeValidator(), new RangeParser());
     }
 
     @Test

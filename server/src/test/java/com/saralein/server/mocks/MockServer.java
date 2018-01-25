@@ -1,15 +1,18 @@
 package com.saralein.server.mocks;
 
 import com.saralein.server.FileHelper;
-import com.saralein.server.controller.ErrorController;
+import com.saralein.server.Server;
 import com.saralein.server.controller.DirectoryController;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.FileController;
 import com.saralein.server.controller.PartialContentController;
+import com.saralein.server.partial_content.RangeParser;
+import com.saralein.server.partial_content.RangeValidator;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import com.saralein.server.Server;
+import com.saralein.server.router.Routes;
+
 import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
@@ -25,7 +28,7 @@ public class MockServer extends Server {
                       new FileController(new FileHelper(Paths.get(System.getProperty("user.dir"), "public"))),
                       new PartialContentController(
                               new FileHelper(Paths.get(System.getProperty("user.dir"), "public")),
-                              new MockFileIO()),
+                              new MockFileIO(), new RangeValidator(), new RangeParser()),
                       new ErrorController(),
                       new Routes(),
                       Paths.get(System.getProperty("user.dir") + "/" + "public")),

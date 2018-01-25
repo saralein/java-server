@@ -1,15 +1,18 @@
 package com.saralein.server;
 
-import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.DirectoryController;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.FileController;
 import com.saralein.server.controller.PartialContentController;
 import com.saralein.server.filesystem.ServerFileIO;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.partial_content.RangeParser;
+import com.saralein.server.partial_content.RangeValidator;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
+import com.saralein.server.router.Routes;
+
 import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +37,8 @@ public class Application {
 
         DirectoryController directoryController = new DirectoryController(fileHelper);
         FileController fileController = new FileController(fileHelper);
-        PartialContentController partialContentController = new PartialContentController(fileHelper, new ServerFileIO());
+        PartialContentController partialContentController =
+                new PartialContentController(fileHelper, new ServerFileIO(), new RangeValidator(), new RangeParser());
 
         ErrorController errorController = new ErrorController();
 
