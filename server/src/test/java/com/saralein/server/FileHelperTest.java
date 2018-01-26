@@ -1,13 +1,15 @@
 package com.saralein.server;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class FileHelperTest {
     private FileHelper fileHelper;
@@ -59,9 +61,13 @@ public class FileHelperTest {
 
     @Test
     public void getsLengthOfFiles() throws IOException {
-        assertEquals(10, fileHelper.getFileLength(txtPath));
-        assertEquals(15587, fileHelper.getFileLength(jpgPath));
-        assertEquals(2628712, fileHelper.getFileLength(gifPath));
+        int txtLength = 10;
+        int jpgLength = 15587;
+        int gifLength = 2628712;
+
+        assertEquals(txtLength, fileHelper.getFileLength(txtPath));
+        assertEquals(jpgLength, fileHelper.getFileLength(jpgPath));
+        assertEquals(gifLength, fileHelper.getFileLength(gifPath));
     }
 
     @Test
