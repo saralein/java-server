@@ -1,7 +1,5 @@
 package com.saralein.server;
 
-import com.saralein.server.Server;
-import com.saralein.server.ServerInitializer;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
@@ -14,9 +12,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class ServerInitializerTest {
     private MockLogger logger;
@@ -29,8 +27,7 @@ public class ServerInitializerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        String rootPath = System.getProperty("user.dir") + "/" + "public";
-        Path root = Paths.get(rootPath);
+        Path root = Paths.get(System.getProperty("user.dir"), "public");
 
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
@@ -51,7 +48,7 @@ public class ServerInitializerTest {
             fail("Test failed to createContents blocking socket.");
         } finally {
             new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
-            assertEquals("Address already in use (Bind failed)", logger.getReceivedStatus());
+            assertEquals("Address already in use (Bind failed)", logger.getReceivedMessage());
         }
     }
 
