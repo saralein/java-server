@@ -16,14 +16,16 @@ public class PartialContentController implements Controller {
     private final FileIO fileIO;
     private final RangeValidator validator;
     private final RangeParser parser;
+    private final ErrorController errorController;
 
     public PartialContentController(
             FileHelper fileHelper, FileIO fileIO,
-            RangeValidator rangeValidator, RangeParser rangeParser) {
+            RangeValidator rangeValidator, RangeParser rangeParser, ErrorController errorController) {
         this.fileHelper = fileHelper;
         this.fileIO = fileIO;
         this.validator = rangeValidator;
         this.parser = rangeParser;
+        this.errorController = errorController;
     }
 
     @Override
@@ -31,9 +33,8 @@ public class PartialContentController implements Controller {
         try {
             return getResponse(request);
         } catch (IOException e) {
-            return new Response.Builder()
-                    .status(500)
-                    .build();
+            return errorController.updateStatus(500)
+                    .respond(request);
         }
     }
 
@@ -48,9 +49,15 @@ public class PartialContentController implements Controller {
 
         Range range = parser.parse(rawRange, fileLength);
 
-        return validator.isValidRange(range.getStart(), range.getEnd(), fileLength)
-                ? getValidRangeResponse(request, file, range, fileLength)
-                : getInvalidRangeResponse(fileLength);
+        return getResponseByNumericValidity(request, file, range, fileLength);
+    }
+
+    private Response getResponseByNumericValidity(Request request, Path file, Range range, int fileLength) throws IOException {
+        if (validator.isValidRange(range.getStart(), range.getEnd(), fileLength)) {
+            return getValidRangeResponse(request, file, range, fileLength);
+        }
+
+        return getInvalidRangeResponse(fileLength);
     }
 
     private Response getInvalidRangeResponse(int fileLength) {

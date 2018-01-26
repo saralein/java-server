@@ -28,7 +28,7 @@ public class MockServer extends Server {
                       new FileController(new FileHelper(Paths.get(System.getProperty("user.dir"), "public"))),
                       new PartialContentController(
                               new FileHelper(Paths.get(System.getProperty("user.dir"), "public")),
-                              new MockFileIO(), new RangeValidator(), new RangeParser()),
+                              new MockFileIO(), new RangeValidator(), new RangeParser(), new ErrorController()),
                       new ErrorController(),
                       new Routes(),
                       Paths.get(System.getProperty("user.dir") + "/" + "public")),

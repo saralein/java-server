@@ -61,7 +61,7 @@ public class PartialContentControllerTest {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         FileHelper fileHelper = new FileHelper(root);
         partialContentController = new PartialContentController(
-                fileHelper, new MockFileIO(), new RangeValidator(), new RangeParser());
+                fileHelper, new MockFileIO(), new RangeValidator(), new RangeParser(), new ErrorController());
     }
 
     @Test

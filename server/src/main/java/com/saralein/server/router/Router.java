@@ -4,7 +4,8 @@ import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.*;
+import com.saralein.server.response.Response;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,10 +58,7 @@ public class Router {
         if (resourceIsDirectory && isAllowedMethod) {
             return directoryController;
         } else if (isAllowedMethod) {
-            if (requestingPartialContent(request)) {
-                return partialContentController;
-            }
-            return fileController;
+            return routeFileRequest(request);
         } else {
             return errorController.updateStatus(405);
         }
@@ -77,6 +75,13 @@ public class Router {
         } else {
             return errorController.updateStatus(404);
         }
+    }
+
+    private Controller routeFileRequest(Request request) {
+        if (requestingPartialContent(request)) {
+            return partialContentController;
+        }
+        return fileController;
     }
 
     private boolean requestingPartialContent(Request request) {

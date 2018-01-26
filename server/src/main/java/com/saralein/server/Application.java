@@ -35,12 +35,11 @@ public class Application {
         Runtime runtime = Runtime.getRuntime();
         FileHelper fileHelper = new FileHelper(root);
 
+        ErrorController errorController = new ErrorController();
         DirectoryController directoryController = new DirectoryController(fileHelper);
         FileController fileController = new FileController(fileHelper);
-        PartialContentController partialContentController =
-                new PartialContentController(fileHelper, new ServerFileIO(), new RangeValidator(), new RangeParser());
-
-        ErrorController errorController = new ErrorController();
+        PartialContentController partialContentController = new PartialContentController(
+                fileHelper, new ServerFileIO(), new RangeValidator(), new RangeParser(), errorController);
 
         Router router = new Router(directoryController, fileController, partialContentController, errorController, routes, root);
         RequestParser requestParser = new RequestParser();
