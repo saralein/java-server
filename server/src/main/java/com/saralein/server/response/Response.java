@@ -1,5 +1,9 @@
 package com.saralein.server.response;
 
+import com.saralein.server.cookies.Cookie;
+
+import java.util.List;
+
 public class Response {
     private final Header header;
     private final byte[] body;
@@ -18,8 +22,13 @@ public class Response {
     }
 
     public static class Builder {
-        private byte[] body = new byte[]{};
-        private Header header = new Header();
+        private byte[] body;
+        private Header header;
+
+        public Builder() {
+            this.body = new byte[]{};
+            this.header = new Header();
+        }
 
         public Builder body(String body) {
             this.body = body.getBytes();
@@ -38,6 +47,11 @@ public class Response {
 
         public Builder addHeader(String title, String content) {
             header.addHeader(title, content);
+            return this;
+        }
+
+        public Builder setCookies(List<Cookie> cookies) {
+            header.setCookies(cookies);
             return this;
         }
 
