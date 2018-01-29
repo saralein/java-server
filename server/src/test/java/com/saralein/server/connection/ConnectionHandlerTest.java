@@ -63,7 +63,7 @@ public class ConnectionHandlerTest {
         Response response = new Response.Builder()
                 .status(404)
                 .addHeader("Content-Type", "text/html")
-                .body("404: Page not found.")
+                .body("404 Not Found")
                 .build();
 
         byte[] notFoundBytes = responseSerializer.convertToBytes(response);

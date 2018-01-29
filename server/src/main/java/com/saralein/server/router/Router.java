@@ -1,15 +1,22 @@
 package com.saralein.server.router;
 
-import com.saralein.server.middleware.Callable;
 import com.saralein.server.controller.Controller;
+import com.saralein.server.controller.ErrorController;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
 public class Router implements Callable {
     private final Routes routes;
+    private final ErrorController errorController;
 
     public Router(Routes routes) {
+        this(routes, new ErrorController());
+    }
+
+    public Router(Routes routes, ErrorController errorController) {
         this.routes = routes;
+        this.errorController = errorController;
     }
 
     public Response call(Request request) {
@@ -20,19 +27,15 @@ public class Router implements Callable {
             Controller controller = routes.retrieveController(uri, method);
             return controller.respond(request);
         } else if (routes.matchesRouteButNotMethod(uri, method)) {
-            return routeError(405);
+            return routeError(405, request);
         } else {
-            return routeError(404);
+            return routeError(404, request);
         }
     }
 
-    private Response routeError(int code) {
-        String body = code == 404 ? "404: Page not found." : "";
-
-        return new Response.Builder()
-                .status(code)
-                .addHeader("Content-Type", "text/html")
-                .body(body)
-                .build();
+    private Response routeError(int code, Request request) {
+        return errorController
+                .updateStatus(code)
+                .respond(request);
     }
 }
