@@ -7,33 +7,39 @@ import com.saralein.server.controller.FileController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.router.Router;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class StaticMiddleware {
+public class StaticMiddleware implements Middleware {
     private final FileHelper fileHelper;
-    private final Router router;
     private final Controller directoryController;
     private final Controller fileController;
+    private Callable next;
 
-    public StaticMiddleware(Path root, Router router) {
-        this(new FileHelper(root), router, new DirectoryController(new FileHelper(root)),
+    public StaticMiddleware(Path root) {
+        this(new FileHelper(root), new DirectoryController(new FileHelper(root)),
                 new FileController(new FileHelper(root)));
     }
 
     public StaticMiddleware(
             FileHelper fileHelper,
-            Router router,
             Controller directoryController,
             Controller fileController) {
         this.fileHelper = fileHelper;
-        this.router = router;
         this.directoryController = directoryController;
         this.fileController = fileController;
+        this.next = null;
     }
 
+    @Override
+    public Middleware apply(Callable callable) {
+        this.next = callable;
+        return this;
+    }
+
+    @Override
     public Response call(Request request) {
         String resource = fileHelper.createAbsolutePath(request.getUri());
         Path resourcePath = Paths.get(resource);
@@ -41,7 +47,7 @@ public class StaticMiddleware {
         if (resourceExists(resourcePath)) {
             return staticResponse(resourcePath, request);
         } else {
-            return router.respond(request);
+            return next.call(request);
         }
     }
 

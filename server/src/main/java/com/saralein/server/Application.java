@@ -1,5 +1,7 @@
 package com.saralein.server;
 
+import com.saralein.server.middleware.Callable;
+import com.saralein.server.middleware.Middleware;
 import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
@@ -9,14 +11,14 @@ import com.saralein.server.router.Routes;
 import java.nio.file.Path;
 
 public class Application {
-    private final StaticMiddleware staticMiddleware;
+    private final Callable callable;
 
-    public Application(StaticMiddleware staticMiddleware) {
-        this.staticMiddleware = staticMiddleware;
+    public Application(Callable callable) {
+        this.callable = callable;
     }
 
     public Response call(Request request) {
-        return staticMiddleware.call(request);
+        return callable.call(request);
     }
 
     public static class Builder {
@@ -33,9 +35,10 @@ public class Application {
         }
 
         public Application build() {
-            Router router = configureRouter();
-            StaticMiddleware staticMiddleware = new StaticMiddleware(root, router);
-            return new Application(staticMiddleware);
+            Callable router = configureRouter();
+            Middleware staticMiddleware = new StaticMiddleware(root);
+
+            return new Application(staticMiddleware.apply(router));
         }
 
         private Router configureRouter() {

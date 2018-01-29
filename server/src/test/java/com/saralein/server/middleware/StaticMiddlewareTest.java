@@ -2,21 +2,23 @@ package com.saralein.server.middleware;
 
 import com.saralein.server.FileHelper;
 import com.saralein.server.controller.Controller;
+import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import com.saralein.server.router.Router;
-import com.saralein.server.router.Routes;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.junit.Assert.*;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class StaticMiddlewareTest {
@@ -24,12 +26,17 @@ public class StaticMiddlewareTest {
     private final String expected;
     private StaticMiddleware staticMiddleware;
 
+    public StaticMiddlewareTest(String uri, String expected) {
+        this.uri = uri;
+        this.expected = expected;
+    }
+
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 {"/", "Directory response"},
                 {"/cheetara.jpg", "File response"},
-                {"/router", "Router response" }
+                {"/router", "Callable response"}
         });
     }
 
@@ -38,17 +45,11 @@ public class StaticMiddlewareTest {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
-        Routes routes = new Routes().get("/router", new MockController(200, "Router response"));
-        Router router = new Router(routes);
+        MockCallable mockCallable = new MockCallable();
 
-        staticMiddleware = new StaticMiddleware(new FileHelper(root), router, directoryController, fileController);
+        staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryController, fileController);
+        staticMiddleware.apply(mockCallable);
     }
-
-    public StaticMiddlewareTest(String uri, String expected) {
-        this.uri = uri;
-        this.expected = expected;
-    }
-
 
     @Test
     public void returnsProperResponseBasedOnType() {

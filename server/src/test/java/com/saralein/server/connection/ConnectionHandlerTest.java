@@ -10,12 +10,14 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
@@ -33,9 +35,8 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
         directoryController = new MockController(200, "Directory response");
         Router router = new Router(new Routes());
-        StaticMiddleware staticMiddleware = new StaticMiddleware(
-                new FileHelper(root), router, directoryController, directoryController);
-        Application application = new Application(staticMiddleware);
+        StaticMiddleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryController, directoryController);
+        Application application = new Application(staticMiddleware.apply(router));
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
 

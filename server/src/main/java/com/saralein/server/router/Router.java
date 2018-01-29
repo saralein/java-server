@@ -1,17 +1,18 @@
 package com.saralein.server.router;
 
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
-public class Router {
+public class Router implements Callable {
     private final Routes routes;
 
     public Router(Routes routes) {
         this.routes = routes;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         String uri = request.getUri();
         String method = request.getMethod();
 

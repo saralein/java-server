@@ -6,7 +6,9 @@ import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class RouterTest {
     private Router router;
@@ -27,7 +29,7 @@ public class RouterTest {
     @Test
     public void returns200ResponseForMatchingRoute() {
         Request request = createRequest("GET", "/stuff");
-        Response response = router.respond(request);
+        Response response = router.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
@@ -37,7 +39,7 @@ public class RouterTest {
     @Test
     public void returnsNotFoundResponseForNonExistentResources() {
         Request request = createRequest("GET", "/snarf.jpg");
-        Response response = router.respond(request);
+        Response response = router.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -47,7 +49,7 @@ public class RouterTest {
     @Test
     public void returnsNotAllowedForIncorrectMethodOnResource() {
         Request request = createRequest("DELETE", "/stuff");
-        Response response = router.respond(request);
+        Response response = router.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
