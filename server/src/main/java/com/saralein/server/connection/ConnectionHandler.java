@@ -23,6 +23,7 @@ public class ConnectionHandler implements Runnable {
         this.responseSerializer = responseSerializer;
     }
 
+    @Override
     public void run() {
         try {
             Request request = requestParser.parse(socket.read());

@@ -10,6 +10,7 @@ import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 import com.saralein.server.Server;
 import java.nio.file.Paths;
+import java.util.concurrent.Executors;
 
 public class MockServer extends Server {
     private boolean stopCalled = false;
@@ -25,7 +26,8 @@ public class MockServer extends Server {
                       new Routes(),
                       Paths.get(System.getProperty("user.dir") + "/" + "public")),
               new RequestParser(),
-              new ResponseSerializer());
+              new ResponseSerializer(),
+              Executors.newSingleThreadExecutor());
     }
 
     @Override

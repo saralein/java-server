@@ -7,27 +7,30 @@ import com.saralein.server.logger.Logger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
-
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
-public class Server implements Runnable {
+public class Server {
     private final ServerSocket serverSocket;
     private final Logger logger;
     private final Router router;
     private final RequestParser requestParser;
     private final String serverIP;
     private final ResponseSerializer responseSerializer;
+    private final ExecutorService threadPool;
+    private boolean listening;
 
-    private boolean listening = true;
-
-    public Server(String serverIP, ServerSocket serverSocket, Logger logger, Router router,
-                  RequestParser requestParser, ResponseSerializer responseSerializer) {
+    public Server(String serverIP, ServerSocket serverSocket,
+                  Logger logger, Router router, RequestParser requestParser,
+                  ResponseSerializer responseSerializer, ExecutorService threadPool) {
         this.serverIP = serverIP;
         this.serverSocket = serverSocket;
         this.logger = logger;
         this.router = router;
         this.requestParser = requestParser;
         this.responseSerializer = responseSerializer;
+        this.threadPool = threadPool;
+        this.listening = true;
     }
 
     public void run() {
@@ -36,8 +39,9 @@ public class Server implements Runnable {
         try {
             while(listening) {
                 Connection socket = serverSocket.accept();
-                ConnectionHandler connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
-                connectionHandler.run();
+                threadPool.execute(
+                        new ConnectionHandler(socket, logger, router, requestParser, responseSerializer)
+                );
             }
             serverSocket.close();
         } catch (IOException e) {

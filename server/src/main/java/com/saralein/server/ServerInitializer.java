@@ -9,6 +9,7 @@ import com.saralein.server.router.Router;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
 
 public class ServerInitializer {
     private final Logger logger;
@@ -16,14 +17,17 @@ public class ServerInitializer {
     private final Router router;
     private final RequestParser requestParser;
     private final ResponseSerializer responseSerializer;
+    private final ExecutorService threadPool;
 
-    public ServerInitializer(Logger logger, Runtime runtime, Router router,
-                             RequestParser requestParser, ResponseSerializer responseSerializer) {
+    public ServerInitializer(Logger logger, Runtime runtime,
+                             Router router, RequestParser requestParser,
+                             ResponseSerializer responseSerializer, ExecutorService threadPool) {
         this.logger = logger;
         this.runtime = runtime;
         this.router = router;
         this.requestParser =requestParser;
         this.responseSerializer = responseSerializer;
+        this.threadPool = threadPool;
     }
 
     public Server setup(Integer port) {
@@ -36,7 +40,7 @@ public class ServerInitializer {
         }
 
         Server server = new Server(findServerIP(), serverSocket, logger, router,
-                                   requestParser, responseSerializer);
+                                   requestParser, responseSerializer, threadPool);
 
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 

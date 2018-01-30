@@ -6,14 +6,18 @@ import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
+import com.saralein.server.router.Routes;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.junit.Assert.*;
 
 public class ServerInitializerTest {
@@ -22,6 +26,7 @@ public class ServerInitializerTest {
     private Router router;
     private RequestParser requestParser;
     private ResponseSerializer responseSerializer;
+    private ExecutorService thread;
 
     @Before
     public void setUp() {
@@ -38,6 +43,7 @@ public class ServerInitializerTest {
         router = new Router(directoryController, fileController, notFoundController, routes, root);
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
+        thread = Executors.newSingleThreadExecutor();
     }
 
     @Test
@@ -47,14 +53,15 @@ public class ServerInitializerTest {
         } catch (IOException e) {
             fail("Test failed to createContents blocking socket.");
         } finally {
-            new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(6066);
+            new ServerInitializer(logger, runtime, router, requestParser, responseSerializer, thread).setup(6066);
             assertEquals("Address already in use (Bind failed)", logger.getReceivedMessage());
         }
     }
 
     @Test
     public void setsUpAndReturnsNewServer() {
-        Server server = new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(1337);
+        Server server = new ServerInitializer(
+                logger, runtime, router, requestParser, responseSerializer, thread).setup(1337);
 
         assertNotNull(server);
         assertEquals(Server.class, server.getClass());

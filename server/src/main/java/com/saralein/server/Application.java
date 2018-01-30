@@ -10,6 +10,8 @@ import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
 
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Application {
     private final Logger logger;
@@ -37,7 +39,9 @@ public class Application {
         Router router = new Router(directoryController, fileController, errorController, routes, root);
         RequestParser requestParser = new RequestParser();
         ResponseSerializer responseSerializer = new ResponseSerializer();
-        Server server = new ServerInitializer(logger, runtime, router, requestParser, responseSerializer).setup(port);
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
+        Server server = new ServerInitializer(
+                logger, runtime, router, requestParser, responseSerializer, threadPool).setup(port);
 
         server.run();
     }
