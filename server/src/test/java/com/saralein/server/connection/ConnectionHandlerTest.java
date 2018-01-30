@@ -9,14 +9,15 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
+import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;

@@ -1,29 +1,33 @@
 package com.saralein.server;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class FileHelperTest {
-    private Path root;
     private FileHelper fileHelper;
     private List<String> fileNames;
-    private String separator = FileSystems.getDefault().getSeparator();
-    private String rootPath = System.getProperty("user.dir") + "/src/test/public";
-    private String jpgPath = rootPath + separator + "cheetara.jpg";
-    private String txtPath = rootPath + separator + "recipe.txt";
-    private String gifPath = rootPath + separator + "marshmallow.gif";
-    private Path subdirectory = Paths.get(rootPath + separator + "sloths");
+    private Path root;
+    private Path jpgPath;
+    private Path txtPath;
+    private Path gifPath;
+    private Path subdirectory;
 
     @Before
     public void setUp() {
-        root = Paths.get(rootPath);
+        root = Paths.get(System.getProperty("user.dir"), "src/test/public");
+        jpgPath = root.resolve("cheetara.jpg");
+        txtPath = root.resolve("recipe.txt");
+        gifPath = root.resolve("marshmallow.gif");
+        subdirectory = root.resolve("sloths");
+
         fileHelper = new FileHelper(root);
         fileNames = new ArrayList<>();
 
@@ -36,9 +40,9 @@ public class FileHelperTest {
 
     @Test
     public void getsAbsolutePathOfFile() {
-        assertEquals(jpgPath, fileHelper.createAbsolutePath("cheetara.jpg"));
-        assertEquals(txtPath, fileHelper.createAbsolutePath("recipe.txt"));
-        assertEquals(gifPath, fileHelper.createAbsolutePath("marshmallow.gif"));
+        assertEquals(jpgPath, fileHelper.createAbsolutePath("/cheetara.jpg"));
+        assertEquals(txtPath, fileHelper.createAbsolutePath("/recipe.txt"));
+        assertEquals(gifPath, fileHelper.createAbsolutePath("/marshmallow.gif"));
     }
 
     @Test
@@ -56,11 +60,18 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getsNamesOfFilesInDirectory() {
-        try {
-            assertEquals(fileNames, fileHelper.listFileNames(root));
-        } catch (IOException e) {
-            fail("Failed to list file names in File Helper test.");
-        }
+    public void getsLengthOfFiles() throws IOException {
+        int txtLength = 10;
+        int jpgLength = 15587;
+        int gifLength = 2628712;
+
+        assertEquals(txtLength, fileHelper.getFileLength(txtPath));
+        assertEquals(jpgLength, fileHelper.getFileLength(jpgPath));
+        assertEquals(gifLength, fileHelper.getFileLength(gifPath));
+    }
+
+    @Test
+    public void getsNamesOfFilesInDirectory() throws IOException {
+        assertEquals(fileNames, fileHelper.listFileNames(root));
     }
 }

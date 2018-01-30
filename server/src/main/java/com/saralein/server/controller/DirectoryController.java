@@ -28,8 +28,7 @@ public class DirectoryController implements Controller {
 
     private String createBody(Request request) {
         StringBuilder filesHTML = new StringBuilder();
-        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
-        Path resource = Paths.get(resourceUri);
+        Path resource = fileHelper.createAbsolutePath(request.getUri());
 
         try {
             for (String filename : fileHelper.listFileNames(resource)) {

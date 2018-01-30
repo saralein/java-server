@@ -10,19 +10,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileHelper {
+    private static String separator = FileSystems.getDefault().getSeparator();
+    private static String emptyString = "";
     private Path root;
-    private String separator = FileSystems.getDefault().getSeparator();
 
     public FileHelper(Path root) {
         this.root = root;
     }
 
-    public String createAbsolutePath(String name) {
-        return root.toString() + separator + name;
+    public Path createAbsolutePath(String name) {
+        return root.resolve(name.substring(1));
     }
 
     public String createRelativeFilePath(String name, Path resource) {
-        return removeRootPortionOfPath(resource) + separator + name;
+        String resourceString = resource.toString();
+        return resourceString.replace(rootPathToString(), emptyString) + separator + name;
     }
 
     public String determineMimeType(String file) {
@@ -38,12 +40,16 @@ public class FileHelper {
                 .collect(Collectors.toList());
     }
 
-    private String removeRootPortionOfPath(Path resource) {
-        return resource.toString().replace(root.toString(), "");
+    public int getFileLength(Path file) throws IOException {
+        return (int) Files.size(file);
+    }
+
+    private String rootPathToString() {
+        return root.toString();
     }
 
     private String formatName(Path path) {
-        String nameEnding = Files.isDirectory(path) ? "/" : "";
+        String nameEnding = Files.isDirectory(path) ? separator : emptyString;
         return path.getFileName().toString() + nameEnding;
     }
 
