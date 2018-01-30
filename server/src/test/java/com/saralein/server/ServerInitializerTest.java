@@ -36,13 +36,11 @@ public class ServerInitializerTest {
 
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
-        Controller partialContentController = new MockController(200, "Partial content response");
         ErrorController notFoundController = new ErrorController();
 
         Routes routes = new Routes();
 
-        router = new Router(directoryController, fileController,
-                partialContentController, notFoundController, routes, root);
+        router = new Router(directoryController, fileController, notFoundController, routes, root);
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();

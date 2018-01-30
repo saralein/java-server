@@ -16,7 +16,6 @@ public class Router {
     private final Path root;
     private final Controller directoryController;
     private final Controller fileController;
-    private final Controller partialContentController;
     private final ErrorController errorController;
     private boolean resourceExists = false;
     private boolean resourceIsDirectory = false;
@@ -24,12 +23,10 @@ public class Router {
     public Router(
             Controller directoryController,
             Controller fileController,
-            Controller partialContentController,
             ErrorController errorController,
             Routes routes, Path root) {
         this.directoryController = directoryController;
         this.fileController = fileController;
-        this.partialContentController = partialContentController;
         this.errorController = errorController;
         this.routes = routes;
         this.root = root;
@@ -58,7 +55,7 @@ public class Router {
         if (resourceIsDirectory && isAllowedMethod) {
             return directoryController;
         } else if (isAllowedMethod) {
-            return routeFileRequest(request);
+            return fileController;
         } else {
             return errorController.updateStatus(405);
         }
@@ -75,16 +72,5 @@ public class Router {
         } else {
             return errorController.updateStatus(404);
         }
-    }
-
-    private Controller routeFileRequest(Request request) {
-        if (requestingPartialContent(request)) {
-            return partialContentController;
-        }
-        return fileController;
-    }
-
-    private boolean requestingPartialContent(Request request) {
-        return !request.getHeader("Range").isEmpty();
     }
 }

@@ -3,13 +3,13 @@ package com.saralein.server.partial_content;
 public class RangeParser {
     public Range parse(String range, int fileLength) {
         String modifiedRange = removeRangeUnit(range);
-        int hyphenIdx = modifiedRange.lastIndexOf("-");
+        int hyphenIndex = modifiedRange.lastIndexOf("-");
 
-        if (hyphenIdx == 0) {
+        if (hyphenIndex == 0) {
             return parseRangeFromEnd(modifiedRange, fileLength);
         }
 
-        if (hyphenIdx == modifiedRange.length() - 1) {
+        if (hyphenIndex == modifiedRange.length() - 1) {
             return parseRangeFromStart(modifiedRange, fileLength);
         }
 

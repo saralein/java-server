@@ -37,11 +37,11 @@ public class Application {
 
         ErrorController errorController = new ErrorController();
         DirectoryController directoryController = new DirectoryController(fileHelper);
-        FileController fileController = new FileController(fileHelper);
         PartialContentController partialContentController = new PartialContentController(
                 fileHelper, new ServerFileIO(), new RangeValidator(), new RangeParser(), errorController);
+        FileController fileController = new FileController(fileHelper, partialContentController);
 
-        Router router = new Router(directoryController, fileController, partialContentController, errorController, routes, root);
+        Router router = new Router(directoryController, fileController, errorController, routes, root);
         RequestParser requestParser = new RequestParser();
         ResponseSerializer responseSerializer = new ResponseSerializer();
         ExecutorService threadPool = Executors.newFixedThreadPool(10);

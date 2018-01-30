@@ -9,14 +9,15 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
+import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
@@ -56,11 +57,9 @@ public class ConnectionHandlerTest {
         notFoundBytes = responseSerializer.convertToBytes(notFoundResponse);
 
         Controller fileController = new MockController(200, "File response");
-        Controller partialContentController = new MockController(200, "Partial content response");
         Routes routes = new Routes();
 
-        Router router = new Router(directoryController, fileController,
-                partialContentController, notFoundController, routes, root);
+        Router router = new Router(directoryController, fileController, notFoundController, routes, root);
         connectionHandler = new ConnectionHandler(socket, logger, router, requestParser, responseSerializer);
     }
 
