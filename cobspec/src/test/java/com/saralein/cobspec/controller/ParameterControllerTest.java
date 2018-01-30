@@ -1,6 +1,5 @@
 package com.saralein.cobspec.controller;
 
-import com.saralein.server.controller.ErrorController;
 import com.saralein.server.parameters.ParameterDecoder;
 import com.saralein.server.parameters.ParameterParser;
 import com.saralein.server.request.Request;
@@ -19,8 +18,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class ParameterControllerTest {
     private static final String OK_HEADER = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
-    private static final String BAD_REQUEST_HEADER = "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n";
-    private static final String BAD_REQUEST_BODY = "400 Bad Request";
     private ParameterController parameterController;
     private String uri;
     private String expectedHeader;
@@ -61,16 +58,15 @@ public class ParameterControllerTest {
                 },
                 {
                         "/parameters?=stuff",
-                        BAD_REQUEST_HEADER,
-                        BAD_REQUEST_BODY
+                        OK_HEADER,
+                        ""
                 }
         });
     }
 
     @Before
     public void setUp() {
-        parameterController = new ParameterController(
-                new ParameterParser(), new ParameterDecoder(), new ErrorController());
+        parameterController = new ParameterController(new ParameterParser(), new ParameterDecoder());
     }
 
     @Test

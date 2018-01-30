@@ -1,9 +1,7 @@
 package com.saralein.server.parameters;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +9,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class ParameterParserTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
     private ParameterParser parameterParser;
 
     @Before
@@ -21,7 +17,7 @@ public class ParameterParserTest {
     }
 
     @Test
-    public void returnsEmptyParamsForUrlsWithoutParameters() throws Exception {
+    public void returnsEmptyParamsForUrlsWithoutParameters() {
         Map<String, String> expected = new HashMap<>();
 
         assertEquals(expected, parameterParser.parse("/parameters?"));
@@ -29,7 +25,7 @@ public class ParameterParserTest {
     }
 
     @Test
-    public void returnsMapForUrlsWithOneParameter() throws Exception {
+    public void returnsMapForUrlsWithOneParameter() {
         Map<String, String> expected = new HashMap<String, String>() {{
             put("variable", "stuff");
         }};
@@ -38,7 +34,7 @@ public class ParameterParserTest {
     }
 
     @Test
-    public void returnsMapForUrlsWithTwoParameters() throws Exception {
+    public void returnsMapForUrlsWithTwoParameters() {
         Map<String, String> expected = new HashMap<String, String>() {{
             put("variable", "stuff");
             put("another", "thing");
@@ -47,18 +43,30 @@ public class ParameterParserTest {
         assertEquals(expected, parameterParser.parse("/parameters?variable=stuff&another=thing"));
     }
 
-    @Test(expected = Exception.class)
-    public void throwsForMissingParameterName() throws Exception {
-        parameterParser.parse("/parameters?=stuff&another=thing");
+    @Test
+    public void handlesMissingParameterName() {
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("another", "thing");
+        }};
+
+        assertEquals(expected, parameterParser.parse("/parameters?=stuff&another=thing"));
     }
 
-    @Test(expected = Exception.class)
-    public void throwsForIncorrectParamDivision() throws Exception {
-        parameterParser.parse("/parameters?variable=stuff&another=thing&");
+
+    @Test
+    public void handlesIncorrectParamDivision() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("variable", "stuff");
+
+        assertEquals(expected, parameterParser.parse("/parameters?variable=stuff&"));
+
+        expected.put("another", "thing");
+
+        assertEquals(expected, parameterParser.parse("/parameters?variable=stuff&another=thing&"));
     }
 
     @Test
-    public void handlesValuelessParameters() throws Exception {
+    public void handlesValuelessParameters() {
         Map<String, String> expected = new HashMap<String, String>() {{
             put("variable", "");
             put("another", "thing");
@@ -69,7 +77,26 @@ public class ParameterParserTest {
     }
 
     @Test
-    public void parsesComplicatedParameters() throws Exception {
+    public void handlesExtraEqualsInParameter() {
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("variable", "stuff=thing");
+        }};
+
+        assertEquals(expected, parameterParser.parse("/parameters?variable=stuff=thing"));
+    }
+
+    @Test
+    public void handlesExtraParameterDeliminators() {
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("variable", "stuff");
+            put("another", "thing");
+        }};
+
+        assertEquals(expected, parameterParser.parse("/parameters?variable=stuff&&another=thing"));
+    }
+
+    @Test
+    public void parsesComplicatedParameters() {
         String uri = "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C" +
                 "%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff";
         String paramValue = "Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-" +

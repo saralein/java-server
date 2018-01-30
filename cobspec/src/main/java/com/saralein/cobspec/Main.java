@@ -11,7 +11,6 @@ import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
 import com.saralein.server.authorization.Authorizer;
-import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.parameters.ParameterDecoder;
@@ -60,7 +59,7 @@ public class Main {
                             .get("/coffee", new CoffeeController())
                             .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
                             .get("/parameters", new ParameterController(
-                                    new ParameterParser(), new ParameterDecoder(), new ErrorController())))
+                                    new ParameterParser(), new ParameterDecoder())))
                     .start(port, root);
         } else {
             logger.fatal(String.join("\n", validationErrors));
