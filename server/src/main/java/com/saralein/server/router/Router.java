@@ -4,7 +4,8 @@ import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.*;
+import com.saralein.server.response.Response;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +62,7 @@ public class Router {
     }
 
     private Controller routeUri(Request request) {
-        String uri = request.getUri();
+        String uri = uriWithoutParameters(request);
         String method = request.getMethod();
 
         if (routes.matchesRouteAndMethod(uri, method)) {
@@ -71,5 +72,9 @@ public class Router {
         } else {
             return errorController.updateStatus(404);
         }
+    }
+
+    private String uriWithoutParameters(Request request) {
+        return request.getUri().split("\\?")[0];
     }
 }

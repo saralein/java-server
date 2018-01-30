@@ -11,8 +11,11 @@ import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
 import com.saralein.server.authorization.Authorizer;
+import com.saralein.server.controller.ErrorController;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.parameters.ParameterDecoder;
+import com.saralein.server.parameters.ParameterParser;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.router.Routes;
 
@@ -41,21 +44,23 @@ public class Main {
 
             new Application(logger)
                     .config(new Routes()
-                                .get("/redirect", new RedirectController())
-                                .get("/form", new FormGetController(formStore, formBody))
-                                .post("/form", new FormPostController(formStore, formBody, formModification))
-                                .put("/form", new FormPutController(formStore, formBody, formModification))
-                                .delete("/form", new FormDeleteController(formStore))
-                                .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
-                                .get("/method_options", new DefaultController())
-                                .put("/method_options", new DefaultController())
-                                .post("/method_options", new DefaultController())
-                                .head("/method_options", new DefaultController())
-                                .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
-                                .get("/method_options2", new DefaultController())
-                                .get("/tea", new DefaultController())
-                                .get("/coffee", new CoffeeController())
-                            .get("/logs", new LogController(logStore, authorizer, unauthorizedController)))
+                            .get("/redirect", new RedirectController())
+                            .get("/form", new FormGetController(formStore, formBody))
+                            .post("/form", new FormPostController(formStore, formBody, formModification))
+                            .put("/form", new FormPutController(formStore, formBody, formModification))
+                            .delete("/form", new FormDeleteController(formStore))
+                            .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
+                            .get("/method_options", new DefaultController())
+                            .put("/method_options", new DefaultController())
+                            .post("/method_options", new DefaultController())
+                            .head("/method_options", new DefaultController())
+                            .options("/method_options2", new OptionsController(Methods.allowGetAndOptions()))
+                            .get("/method_options2", new DefaultController())
+                            .get("/tea", new DefaultController())
+                            .get("/coffee", new CoffeeController())
+                            .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
+                            .get("/parameters", new ParameterController(
+                                    new ParameterParser(), new ParameterDecoder(), new ErrorController())))
                     .start(port, root);
         } else {
             logger.fatal(String.join("\n", validationErrors));

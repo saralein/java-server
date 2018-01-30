@@ -6,12 +6,14 @@ import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class RouterTest {
     private Router router;
@@ -24,7 +26,8 @@ public class RouterTest {
         Controller directoryController = new MockController(200, "Directory response");
         Controller fileController = new MockController(200, "File response");
         ErrorController errorController = new ErrorController();
-        Routes routes = new Routes();
+        Routes routes = new Routes()
+                .get("/parameters", new MockController(200, "Parameter response"));
 
         router = new Router(directoryController, fileController, errorController, routes, root);
     }
@@ -80,5 +83,16 @@ public class RouterTest {
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+    }
+
+    @Test
+    public void returnsCorrectResponseForUrlWithParameters() {
+        Request request = new Request.Builder()
+                .method("GET")
+                .uri("/parameters?variable=stuff")
+                .build();
+        Response response = router.resolveRequest(request);
+
+        assertArrayEquals("Parameter response".getBytes(), response.getBody());
     }
 }
