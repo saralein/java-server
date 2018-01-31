@@ -1,24 +1,38 @@
 package com.saralein.server.request;
 
+import com.saralein.server.parameters.ParameterDecoder;
+import com.saralein.server.parameters.ParameterParser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import static com.saralein.server.Constants.CRLF;
 
 public class RequestParser {
+    private final ParameterParser parameterParser;
+    private final ParameterDecoder parameterDecoder;
+
+    public RequestParser(ParameterParser parameterParser, ParameterDecoder parameterDecoder) {
+        this.parameterParser = parameterParser;
+        this.parameterDecoder = parameterDecoder;
+    }
+
     public Request parse(String rawRequest) throws Exception {
         List<String> request = splitRawRequest(rawRequest);
         String[] requestLine = parseRequestLine(request);
         Map<String, String> headers = parseHeaders(request);
         String body = parseBody(request);
 
-        try {
-            return buildRequest(requestLine, headers, body);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new Exception("Bad request. Connection closed.");
-        }
+        String uri = getUri(requestLine);
+        Map<String, String> parameters = parameterParser.parse(uri);
+        Map<String, String> decodedParameters = parameterDecoder.decode(parameters);
+        String updatedUri = parameterParser.removeParamsFromUri(uri);
+
+
+        return getRequest(updatedUri, getMethod(requestLine), headers, body, decodedParameters);
     }
 
     private List<String> splitRawRequest(String rawRequest) {
@@ -28,12 +42,24 @@ public class RequestParser {
     }
 
     private String[] parseRequestLine(List<String> request) throws Exception {
+        String[] splitRequestLine = new String[]{};
+
         try {
             String requestLine = request.get(0);
-            return requestLine.split(" ");
+            splitRequestLine = requestLine.split(" ");
         } catch (IndexOutOfBoundsException e) {
-            throw new Exception("Bad request. Connection closed.");
+            throwException();
         }
+
+        if (!validRequestLineLength(splitRequestLine)) {
+            throwException();
+        }
+
+        return splitRequestLine;
+    }
+
+    private boolean validRequestLineLength(String[] requestLine) {
+        return requestLine.length == 3;
     }
 
     private Map<String, String> parseHeaders(List<String> request) {
@@ -65,11 +91,15 @@ public class RequestParser {
                 : "";
     }
 
-    private Request buildRequest(String[] requestLine, Map<String, String> headers, String body) {
+    private Request getRequest(
+            String uri, String method, Map<String, String> headers,
+            String body, Map<String, String> parameters
+    ) {
         return new Request.Builder()
-                .method(getMethod(requestLine))
-                .uri(getUri(requestLine))
+                .method(method)
+                .uri(uri)
                 .body(body)
+                .parameters(parameters)
                 .addHeaders(headers)
                 .build();
     }
@@ -80,5 +110,10 @@ public class RequestParser {
 
     private String getUri(String[] requestLine) {
         return requestLine[1];
+
+    }
+
+    private void throwException() throws Exception {
+        throw new Exception("Bad request. Connection closed.");
     }
 }

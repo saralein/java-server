@@ -6,6 +6,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ParameterParser {
+    private final String uriDelimiter;
+    private final String paramDelimiter;
+    private final String nameValueDelimiter;
+    private final String placeholder;
+
+    public ParameterParser() {
+        this.uriDelimiter = "\\?";
+        this.paramDelimiter = "&";
+        this.nameValueDelimiter = "=";
+        this.placeholder = "";
+
+    }
+
     public Map<String, String> parse(String uri) {
         Map<String, String> params = new HashMap<>();
         String[] splitUriAndParams = splitUriAndParams(uri);
@@ -18,16 +31,20 @@ public class ParameterParser {
         return params;
     }
 
+    public String removeParamsFromUri(String uri) {
+        return splitUriAndParams(uri)[0];
+    }
+
     private String[] splitUriAndParams(String uri) {
-        return uri.split("\\?");
+        return uri.split(uriDelimiter, 2);
     }
 
     private String[] splitMultipleParams(String params) {
-        return params.split("&");
+        return params.split(paramDelimiter);
     }
 
     private String[] splitParamNameAndValue(String params) {
-        return params.split("=", 2);
+        return params.split(nameValueDelimiter, 2);
     }
 
     private Map<String, String> mapParams(String rawParameters) {
@@ -44,12 +61,12 @@ public class ParameterParser {
     }
 
     private boolean hasValidName(String param) {
-        return param.indexOf("=") != 0;
+        return param.indexOf(nameValueDelimiter) != 0;
     }
 
     private String[] addPlaceholderForMissingValues(String[] param) {
         if (param.length == 1) {
-            return new String[]{param[0], ""};
+            return new String[]{param[0], placeholder};
         }
 
         return param;

@@ -84,15 +84,4 @@ public class RouterTest {
 
         assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
     }
-
-    @Test
-    public void returnsCorrectResponseForUrlWithParameters() {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/parameters?variable=stuff")
-                .build();
-        Response response = router.resolveRequest(request);
-
-        assertArrayEquals("Parameter response".getBytes(), response.getBody());
-    }
 }

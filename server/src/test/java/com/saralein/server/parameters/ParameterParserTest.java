@@ -108,4 +108,14 @@ public class ParameterParserTest {
 
         assertEquals(expected, parameterParser.parse(uri));
     }
+
+    @Test
+    public void removesParametersFromUri() {
+        String uri = "/parameters";
+        String queryUri = "/parameters?variable=thing";
+        String expected = "/parameters";
+
+        assertEquals(expected, parameterParser.removeParamsFromUri(uri));
+        assertEquals(expected, parameterParser.removeParamsFromUri(queryUri));
+    }
 }

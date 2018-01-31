@@ -13,8 +13,6 @@ import com.saralein.server.Application;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.parameters.ParameterDecoder;
-import com.saralein.server.parameters.ParameterParser;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.router.Routes;
 
@@ -58,8 +56,7 @@ public class Main {
                             .get("/tea", new DefaultController())
                             .get("/coffee", new CoffeeController())
                             .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
-                            .get("/parameters", new ParameterController(
-                                    new ParameterParser(), new ParameterDecoder())))
+                            .get("/parameters", new ParameterController()))
                     .start(port, root);
         } else {
             logger.fatal(String.join("\n", validationErrors));

@@ -62,7 +62,7 @@ public class Router {
     }
 
     private Controller routeUri(Request request) {
-        String uri = uriWithoutParameters(request);
+        String uri = request.getUri();
         String method = request.getMethod();
 
         if (routes.matchesRouteAndMethod(uri, method)) {
@@ -72,9 +72,5 @@ public class Router {
         } else {
             return errorController.updateStatus(404);
         }
-    }
-
-    private String uriWithoutParameters(Request request) {
-        return request.getUri().split("\\?")[0];
     }
 }

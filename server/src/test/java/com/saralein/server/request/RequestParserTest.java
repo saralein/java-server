@@ -1,19 +1,25 @@
 package com.saralein.server.request;
 
+import com.saralein.server.parameters.ParameterDecoder;
+import com.saralein.server.parameters.ParameterParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class RequestParserTest {
-    private RequestParser requestParser;
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(new ParameterParser(), new ParameterDecoder());
     }
 
     @Test
@@ -63,6 +69,19 @@ public class RequestParserTest {
         assertEquals("/", parsedRequest.getUri());
         assertEquals("26", parsedRequest.getHeader("Content-Length"));
         assertEquals("Content-Length is a header", parsedRequest.getBody());
+    }
+
+    @Test
+    public void parsesRequestWithParameters() throws Exception {
+        Map<String, String> parameters = new HashMap<String, String>() {{
+            put("variable", "stuff");
+        }};
+        String rawRequest = "GET /parameters?variable=stuff HTTP/1.1\r\n\r\n";
+        Request parsedRequest = requestParser.parse(rawRequest);
+
+        assertEquals("GET", parsedRequest.getMethod());
+        assertEquals("/parameters", parsedRequest.getUri());
+        assertEquals(parameters, parsedRequest.getParameters());
     }
 
     @Test(expected = Exception.class)

@@ -4,16 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
-    private final Map<String, String> request;
+    private final Map<String, String> headers;
+    private final Map<String, String> parameters;
     private String method;
     private String uri;
     private String body;
 
-    public Request(String method, String uri, String body, Map<String, String> headers) {
+    public Request(
+            String method, String uri, String body,
+            Map<String, String> headers, Map<String, String> parameters) {
         this.method = method;
         this.uri = uri;
         this.body = body;
-        this.request = headers;
+        this.headers = headers;
+        this.parameters = parameters;
     }
 
     public String getMethod() {
@@ -29,7 +33,11 @@ public class Request {
     }
 
     public String getHeader(String key) {
-        return request.getOrDefault(key, "");
+        return headers.getOrDefault(key, "");
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     public String getRequestLine() {
@@ -41,6 +49,7 @@ public class Request {
         private String uri = "";
         private String body = "";
         private Map<String, String> headers = new HashMap<>();
+        private Map<String, String> parameters = new HashMap<>();
 
         public Builder method(String method) {
             this.method = method;
@@ -67,8 +76,13 @@ public class Request {
             return this;
         }
 
+        public Builder parameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
         public Request build() {
-            return new Request(method, uri, body, headers);
+            return new Request(method, uri, body, headers, parameters);
         }
     }
 }

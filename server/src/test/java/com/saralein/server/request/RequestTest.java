@@ -1,9 +1,12 @@
 package com.saralein.server.request;
 
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class RequestTest {
     private Request request;
@@ -100,5 +103,18 @@ public class RequestTest {
     @Test
     public void returnsFullRequestLine() {
         assertEquals("GET /cheetara.jpg HTTP/1.1", request.getRequestLine());
+    }
+
+    @Test
+    public void setsParametersOfRequest() {
+        Map<String, String> parameters = new HashMap<String, String>() {{
+            put("variable", "stuff");
+        }};
+
+        Request request = new Request.Builder()
+                .parameters(parameters)
+                .build();
+
+        assertEquals(parameters, request.getParameters());
     }
 }
