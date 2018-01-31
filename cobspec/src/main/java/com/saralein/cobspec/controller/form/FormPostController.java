@@ -1,19 +1,20 @@
 package com.saralein.cobspec.controller.form;
 
+import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.controller.Controller;
-import com.saralein.cobspec.data.DataStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class FormPostController implements Controller {
-    private final DataStore dataStore;
+    private final FormStore formStore;
     private final FormBody formBody;
     private final FormModification formModification;
 
-    public FormPostController(DataStore dataStore, FormBody formBody, FormModification formModification) {
-        this.dataStore = dataStore;
+    public FormPostController(FormStore formStore, FormBody formBody, FormModification formModification) {
+        this.formStore = formStore;
         this.formBody = formBody;
         this.formModification = formModification;
     }
@@ -21,9 +22,9 @@ public class FormPostController implements Controller {
     public Response respond(Request request) {
         HashMap<String, String> formData = new LinkedHashMap<>();
 
-        boolean succeeded = formModification.processFormData(request, formData, dataStore);
+        boolean succeeded = formModification.processFormData(request, formData, formStore);
         Integer status = succeeded ? 200 : 400;
-        String body = succeeded ? formBody.formatDataToHtml(dataStore.retrieveData(request.getUri())) : "";
+        String body = succeeded ? formBody.formatDataToHtml(formStore.retrieveData(request.getUri())) : "";
 
         return new Response.Builder()
                     .status(status)

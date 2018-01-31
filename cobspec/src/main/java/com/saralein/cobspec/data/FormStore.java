@@ -2,26 +2,26 @@ package com.saralein.cobspec.data;
 
 import java.util.HashMap;
 
-public class FormStore implements DataStore {
-   private HashMap<String, HashMap<String, String>> dataStore;
+public class FormStore {
+    private HashMap<String, HashMap<String, String>> formStore;
 
    public FormStore() {
-       this.dataStore = new HashMap<>();
+       this.formStore = new HashMap<>();
    }
 
    public void addData(String id, HashMap<String, String> data) {
-       dataStore.put(id, data);
+       formStore.put(id, data);
    }
 
    public HashMap<String, String> retrieveData(String id) {
-       return dataStore.getOrDefault(id, new HashMap<>());
+       return formStore.getOrDefault(id, new HashMap<>());
    }
 
    public void deleteData(String id) {
-       dataStore.remove(id);
+       formStore.remove(id);
    }
 
    public boolean dataExistsForID(String id) {
-       return dataStore.containsKey(id);
+       return formStore.containsKey(id);
    }
 }

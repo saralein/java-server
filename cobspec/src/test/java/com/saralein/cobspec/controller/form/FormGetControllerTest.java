@@ -1,19 +1,21 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.cobspec.data.DataStore;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.LinkedHashMap;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class FormGetControllerTest {
     private Request request;
     private FormGetController formGetController;
-    private DataStore dataStore;
+    private FormStore formStore;
 
     @Before
     public void setUp() {
@@ -22,9 +24,9 @@ public class FormGetControllerTest {
                 .uri("/form")
                 .build();
 
-        dataStore = new FormStore();
+        formStore = new FormStore();
         FormBody formBody = new FormBody();
-        formGetController = new FormGetController(dataStore, formBody);
+        formGetController = new FormGetController(formStore, formBody);
     }
 
     @Test
@@ -38,7 +40,7 @@ public class FormGetControllerTest {
 
     @Test
     public void returnsCorrectResponseWhenStoreHasData() {
-        dataStore.addData("/form", new LinkedHashMap<String, String>(){{
+        formStore.addData("/form", new LinkedHashMap<String, String>() {{
             put("My", "Data");
             put("More", "Stuff");
         }});
