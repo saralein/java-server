@@ -1,7 +1,12 @@
 package com.saralein.server.response;
 
+import com.saralein.server.cookies.Cookie;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class HeaderTest {
     @Test
@@ -12,6 +17,21 @@ public class HeaderTest {
         header.status(200);
 
         assertEquals(header200, header.formatToString());
+    }
+
+    @Test
+    public void addsCookiesToHeader() {
+        List<Cookie> cookies = new ArrayList<Cookie>() {{
+            add(new Cookie("type", "chocolate"));
+            add(new Cookie("amount", "12"));
+        }};
+        Header header = new Header();
+        header.status(200);
+        header.setCookies(cookies);
+        String expected = "HTTP/1.1 200 OK\r\nSet-Cookie: type=chocolate\r\n" +
+                "Set-Cookie: amount=12\r\n\r\n";
+
+        assertEquals(expected, header.formatToString());
     }
 
     @Test
