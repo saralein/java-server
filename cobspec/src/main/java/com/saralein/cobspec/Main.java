@@ -15,7 +15,10 @@ import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.middleware.Middleware;
+import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.protocol.Methods;
+import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 
 import java.nio.file.Path;
@@ -52,9 +55,11 @@ public class Main {
     }
 
     private static Application configureApplication(Path root, LogStore logStore) {
-        return new Application.Builder(root)
-                .router(configureRoutes(logStore))
-                .build();
+        Routes routes = configureRoutes(logStore);
+        Router router = new Router(routes);
+        Middleware staticMiddleware = new StaticMiddleware(root);
+
+        return new Application(staticMiddleware.apply(router));
     }
 
     private static Routes configureRoutes(LogStore logStore) {

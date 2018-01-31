@@ -1,5 +1,6 @@
 package com.saralein.server;
 
+import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
@@ -8,8 +9,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,8 +27,7 @@ public class ServerInitializerTest {
     public void setUp() {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
-        Path root = Paths.get(System.getProperty("user.dir"), "public");
-        application = new Application.Builder(root).build();
+        application = new Application(new MockCallable());
         requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();
