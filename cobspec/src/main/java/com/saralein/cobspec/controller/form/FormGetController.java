@@ -1,17 +1,18 @@
 package com.saralein.cobspec.controller.form;
 
+import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.controller.Controller;
-import com.saralein.cobspec.data.DataStore;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
+
 import java.util.HashMap;
 
 public class FormGetController implements Controller {
     private final FormBody formBody;
-    private DataStore dataStore;
+    private FormStore formStore;
 
-    public FormGetController(DataStore dataStore, FormBody formBody) {
-        this.dataStore = dataStore;
+    public FormGetController(FormStore formStore, FormBody formBody) {
+        this.formStore = formStore;
         this.formBody = formBody;
     }
 
@@ -26,8 +27,8 @@ public class FormGetController implements Controller {
     private String createBody(Request request) {
         String uri = request.getUri();
 
-        if (dataStore.dataExistsForID(uri)) {
-            HashMap<String, String> data = dataStore.retrieveData(uri);
+        if (formStore.dataExistsForID(uri)) {
+            HashMap<String, String> data = formStore.retrieveData(uri);
             return formBody.formatDataToHtml(data);
         } else {
             return "";

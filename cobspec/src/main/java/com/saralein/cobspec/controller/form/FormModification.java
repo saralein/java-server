@@ -1,16 +1,17 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.cobspec.data.DataStore;
+import com.saralein.cobspec.data.FormStore;
 import com.saralein.server.request.Request;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class FormModification {
-    boolean processFormData(Request request, HashMap<String, String> data, DataStore dataStore) {
+    boolean processFormData(Request request, HashMap<String, String> data, FormStore formStore) {
         if (containsValidData(request)) {
             HashMap<String, String> formData = serializeRequestBodyToData(request, data);
-            dataStore.addData(request.getUri(), formData);
+            formStore.addData(request.getUri(), formData);
             return true;
         }
 
