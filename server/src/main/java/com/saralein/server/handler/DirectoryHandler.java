@@ -1,23 +1,27 @@
-package com.saralein.server.controller;
+package com.saralein.server.handler;
 
 import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DirectoryController implements Controller {
+public class DirectoryHandler implements Handler {
     private final FileHelper fileHelper;
 
-    public DirectoryController(FileHelper fileHelper) {
+    public DirectoryHandler(FileHelper fileHelper) {
         this.fileHelper = fileHelper;
     }
 
-    public Response respond(Request request) {
-        String requestMethod = request.getMethod();
-        String body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : "";
+    public Response handle(Request request) throws IOException {
+        String body = "";
+
+        if (isGetRequest(request.getMethod())) {
+            body = createBody(request.getUri());
+        }
 
         return new Response.Builder()
                     .status(200)
@@ -26,18 +30,18 @@ public class DirectoryController implements Controller {
                     .build();
     }
 
-    private String createBody(Request request) {
+    private boolean isGetRequest(String method) {
+        return method.equals(Methods.GET.name());
+    }
+
+    private String createBody(String uri) throws IOException {
         StringBuilder filesHTML = new StringBuilder();
-        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
+        String resourceUri = fileHelper.createAbsolutePath(uri);
         Path resource = Paths.get(resourceUri);
 
-        try {
-            for (String filename : fileHelper.listFileNames(resource)) {
-                String filePath = fileHelper.createRelativeFilePath(filename, resource);
-                filesHTML.append(createFileHTML(filePath, filename));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (String filename : fileHelper.listFileNames(resource)) {
+            String filePath = fileHelper.createRelativeFilePath(filename, resource);
+            filesHTML.append(createFileHTML(filePath, filename));
         }
 
         return filesHTML.toString();

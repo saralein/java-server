@@ -3,7 +3,7 @@ package com.saralein.server.connection;
 import com.saralein.server.Application;
 import com.saralein.server.FileHelper;
 import com.saralein.server.middleware.StaticMiddleware;
-import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
@@ -15,6 +15,7 @@ import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertArrayEquals;
 public class ConnectionHandlerTest {
     private MockSocket socket;
     private ConnectionHandler connectionHandler;
-    private MockController directoryController;
+    private MockHandler directoryHandler;
     private ResponseSerializer responseSerializer;
 
     @Before
@@ -33,22 +34,23 @@ public class ConnectionHandlerTest {
         RequestParser requestParser = new RequestParser();
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
-        directoryController = new MockController(200, "Directory response");
+        directoryHandler = new MockHandler(200, "Directory response");
+        MockHandler fileHandler = new MockHandler(200, "File response");
         Router router = new Router(new Routes());
-        StaticMiddleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryController, directoryController);
+        StaticMiddleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryHandler, fileHandler);
         Application application = new Application(staticMiddleware.apply(router));
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
 
     @Test
-    public void handlesValidRequestFromSocket() {
+    public void handlesValidRequestFromSocket() throws IOException {
         String directoryString = "GET / HTTP/1.1";
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/")
                 .build();
 
-        Response directoryResponse = directoryController.respond(request);
+        Response directoryResponse = directoryHandler.handle(request);
         byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
 
         socket.setRequest(directoryString);

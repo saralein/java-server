@@ -1,9 +1,8 @@
 package com.saralein.server.middleware;
 
 import com.saralein.server.FileHelper;
-import com.saralein.server.controller.Controller;
 import com.saralein.server.mocks.MockCallable;
-import com.saralein.server.mocks.MockController;
+import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
@@ -43,11 +42,11 @@ public class StaticMiddlewareTest {
     @Before
     public void setUp() {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        Controller directoryController = new MockController(200, "Directory response");
-        Controller fileController = new MockController(200, "File response");
+        MockHandler directoryHandler = new MockHandler(200, "Directory response");
+        MockHandler fileHandler = new MockHandler(200, "File response");
         MockCallable mockCallable = new MockCallable();
 
-        staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryController, fileController);
+        staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryHandler, fileHandler);
         staticMiddleware.apply(mockCallable);
     }
 
