@@ -5,18 +5,21 @@ import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
+import com.saralein.server.parameters.ParameterDecoder;
+import com.saralein.server.parameters.ParameterParser;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-import com.saralein.server.router.Routes;
 import com.saralein.server.router.Router;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
+import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
     private MockSocket socket;
@@ -31,7 +34,7 @@ public class ConnectionHandlerTest {
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
         MockLogger logger = new MockLogger();
-        RequestParser requestParser = new RequestParser();
+        RequestParser requestParser = new RequestParser(new ParameterParser(), new ParameterDecoder());
         ResponseSerializer responseSerializer = new ResponseSerializer();
 
         socket = new MockSocket();

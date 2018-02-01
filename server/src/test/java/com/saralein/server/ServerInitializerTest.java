@@ -4,6 +4,8 @@ import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockLogger;
+import com.saralein.server.parameters.ParameterDecoder;
+import com.saralein.server.parameters.ParameterParser;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
@@ -41,7 +43,7 @@ public class ServerInitializerTest {
         Routes routes = new Routes();
 
         router = new Router(directoryController, fileController, notFoundController, routes, root);
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(new ParameterParser(), new ParameterDecoder());
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();
     }

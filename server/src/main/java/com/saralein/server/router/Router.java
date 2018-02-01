@@ -4,7 +4,8 @@ import com.saralein.server.controller.Controller;
 import com.saralein.server.controller.ErrorController;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.*;
+import com.saralein.server.response.Response;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
