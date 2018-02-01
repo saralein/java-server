@@ -3,8 +3,8 @@ package com.saralein.server.router;
 import com.saralein.server.controller.Controller;
 import com.saralein.server.middleware.Callable;
 import com.saralein.server.middleware.Middleware;
-import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
+import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
 
 public class Router implements Middleware {
@@ -31,17 +31,9 @@ public class Router implements Middleware {
             Controller controller = routes.retrieveController(uri, method);
             return controller.respond(request);
         } else if (routes.matchesRouteButNotMethod(uri, method)) {
-            return accessNotAllowed();
+            return new ErrorResponse(405).respond();
         } else {
             return next.call(request);
         }
-    }
-
-    private Response accessNotAllowed() {
-        return new Response.Builder()
-                .status(405)
-                .addHeader("Content-Type", "text/html")
-                .body(StatusCodes.retrieve(405))
-                .build();
     }
 }

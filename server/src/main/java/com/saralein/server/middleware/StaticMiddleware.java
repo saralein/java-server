@@ -5,8 +5,8 @@ import com.saralein.server.handler.DirectoryHandler;
 import com.saralein.server.handler.FileHandler;
 import com.saralein.server.handler.Handler;
 import com.saralein.server.protocol.Methods;
-import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
+import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
 
 import java.io.IOException;
@@ -95,18 +95,10 @@ public class StaticMiddleware implements Middleware {
     }
 
     private Response serverError() {
-        return new Response.Builder()
-                .status(500)
-                .addHeader("Content-Type", "text/html")
-                .body(StatusCodes.retrieve(500))
-                .build();
+        return new ErrorResponse(500).respond();
     }
 
     private Response accessNotAllowed() {
-        return new Response.Builder()
-                .status(405)
-                .addHeader("Content-Type", "text/html")
-                .body(StatusCodes.retrieve(405))
-                .build();
+        return new ErrorResponse(405).respond();
     }
 }
