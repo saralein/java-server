@@ -5,6 +5,7 @@ import com.saralein.server.handler.DirectoryHandler;
 import com.saralein.server.handler.FileHandler;
 import com.saralein.server.handler.Handler;
 import com.saralein.server.protocol.Methods;
+import com.saralein.server.protocol.StatusCodes;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
@@ -46,13 +47,13 @@ public class StaticMiddleware implements Middleware {
         Path resourcePath = Paths.get(resource);
 
         if (resourceExists(resourcePath)) {
-            return staticResponse(resourcePath, request);
+            return getResponse(resourcePath, request);
         } else {
             return next.call(request);
         }
     }
 
-    private Response staticResponse(Path resource, Request request) {
+    private Response getResponse(Path resource, Request request) {
         if (!isAcceptedMethod(request.getMethod())) {
             return accessNotAllowed();
         }
@@ -96,6 +97,8 @@ public class StaticMiddleware implements Middleware {
     private Response serverError() {
         return new Response.Builder()
                 .status(500)
+                .addHeader("Content-Type", "text/html")
+                .body(StatusCodes.retrieve(500))
                 .build();
     }
 
@@ -103,6 +106,7 @@ public class StaticMiddleware implements Middleware {
         return new Response.Builder()
                 .status(405)
                 .addHeader("Content-Type", "text/html")
+                .body(StatusCodes.retrieve(405))
                 .build();
     }
 }

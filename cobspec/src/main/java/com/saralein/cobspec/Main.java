@@ -15,6 +15,8 @@ import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.middleware.Callable;
+import com.saralein.server.middleware.FinalCallable;
 import com.saralein.server.middleware.Middleware;
 import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.protocol.Methods;
@@ -56,10 +58,18 @@ public class Main {
 
     private static Application configureApplication(Path root, LogStore logStore) {
         Routes routes = configureRoutes(logStore);
-        Router router = new Router(routes);
+        Callable middlewares = configureMiddleware(root, routes);
+
+        return new Application(middlewares);
+    }
+
+    private static Callable configureMiddleware(Path root, Routes routes) {
+        Callable finalCallable = new FinalCallable();
+        Middleware router = new Router(routes);
         Middleware staticMiddleware = new StaticMiddleware(root);
 
-        return new Application(staticMiddleware.apply(router));
+        return staticMiddleware.apply(
+                router.apply(finalCallable));
     }
 
     private static Routes configureRoutes(LogStore logStore) {

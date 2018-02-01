@@ -21,21 +21,28 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class StaticMiddlewareTest {
+    private static final String OK_HEADER = "HTTP/1.1 200 OK\r\n\r\n";
     private final String uri;
-    private final String expected;
+    private final String expectedBody;
+    private final String expectedHeader;
+    private final String method;
     private StaticMiddleware staticMiddleware;
 
-    public StaticMiddlewareTest(String uri, String expected) {
+    public StaticMiddlewareTest(String method, String uri, String expectedBody, String expectedHeader) {
+        this.method = method;
         this.uri = uri;
-        this.expected = expected;
+        this.expectedBody = expectedBody;
+        this.expectedHeader = expectedHeader;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                {"/", "Directory response"},
-                {"/cheetara.jpg", "File response"},
-                {"/router", "Callable response"}
+                {"GET", "/", "Directory response", OK_HEADER},
+                {"GET", "/cheetara.jpg", "File response", OK_HEADER},
+                {"GET", "/router", "Callable response", OK_HEADER},
+                {"DELETE", "/cheetara.jpg", "405 Method Not Allowed",
+                        "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n"}
         });
     }
 
@@ -53,13 +60,13 @@ public class StaticMiddlewareTest {
     @Test
     public void returnsProperResponseBasedOnType() {
         Request request = new Request.Builder()
-                .method("GET")
+                .method(method)
                 .uri(uri)
                 .build();
         Response response = staticMiddleware.call(request);
         Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());
-        assertArrayEquals(expected.getBytes(), response.getBody());
+        assertEquals(expectedHeader, header.formatToString());
+        assertArrayEquals(expectedBody.getBytes(), response.getBody());
     }
 }
