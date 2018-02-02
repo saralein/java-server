@@ -1,22 +1,24 @@
-package com.saralein.server.controller;
+package com.saralein.server.handler;
 
 import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileController implements Controller {
+public class FileHandler implements Handler {
     private final FileHelper fileHelper;
 
-    public FileController(FileHelper fileHelper) {
+    public FileHandler(FileHelper fileHelper) {
         this.fileHelper = fileHelper;
     }
 
-    public Response respond(Request request) {
+    @Override
+    public Response handle(Request request) throws IOException {
         String requestMethod = request.getMethod();
         byte[] body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : new byte[]{};
 
@@ -27,19 +29,11 @@ public class FileController implements Controller {
                     .build();
     }
 
-    private byte[] createBody(Request request) {
+    private byte[] createBody(Request request) throws IOException {
         String resourceUri = fileHelper.createAbsolutePath(request.getUri());
         Path resource = Paths.get(resourceUri);
 
-        byte[] fileByte = new byte[]{};
-
-        try {
-            fileByte = Files.readAllBytes(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileByte;
+        return Files.readAllBytes(resource);
     }
 
     private String getMimeType(Request request) {

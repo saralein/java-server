@@ -1,18 +1,23 @@
-package com.saralein.server.controller;
+package com.saralein.server.handler;
 
+import com.saralein.server.FileHelper;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-import com.saralein.server.FileHelper;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class DirectoryControllerTest {
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+public class DirectoryHandlerTest {
     private byte[] bodyArray;
-    private Response directoryResponse;
+    private DirectoryHandler directoryHandler;
+    private Request request;
 
     @Before
     public void setUp() {
@@ -27,24 +32,20 @@ public class DirectoryControllerTest {
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
         FileHelper fileHelper = new FileHelper(root);
-        Request request = new Request.Builder()
+        request = new Request.Builder()
                 .method("GET")
                 .uri("/")
                 .build();
 
-        DirectoryController directoryController = new DirectoryController(fileHelper);
-        directoryResponse = directoryController.respond(request);
+        directoryHandler = new DirectoryHandler(fileHelper);
     }
 
     @Test
-    public void returnsResponseWithCorrectHeader() {
-        Header header = directoryResponse.getHeader();
+    public void returnsValidDirectoryResponse() throws IOException {
+        Response response = directoryHandler.handle(request);
+        Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returnsResponseWithCorrectBody() {
-        assertArrayEquals(bodyArray, directoryResponse.getBody());
+        assertArrayEquals(bodyArray, response.getBody());
     }
 }
