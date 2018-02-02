@@ -1,7 +1,5 @@
 package com.saralein.server.router;
 
-import com.saralein.server.middleware.Middleware;
-import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Header;
@@ -13,12 +11,12 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class RouterTest {
-    private Middleware router;
+    private Router router;
 
     @Before
     public void setUp() {
         Routes routes = new Routes().get("/stuff", new MockController(200, "Some stuff!"));
-        router = new Router(routes).apply(new MockCallable());
+        router = new Router(routes);
     }
 
     private Request createRequest(String method, String uri) {
@@ -39,11 +37,13 @@ public class RouterTest {
     }
 
     @Test
-    public void callsNextCallableIfResourceNotFound() {
+    public void returnsNotFoundResponseForNonExistentResources() {
         Request request = createRequest("GET", "/snarf.jpg");
         Response response = router.call(request);
+        Header header = response.getHeader();
 
-        assertArrayEquals("Callable response".getBytes(), response.getBody());
+        assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertArrayEquals("404 Not Found".getBytes(), response.getBody());
     }
 
     @Test
