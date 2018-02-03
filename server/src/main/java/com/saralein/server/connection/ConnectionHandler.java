@@ -7,6 +7,8 @@ import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
 
+import java.io.IOException;
+
 public class ConnectionHandler implements Runnable {
     private final Logger logger;
     private final Connection socket;
@@ -30,8 +32,17 @@ public class ConnectionHandler implements Runnable {
             logger.trace(request.getRequestLine());
             Response response = application.call(request);
             socket.write(responseSerializer.convertToBytes(response));
-            socket.close();
         } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            closeSocket();
+        }
+    }
+
+    private void closeSocket() {
+        try {
+            socket.close();
+        } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
