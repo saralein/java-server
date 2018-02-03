@@ -40,6 +40,6 @@ public class ApplicationLogger implements Logger {
     }
 
     private String formatMessage(String category, String message) {
-        return String.format("%s [%s] %s\n", category, Instant.now(), message);
+        return String.format("%s [%s] %s\n", category, Instant.now().toString(), message);
     }
 }
