@@ -1,9 +1,11 @@
 package com.saralein.server.request;
 
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
 
 public class RequestTest {
     private Request request;

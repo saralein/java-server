@@ -3,7 +3,7 @@ package com.saralein.server.connection;
 import com.saralein.server.Application;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.Request;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
 

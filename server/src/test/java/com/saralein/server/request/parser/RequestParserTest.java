@@ -1,19 +1,21 @@
-package com.saralein.server.request;
+package com.saralein.server.request.parser;
 
+import com.saralein.server.request.Request;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class RequestParserTest {
-    private RequestParser requestParser;
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(new RequestLineParser(), new HeaderParser());
     }
 
     @Test

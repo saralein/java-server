@@ -2,7 +2,9 @@ package com.saralein.server.mocks;
 
 import com.saralein.server.Application;
 import com.saralein.server.Server;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.HeaderParser;
+import com.saralein.server.request.parser.RequestLineParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 
 import java.util.concurrent.Executors;
@@ -15,7 +17,9 @@ public class MockServer extends Server {
                 new MockServerSocket(),
                 new MockLogger(),
                 new Application(new MockCallable()),
-                new RequestParser(),
+                new RequestParser(
+                        new RequestLineParser(),
+                        new HeaderParser()),
                 new ResponseSerializer(),
                 Executors.newSingleThreadExecutor());
     }
