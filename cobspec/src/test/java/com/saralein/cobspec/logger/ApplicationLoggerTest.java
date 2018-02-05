@@ -1,58 +1,55 @@
 package com.saralein.cobspec.logger;
 
-import com.saralein.cobspec.data.LogStore;
+import com.saralein.cobspec.mocks.MockTransport;
 import com.saralein.server.logger.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.junit.Assert.assertTrue;
 
 public class ApplicationLoggerTest {
-    private ByteArrayOutputStream output;
-    private LogStore logStore;
     private Logger logger;
+    private MockTransport streamTransport;
+    private MockTransport storeTransport;
 
     @Before
     public void setUp() {
-        output = new ByteArrayOutputStream();
-        logStore = new LogStore();
-        logger = new ApplicationLogger(new PrintStream(output), logStore);
+        streamTransport = new MockTransport();
+        storeTransport = new MockTransport();
+        logger = new ApplicationLogger()
+                .add(streamTransport)
+                .add(storeTransport);
     }
 
     @Test
-    public void logsErrorToStreamAndLog() {
+    public void logsErrorToTransports() {
         logger.error("Test error");
 
-        assertTrue(output.toString().contains("Test error\n"));
-        assertTrue(logStore.retrieveLog().contains("Test error\n"));
+        assertTrue(streamTransport.contains("ERROR Test error\n"));
+        assertTrue(storeTransport.contains("ERROR Test error\n"));
     }
 
     @Test
-    public void logsFatalToStream() {
+    public void logsFatalToTransports() {
         logger.fatal("System failure");
 
-        assertTrue(output.toString().contains("System failure\n"));
+        assertTrue(streamTransport.contains("FATAL System failure\n"));
+        assertTrue(storeTransport.contains("FATAL System failure\n"));
     }
 
     @Test
-    public void logsInfoToStream() {
+    public void logsInfoTransports() {
         logger.info("I am logging!");
-        logger.info("I am still logging!");
-        String result = output.toString();
 
-        assertTrue(result.contains("I am logging!\n"));
-        assertTrue(result.contains("I am still logging!\n"));
+        assertTrue(streamTransport.contains("INFO I am logging!\n"));
+        assertTrue(storeTransport.contains("INFO I am logging!\n"));
     }
 
     @Test
-    public void logsRequestTraceToStreamAndLog() {
-        String message = "GET /cheetara.jpg HTTP/1.1";
-        logger.trace(message);
+    public void logsRequestTraceToTransports() {
+        logger.trace("GET /cheetara.jpg HTTP/1.1");
 
-        assertTrue(output.toString().contains(message));
-        assertTrue(logStore.retrieveLog().contains(message));
+        assertTrue(streamTransport.contains("TRACE GET /cheetara.jpg HTTP/1.1"));
+        assertTrue(storeTransport.contains("TRACE GET /cheetara.jpg HTTP/1.1"));
     }
 }

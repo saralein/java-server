@@ -5,6 +5,8 @@ import com.saralein.cobspec.controller.form.*;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.cobspec.logger.ApplicationLogger;
+import com.saralein.cobspec.logger.StoreTransport;
+import com.saralein.cobspec.logger.StreamTransport;
 import com.saralein.cobspec.validation.ArgsValidation;
 import com.saralein.cobspec.validation.DirectoryValidator;
 import com.saralein.cobspec.validation.PortValidator;
@@ -15,6 +17,8 @@ import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.logger.Logger;
+import com.saralein.server.middleware.Callable;
+import com.saralein.server.middleware.LoggingMiddleware;
 import com.saralein.server.middleware.Middleware;
 import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.protocol.Methods;
@@ -29,7 +33,7 @@ public class Main {
     public static void main(String[] args) {
         String home = System.getProperty("user.dir");
         LogStore logStore = new LogStore();
-        Logger logger = new ApplicationLogger(System.out, logStore);
+        Logger logger = configureLogger(logStore);
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
@@ -37,12 +41,20 @@ public class Main {
             Integer port = argsParser.parsePort();
             Path root = argsParser.parseRoot(home);
 
-            Application application = configureApplication(root, logStore);
+            Routes routes = configureRoutes(logStore);
+            List<Middleware> middlewares = configureMiddleware(root, logger);
+            Application application = configureApplication(routes, middlewares);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
         } else {
             logger.fatal(String.join("\n", validationErrors));
         }
+    }
+
+    private static ApplicationLogger configureLogger(LogStore logStore) {
+        return new ApplicationLogger()
+                .add(new StoreTransport(logStore))
+                .add(new StreamTransport(System.out));
     }
 
     private static List<String> runValidationAndReturnErrors(String[] args, String home) {
@@ -54,12 +66,23 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static Application configureApplication(Path root, LogStore logStore) {
-        Routes routes = configureRoutes(logStore);
-        Router router = new Router(routes);
-        Middleware staticMiddleware = new StaticMiddleware(root);
+    private static List<Middleware> configureMiddleware(Path root, Logger logger) {
+        List<Middleware> middlewares = new ArrayList<>();
+        middlewares.add(new StaticMiddleware(root));
+        middlewares.add(new LoggingMiddleware(logger));
 
-        return new Application(staticMiddleware.apply(router));
+        return middlewares;
+    }
+
+    private static Application configureApplication(Routes routes, List<Middleware> middlewares) {
+        Callable applied = new Router(routes);
+
+        for (Middleware middleware : middlewares) {
+            Callable toApply = applied;
+            applied = middleware.apply(toApply);
+        }
+
+        return new Application(applied);
     }
 
     private static Routes configureRoutes(LogStore logStore) {
