@@ -1,45 +1,47 @@
 package com.saralein.cobspec.logger;
 
-import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.logger.Logger;
-
-import java.io.PrintStream;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApplicationLogger implements Logger {
-    private PrintStream printer;
-    private LogStore logStore;
+    private List<LogTransport> transports;
 
-    public ApplicationLogger(PrintStream printer, LogStore logStore) {
-        this.printer = printer;
-        this.logStore = logStore;
+    public ApplicationLogger() {
+        this.transports = new ArrayList<>();
+    }
+
+    public ApplicationLogger add(LogTransport transport) {
+        transports.add(transport);
+        return this;
     }
 
     @Override
     public void error(String error) {
-        String message = formatMessage("ERROR", error);
-        logStore.add(message);
-        printer.print(message);
+        log(formatMessage("ERROR", error));
     }
 
     @Override
     public void fatal(String message) {
-        printer.print(formatMessage("FATAL", message));
+        log(formatMessage("FATAL", message));
     }
 
     @Override
     public void info(String message) {
-        printer.print(formatMessage("INFO", message));
+        log(formatMessage("INFO", message));
     }
 
     @Override
     public void trace(String message) {
-        String formattedMessage = formatMessage("TRACE", message);
-        logStore.add(formattedMessage);
-        printer.print(formattedMessage);
+        log(formatMessage("TRACE", message));
     }
 
     private String formatMessage(String category, String message) {
-        return String.format("%s [%s] %s\n", category, Instant.now(), message);
+        return String.format("[%s] %s %s\n", Instant.now().toString(), category, message);
+    }
+
+    private void log(String message) {
+        transports.forEach(transport -> transport.log(message));
     }
 }
