@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import java.util.HashMap;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class RequestParserTest {
@@ -14,7 +16,8 @@ public class RequestParserTest {
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser(new RequestLineParser(), new HeaderParser());
+        requestParser = new RequestParser(
+                new RequestLineParser(), new HeaderParser(), new ParameterParser());
     }
 
     @Test
@@ -43,6 +46,20 @@ public class RequestParserTest {
         assertEquals("POST", parsedRequest.getMethod());
         assertEquals("/form", parsedRequest.getUri());
         assertEquals("My=Data&More=Data", parsedRequest.getBody());
+    }
+
+    @Test
+    public void parsesRequestWithQueryInRequestLine() throws Exception {
+        String rawRequest = "GET /birds?type=chicken&number=6 HTTP/1.1\r\n\r\n";
+        Request parsedRequest = requestParser.parse(rawRequest);
+        Map<String, String> parameters = new HashMap<String, String>() {{
+            put("type", "chicken");
+            put("number", "6");
+        }};
+
+        assertEquals("GET", parsedRequest.getMethod());
+        assertEquals("/birds", parsedRequest.getUri());
+        assertEquals(parameters, parsedRequest.getParameters());
     }
 
     @Test(expected = Exception.class)

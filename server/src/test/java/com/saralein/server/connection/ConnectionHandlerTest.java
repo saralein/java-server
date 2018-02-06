@@ -9,6 +9,7 @@ import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
 import com.saralein.server.request.parser.HeaderParser;
+import com.saralein.server.request.parser.ParameterParser;
 import com.saralein.server.request.parser.RequestLineParser;
 import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.Response;
@@ -32,7 +33,8 @@ public class ConnectionHandlerTest {
     public void setUp() {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         MockLogger logger = new MockLogger();
-        RequestParser requestParser = new RequestParser(new RequestLineParser(), new HeaderParser());
+        RequestParser requestParser = new RequestParser(
+                new RequestLineParser(), new HeaderParser(), new ParameterParser());
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");

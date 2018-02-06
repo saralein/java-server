@@ -10,7 +10,7 @@ public class RequestLineTest {
 
     @Before
     public void setUp() {
-        requestLine = new RequestLine("GET", "/stuff");
+        requestLine = new RequestLine("GET", "/stuff", "type=stuff");
     }
 
     @Test
@@ -21,5 +21,10 @@ public class RequestLineTest {
     @Test
     public void retrievesUri() {
         assertEquals("/stuff", requestLine.getUri());
+    }
+
+    @Test
+    public void retrievesQuery() {
+        assertEquals("type=stuff", requestLine.getQuery());
     }
 }
