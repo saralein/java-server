@@ -6,7 +6,6 @@ import com.saralein.server.request.Request;
 import com.saralein.server.request.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
-
 import java.io.IOException;
 
 public class ConnectionHandler implements Runnable {
