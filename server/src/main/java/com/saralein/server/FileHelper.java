@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileHelper {
     private Path root;
@@ -31,11 +32,12 @@ public class FileHelper {
     }
 
     public List<String> listFileNames(Path directory) throws IOException {
-        return Files.list(directory)
-                .filter(this::isNotHidden)
-                .map(this::formatName)
-                .sorted()
-                .collect(Collectors.toList());
+        try (Stream<Path> files = Files.list(directory)) {
+            return files.filter(this::isNotHidden)
+                    .map(this::formatName)
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
     }
 
     private String removeRootPortionOfPath(Path resource) {
