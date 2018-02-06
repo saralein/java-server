@@ -17,11 +17,9 @@ import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
@@ -47,7 +45,7 @@ public class ConnectionHandlerTest {
 
     @Test
     public void handlesValidRequestFromSocket() throws IOException {
-        String directoryString = "GET / HTTP/1.1";
+        String directoryString = "GET / HTTP/1.1\r\n\r\n";
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/")
@@ -64,7 +62,7 @@ public class ConnectionHandlerTest {
 
     @Test
     public void handlesInvalidRequestFromSocket() {
-        String notFoundString = "GET /snarf.jpg HTTP/1.1";
+        String notFoundString = "GET /snarf.jpg HTTP/1.1\r\n\r\n";
         Response response = new Response.Builder()
                 .status(404)
                 .addHeader("Content-Type", "text/html")

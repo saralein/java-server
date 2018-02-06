@@ -2,15 +2,12 @@ package com.saralein.server.request.parser;
 
 import com.saralein.server.request.transfer.RequestLine;
 
-import java.util.List;
-
 public class RequestLineParser {
-    public RequestLine parse(List<String> request) throws Exception {
-        String rawRequestLine = request.get(0);
+    public RequestLine parse(String rawRequestLine) throws Exception {
         String[] requestLine = rawRequestLine.split(" ");
 
         if (!hasValidLength(requestLine)) {
-            throw new Exception("Bad request. Connection closed.");
+            throw new Exception("Invalid request.");
         }
 
         String method = parseMethod(requestLine);

@@ -3,10 +3,6 @@ package com.saralein.server.request.parser;
 import com.saralein.server.request.transfer.RequestLine;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 public class RequestLineParserTest {
@@ -19,11 +15,7 @@ public class RequestLineParserTest {
 
     @Test
     public void parsesSimpleRequestLine() throws Exception {
-        List<String> request = new ArrayList<String>() {{
-            add("GET /birds HTTP/1.1");
-        }};
-
-        RequestLine requestLine = requestLineParser.parse(request);
+        RequestLine requestLine = requestLineParser.parse("GET /birds HTTP/1.1");
 
         assertEquals("GET", requestLine.getMethod());
         assertEquals("/birds", requestLine.getUri());

@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import static org.junit.Assert.assertEquals;
 
 public class RequestParserTest {
@@ -20,7 +19,7 @@ public class RequestParserTest {
 
     @Test
     public void parsesRequestForRoot() throws Exception {
-        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Type: text/html");
+        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Type: text/html\r\n\r\n");
 
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/", parsedRequest.getUri());
@@ -29,21 +28,11 @@ public class RequestParserTest {
 
     @Test
     public void parsesRequestWithNoBody() throws Exception {
-        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1\r\nContent-Type: text/html");
+        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1\r\nContent-Type: text/html\r\n\r\n");
 
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/cheetara.jpg", parsedRequest.getUri());
         assertEquals("text/html", parsedRequest.getHeader("Content-Type"));
-    }
-
-    @Test
-    public void parsesRequestWithZeroContentLength() throws Exception {
-        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Length: 0");
-
-        assertEquals("GET", parsedRequest.getMethod());
-        assertEquals("/", parsedRequest.getUri());
-        assertEquals("0", parsedRequest.getHeader("Content-Length"));
-        assertEquals("", parsedRequest.getBody());
     }
 
     @Test
@@ -54,17 +43,6 @@ public class RequestParserTest {
         assertEquals("POST", parsedRequest.getMethod());
         assertEquals("/form", parsedRequest.getUri());
         assertEquals("My=Data&More=Data", parsedRequest.getBody());
-    }
-
-    @Test
-    public void parsesRequestWhenBodyStartsWithContentLength() throws Exception {
-        String rawRequest = "GET / HTTP/1.1\r\nContent-Length: 26\r\n\r\nContent-Length is a header";
-        Request parsedRequest = requestParser.parse(rawRequest);
-
-        assertEquals("GET", parsedRequest.getMethod());
-        assertEquals("/", parsedRequest.getUri());
-        assertEquals("26", parsedRequest.getHeader("Content-Length"));
-        assertEquals("Content-Length is a header", parsedRequest.getBody());
     }
 
     @Test(expected = Exception.class)
