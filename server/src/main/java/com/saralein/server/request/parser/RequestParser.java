@@ -30,7 +30,7 @@ public class RequestParser {
 
         RequestLine requestLine = requestLineParser.parse(rawRequestLine);
         Map<String, String> headers = headerParser.parse(rawHeaders);
-
+        
         return buildRequest(requestLine, headers, body);
     }
 
