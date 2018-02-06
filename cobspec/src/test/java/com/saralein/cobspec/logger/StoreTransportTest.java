@@ -3,7 +3,6 @@ package com.saralein.cobspec.logger;
 import com.saralein.cobspec.data.LogStore;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class StoreTransportTest {

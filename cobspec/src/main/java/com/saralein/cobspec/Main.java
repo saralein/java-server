@@ -24,7 +24,6 @@ import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;

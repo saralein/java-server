@@ -4,7 +4,6 @@ import com.saralein.cobspec.mocks.MockTransport;
 import com.saralein.server.logger.Logger;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 public class ApplicationLoggerTest {
