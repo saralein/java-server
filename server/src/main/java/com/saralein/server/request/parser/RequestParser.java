@@ -41,9 +41,9 @@ public class RequestParser {
 
     private String pullHeaders(List<String> messageHeaderAndBody) {
         String fullHeader = messageHeaderAndBody.get(0);
-        int crlfIndex = fullHeader.indexOf(CRLF);
 
-        if (crlfIndex != -1) {
+        if (fullHeader.contains(CRLF)) {
+            int crlfIndex = fullHeader.indexOf(CRLF);
             return fullHeader.substring(crlfIndex);
         }
 
@@ -51,7 +51,9 @@ public class RequestParser {
     }
 
     private String pullBody(List<String> messageHeaderAndBody) {
-        if (messageHeaderAndBody.size() == 2) {
+        int validLength = 2;
+
+        if (messageHeaderAndBody.size() == validLength) {
             return messageHeaderAndBody.get(1);
         }
 
