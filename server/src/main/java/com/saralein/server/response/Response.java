@@ -1,6 +1,8 @@
 package com.saralein.server.response;
 
+import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.Header;
+import java.util.List;
 
 public class Response {
     private final Header header;
@@ -40,6 +42,11 @@ public class Response {
 
         public Builder addHeader(String title, String content) {
             header.addHeader(title, content);
+            return this;
+        }
+
+        public Builder setCookies(List<Cookie> cookies) {
+            header.setCookies(cookies);
             return this;
         }
 

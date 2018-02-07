@@ -1,6 +1,9 @@
 package com.saralein.server.request;
 
+import com.saralein.server.exchange.Cookie;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Request {
@@ -9,11 +12,15 @@ public class Request {
     private final String method;
     private final String uri;
     private final String body;
+    private final List<Cookie> cookies;
 
-    public Request(String method, String uri, Map<String, String> parameters, String body, Map<String, String> headers) {
+    public Request(
+            String method, String uri, Map<String, String> parameters,
+            List<Cookie> cookies, String body, Map<String, String> headers) {
         this.method = method;
         this.uri = uri;
         this.parameters = parameters;
+        this.cookies = cookies;
         this.body = body;
         this.request = headers;
     }
@@ -28,6 +35,10 @@ public class Request {
 
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    public List<Cookie> getCookies() {
+        return cookies;
     }
 
     public String getBody() {
@@ -47,6 +58,7 @@ public class Request {
         private String uri = "";
         private String body = "";
         private Map<String, String> parameters = new HashMap<>();
+        private List<Cookie> cookies = new ArrayList<>();
         private Map<String, String> headers = new HashMap<>();
 
         public Builder method(String method) {
@@ -69,6 +81,11 @@ public class Request {
             return this;
         }
 
+        public Builder cookies(List<Cookie> cookies) {
+            this.cookies = cookies;
+            return this;
+        }
+
         public Builder addHeader(String key, String value) {
             headers.put(key, value);
             return this;
@@ -80,7 +97,7 @@ public class Request {
         }
 
         public Request build() {
-            return new Request(method, uri, parameters, body, headers);
+            return new Request(method, uri, parameters, cookies, body, headers);
         }
     }
 }
