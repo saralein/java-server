@@ -19,5 +19,15 @@ public class RequestLineParserTest {
 
         assertEquals("GET", requestLine.getMethod());
         assertEquals("/birds", requestLine.getUri());
+        assertEquals("", requestLine.getQuery());
+    }
+
+    @Test
+    public void parsesRequestLineWithQuery() throws Exception {
+        RequestLine requestLine = requestLineParser.parse("GET /birds?type=chicken HTTP/1.1");
+
+        assertEquals("GET", requestLine.getMethod());
+        assertEquals("/birds", requestLine.getUri());
+        assertEquals("type=chicken", requestLine.getQuery());
     }
 }

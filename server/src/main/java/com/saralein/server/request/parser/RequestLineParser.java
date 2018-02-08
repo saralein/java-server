@@ -12,8 +12,9 @@ public class RequestLineParser {
 
         String method = parseMethod(requestLine);
         String uri = parseUri(requestLine);
+        String query = parseQuery(requestLine);
 
-        return new RequestLine(method, uri);
+        return new RequestLine(method, uri, query);
     }
 
     private boolean hasValidLength(String[] requestLine) {
@@ -25,6 +26,22 @@ public class RequestLineParser {
     }
 
     private String parseUri(String[] requestLine) {
-        return requestLine[1];
+        String[] uriWithQuery = parseUriWithQuery(requestLine);
+        return uriWithQuery[0];
+    }
+
+    private String parseQuery(String[] requestLine) {
+        String[] uriWithQuery = parseUriWithQuery(requestLine);
+
+        if (uriWithQuery.length == 2) {
+            return uriWithQuery[1];
+        }
+
+        return "";
+    }
+
+    private String[] parseUriWithQuery(String[] requestLine) {
+        String uriWithQuery = requestLine[1];
+        return uriWithQuery.split("\\?");
     }
 }

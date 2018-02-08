@@ -10,11 +10,15 @@ import static com.saralein.server.Constants.CRLF;
 public class RequestParser {
     private final RequestLineParser requestLineParser;
     private final HeaderParser headerParser;
+    private final ParameterParser parameterParser;
     private final String empty;
 
-    public RequestParser(RequestLineParser requestLineParser, HeaderParser headerParser) {
+    public RequestParser(
+            RequestLineParser requestLineParser, HeaderParser headerParser, ParameterParser parameterParser
+    ) {
         this.requestLineParser = requestLineParser;
         this.headerParser = headerParser;
+        this.parameterParser = parameterParser;
         this.empty = "";
     }
 
@@ -27,11 +31,22 @@ public class RequestParser {
         String rawRequestLine = pullRequestLine(request);
         String rawHeaders = pullHeaders(messageHeaderAndBody);
         String body = pullBody(messageHeaderAndBody);
-
         RequestLine requestLine = requestLineParser.parse(rawRequestLine);
-        Map<String, String> headers = headerParser.parse(rawHeaders);
 
-        return buildRequest(requestLine, headers, body);
+        String method = requestLine.getMethod();
+        String uri = requestLine.getUri();
+        String query = requestLine.getQuery();
+
+        Map<String, String> headers = headerParser.parse(rawHeaders);
+        Map<String, String> parameters = parameterParser.parse(query);
+
+        return new Request.Builder()
+                .method(method)
+                .uri(uri)
+                .body(body)
+                .parameters(parameters)
+                .addHeaders(headers)
+                .build();
     }
 
     private String pullRequestLine(String request) {
@@ -62,14 +77,5 @@ public class RequestParser {
 
     private List<String> splitMessageHeaderAndBody(String request) {
         return Arrays.asList(request.split(CRLF + CRLF));
-    }
-
-    private Request buildRequest(RequestLine requestLine, Map<String, String> headers, String body) {
-        return new Request.Builder()
-                .method(requestLine.getMethod())
-                .uri(requestLine.getUri())
-                .body(body)
-                .addHeaders(headers)
-                .build();
     }
 }
