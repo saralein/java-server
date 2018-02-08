@@ -107,6 +107,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logStore, authorizer, unauthorizedController));
+                .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
+                .get("/parameters", new ParameterController());
     }
 }

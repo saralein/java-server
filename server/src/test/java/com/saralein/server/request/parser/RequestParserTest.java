@@ -1,24 +1,28 @@
-package com.saralein.server.request;
+package com.saralein.server.request.parser;
 
+import com.saralein.server.request.Request;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
 public class RequestParserTest {
-    private RequestParser requestParser;
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(
+                new RequestLineParser(), new HeaderParser(), new ParameterParser());
     }
 
     @Test
     public void parsesRequestForRoot() throws Exception {
-        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Type: text/html");
+        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Type: text/html\r\n\r\n");
 
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/", parsedRequest.getUri());
@@ -27,21 +31,11 @@ public class RequestParserTest {
 
     @Test
     public void parsesRequestWithNoBody() throws Exception {
-        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1\r\nContent-Type: text/html");
+        Request parsedRequest = requestParser.parse("GET /cheetara.jpg HTTP/1.1\r\nContent-Type: text/html\r\n\r\n");
 
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/cheetara.jpg", parsedRequest.getUri());
         assertEquals("text/html", parsedRequest.getHeader("Content-Type"));
-    }
-
-    @Test
-    public void parsesRequestWithZeroContentLength() throws Exception {
-        Request parsedRequest = requestParser.parse("GET / HTTP/1.1\r\nContent-Length: 0");
-
-        assertEquals("GET", parsedRequest.getMethod());
-        assertEquals("/", parsedRequest.getUri());
-        assertEquals("0", parsedRequest.getHeader("Content-Length"));
-        assertEquals("", parsedRequest.getBody());
     }
 
     @Test
@@ -55,14 +49,17 @@ public class RequestParserTest {
     }
 
     @Test
-    public void parsesRequestWhenBodyStartsWithContentLength() throws Exception {
-        String rawRequest = "GET / HTTP/1.1\r\nContent-Length: 26\r\n\r\nContent-Length is a header";
+    public void parsesRequestWithQueryInRequestLine() throws Exception {
+        String rawRequest = "GET /birds?type=chicken&number=6 HTTP/1.1\r\n\r\n";
         Request parsedRequest = requestParser.parse(rawRequest);
+        Map<String, String> parameters = new HashMap<String, String>() {{
+            put("type", "chicken");
+            put("number", "6");
+        }};
 
         assertEquals("GET", parsedRequest.getMethod());
-        assertEquals("/", parsedRequest.getUri());
-        assertEquals("26", parsedRequest.getHeader("Content-Length"));
-        assertEquals("Content-Length is a header", parsedRequest.getBody());
+        assertEquals("/birds", parsedRequest.getUri());
+        assertEquals(parameters, parsedRequest.getParameters());
     }
 
     @Test(expected = Exception.class)

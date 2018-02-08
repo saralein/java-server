@@ -3,7 +3,10 @@ package com.saralein.server;
 import com.saralein.server.connection.ListeningSocket;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.HeaderParser;
+import com.saralein.server.request.parser.ParameterParser;
+import com.saralein.server.request.parser.RequestLineParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 
 import java.io.IOException;
@@ -21,7 +24,9 @@ public class ServerInitializer {
     private final ExecutorService threadPool;
 
     public ServerInitializer(Logger logger, Application application) {
-        this(logger, Runtime.getRuntime(), application, new RequestParser(),
+        this(logger, Runtime.getRuntime(), application,
+                new RequestParser(
+                        new RequestLineParser(), new HeaderParser(), new ParameterParser()),
                 new ResponseSerializer(), Executors.newFixedThreadPool(10));
     }
 

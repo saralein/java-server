@@ -8,18 +8,19 @@ import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
 import com.saralein.server.request.Request;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.HeaderParser;
+import com.saralein.server.request.parser.ParameterParser;
+import com.saralein.server.request.parser.RequestLineParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.Response;
 import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import static org.junit.Assert.assertArrayEquals;
 
 public class ConnectionHandlerTest {
@@ -32,7 +33,8 @@ public class ConnectionHandlerTest {
     public void setUp() {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         MockLogger logger = new MockLogger();
-        RequestParser requestParser = new RequestParser();
+        RequestParser requestParser = new RequestParser(
+                new RequestLineParser(), new HeaderParser(), new ParameterParser());
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");
@@ -45,7 +47,7 @@ public class ConnectionHandlerTest {
 
     @Test
     public void handlesValidRequestFromSocket() throws IOException {
-        String directoryString = "GET / HTTP/1.1";
+        String directoryString = "GET / HTTP/1.1\r\n\r\n";
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/")
@@ -62,7 +64,7 @@ public class ConnectionHandlerTest {
 
     @Test
     public void handlesInvalidRequestFromSocket() {
-        String notFoundString = "GET /snarf.jpg HTTP/1.1";
+        String notFoundString = "GET /snarf.jpg HTTP/1.1\r\n\r\n";
         Response response = new Response.Builder()
                 .status(404)
                 .addHeader("Content-Type", "text/html")

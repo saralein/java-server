@@ -1,9 +1,12 @@
 package com.saralein.server.request;
 
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class RequestTest {
     private Request request;
@@ -40,6 +43,20 @@ public class RequestTest {
                 .build();
 
         assertEquals("/", request.getUri());
+    }
+
+    @Test
+    public void addsParametersToRequest() {
+        Map<String, String> parameters = new HashMap<String, String>() {{
+            put("Content-Length", "4");
+            put("Range", "bytes=0-9");
+        }};
+
+        Request request = new Request.Builder()
+                .parameters(parameters)
+                .build();
+
+        assertEquals(parameters, request.getParameters());
     }
 
     @Test

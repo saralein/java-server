@@ -2,7 +2,10 @@ package com.saralein.server;
 
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockLogger;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.HeaderParser;
+import com.saralein.server.request.parser.ParameterParser;
+import com.saralein.server.request.parser.RequestLineParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +31,8 @@ public class ServerInitializerTest {
         logger = new MockLogger();
         runtime = Runtime.getRuntime();
         application = new Application(new MockCallable());
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(
+                new RequestLineParser(), new HeaderParser(), new ParameterParser());
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();
     }

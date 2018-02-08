@@ -4,7 +4,7 @@ import com.saralein.server.connection.Connection;
 import com.saralein.server.connection.ConnectionHandler;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.request.RequestParser;
+import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.ResponseSerializer;
 
 import java.io.IOException;

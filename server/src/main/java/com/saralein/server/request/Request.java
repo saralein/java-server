@@ -5,13 +5,15 @@ import java.util.Map;
 
 public class Request {
     private final Map<String, String> request;
-    private String method;
-    private String uri;
-    private String body;
+    private final Map<String, String> parameters;
+    private final String method;
+    private final String uri;
+    private final String body;
 
-    public Request(String method, String uri, String body, Map<String, String> headers) {
+    public Request(String method, String uri, Map<String, String> parameters, String body, Map<String, String> headers) {
         this.method = method;
         this.uri = uri;
+        this.parameters = parameters;
         this.body = body;
         this.request = headers;
     }
@@ -22,6 +24,10 @@ public class Request {
 
     public String getUri() {
         return uri;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     public String getBody() {
@@ -40,6 +46,7 @@ public class Request {
         private String method = "";
         private String uri = "";
         private String body = "";
+        private Map<String, String> parameters = new HashMap<>();
         private Map<String, String> headers = new HashMap<>();
 
         public Builder method(String method) {
@@ -57,6 +64,11 @@ public class Request {
             return this;
         }
 
+        public Builder parameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
         public Builder addHeader(String key, String value) {
             headers.put(key, value);
             return this;
@@ -68,7 +80,7 @@ public class Request {
         }
 
         public Request build() {
-            return new Request(method, uri, body, headers);
+            return new Request(method, uri, parameters, body, headers);
         }
     }
 }
