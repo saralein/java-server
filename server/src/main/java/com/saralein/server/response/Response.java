@@ -1,5 +1,7 @@
 package com.saralein.server.response;
 
+import com.saralein.server.exchange.Header;
+
 public class Response {
     private final Header header;
     private final byte[] body;

@@ -1,12 +1,11 @@
 package com.saralein.server.authorization;
 
 import com.saralein.server.controller.UnauthorizedController;
+import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class UnauthorizedControllerTest {

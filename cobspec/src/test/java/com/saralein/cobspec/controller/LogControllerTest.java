@@ -3,14 +3,12 @@ package com.saralein.cobspec.controller;
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
+import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.Base64;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

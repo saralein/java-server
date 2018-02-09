@@ -1,16 +1,14 @@
 package com.saralein.server.handler;
 
 import com.saralein.server.FileHelper;
+import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 

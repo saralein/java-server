@@ -1,8 +1,8 @@
-package com.saralein.server.response;
+package com.saralein.server.exchange;
 
-import static com.saralein.server.Constants.CRLF;
 import com.saralein.server.protocol.StatusCodes;
 import java.util.HashMap;
+import static com.saralein.server.Constants.CRLF;
 
 public class Header {
     private HashMap<String, String> header;
@@ -30,7 +30,7 @@ public class Header {
     }
 
     private String createStatusLine(int code) {
-        return  "HTTP/1.1 " + StatusCodes.retrieve(code);
+        return "HTTP/1.1 " + StatusCodes.retrieve(code);
     }
 
     private void appendStatusLine(StringBuilder headerBuilder) {

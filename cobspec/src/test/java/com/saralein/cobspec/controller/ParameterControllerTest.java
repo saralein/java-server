@@ -1,18 +1,16 @@
 package com.saralein.cobspec.controller;
 
+import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)

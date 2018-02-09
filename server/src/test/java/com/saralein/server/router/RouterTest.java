@@ -1,12 +1,11 @@
 package com.saralein.server.router;
 
+import com.saralein.server.exchange.Header;
 import com.saralein.server.mocks.MockController;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 

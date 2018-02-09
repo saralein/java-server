@@ -1,6 +1,6 @@
 package com.saralein.server.request.parser;
 
-import com.saralein.server.request.transfer.RequestLine;
+import com.saralein.server.exchange.RequestLine;
 
 public class RequestLineParser {
     public RequestLine parse(String rawRequestLine) throws Exception {

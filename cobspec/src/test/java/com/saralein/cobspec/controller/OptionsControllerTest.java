@@ -1,13 +1,13 @@
 package com.saralein.cobspec.controller;
 
+import com.saralein.server.exchange.Header;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
-import com.saralein.server.response.Header;
 import com.saralein.server.response.Response;
-
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class OptionsControllerTest {
     private Request request;
