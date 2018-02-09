@@ -1,8 +1,11 @@
 package com.saralein.server.response;
 
+import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.Header;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -41,6 +44,21 @@ public class ResponseTest {
         Header header = response.getHeader();
 
         assertEquals(fullHeader, header.formatToString());
+    }
+
+    @Test
+    public void addsCookiesToResponse() {
+        List<Cookie> cookies = new ArrayList<Cookie>() {{
+            add(new Cookie("type", "chocolate"));
+            add(new Cookie("amount", "12"));
+        }};
+        Response response = new Response.Builder()
+                .setCookies(cookies)
+                .build();
+        Header header = response.getHeader();
+        String expected = "Set-Cookie: type=chocolate\r\nSet-Cookie: amount=12\r\n\r\n";
+
+        assertEquals(expected, header.formatToString());
     }
 
     @Test

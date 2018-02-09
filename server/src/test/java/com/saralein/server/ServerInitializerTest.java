@@ -2,19 +2,14 @@ package com.saralein.server;
 
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockLogger;
-import com.saralein.server.request.parser.HeaderParser;
-import com.saralein.server.request.parser.ParameterParser;
-import com.saralein.server.request.parser.RequestLineParser;
-import com.saralein.server.request.parser.RequestParser;
+import com.saralein.server.request.parser.*;
 import com.saralein.server.response.ResponseSerializer;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -32,7 +27,8 @@ public class ServerInitializerTest {
         runtime = Runtime.getRuntime();
         application = new Application(new MockCallable());
         requestParser = new RequestParser(
-                new RequestLineParser(), new HeaderParser(), new ParameterParser());
+                new RequestLineParser(), new HeaderParser(),
+                new ParameterParser(), new CookieParser());
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();
     }

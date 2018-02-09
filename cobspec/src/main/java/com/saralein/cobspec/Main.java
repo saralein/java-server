@@ -2,6 +2,7 @@ package com.saralein.cobspec;
 
 import com.saralein.cobspec.controller.*;
 import com.saralein.cobspec.controller.form.*;
+import com.saralein.cobspec.data.CookieStore;
 import com.saralein.cobspec.data.FormStore;
 import com.saralein.cobspec.data.LogStore;
 import com.saralein.cobspec.logger.ApplicationLogger;
@@ -92,6 +93,8 @@ public class Main {
         Authorizer authorizer = new Authorizer("admin", "hunter2");
         UnauthorizedController unauthorizedController = new UnauthorizedController("ServerCity");
 
+        CookieStore cookieStore = new CookieStore();
+
         return new Routes()
                 .get("/redirect", new RedirectController())
                 .get("/form", new FormGetController(formStore, formBody))
@@ -108,6 +111,8 @@ public class Main {
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
                 .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
-                .get("/parameters", new ParameterController());
+                .get("/parameters", new ParameterController())
+                .get("/cookie", new CookieController(cookieStore))
+                .get("/eat_cookie", new CookieController(cookieStore));
     }
 }
