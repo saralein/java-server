@@ -7,8 +7,6 @@ import com.saralein.server.request.parser.HeaderParser;
 import com.saralein.server.request.parser.ParameterParser;
 import com.saralein.server.request.parser.RequestLineParser;
 import com.saralein.server.request.parser.RequestParser;
-import com.saralein.server.response.ResponseSerializer;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -20,24 +18,21 @@ public class ServerInitializer {
     private final Runtime runtime;
     private final Application application;
     private final RequestParser requestParser;
-    private final ResponseSerializer responseSerializer;
     private final ExecutorService threadPool;
 
     public ServerInitializer(Logger logger, Application application) {
         this(logger, Runtime.getRuntime(), application,
                 new RequestParser(
                         new RequestLineParser(), new HeaderParser(), new ParameterParser()),
-                new ResponseSerializer(), Executors.newFixedThreadPool(10));
+                Executors.newFixedThreadPool(10));
     }
 
     public ServerInitializer(Logger logger, Runtime runtime, Application application,
-                             RequestParser requestParser, ResponseSerializer responseSerializer,
-                             ExecutorService threadPool) {
+                             RequestParser requestParser, ExecutorService threadPool) {
         this.logger = logger;
         this.runtime = runtime;
         this.application = application;
         this.requestParser =requestParser;
-        this.responseSerializer = responseSerializer;
         this.threadPool = threadPool;
     }
 
@@ -50,8 +45,7 @@ public class ServerInitializer {
             logger.error(e.getMessage());
 
         }
-        Server server = new Server(findServerIP(), serverSocket, logger, application,
-                                   requestParser, responseSerializer, threadPool);
+        Server server = new Server(findServerIP(), serverSocket, logger, application, requestParser, threadPool);
 
         runtime.addShutdownHook(new ShutdownHook(server, logger));
 

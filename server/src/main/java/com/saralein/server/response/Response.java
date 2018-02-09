@@ -1,14 +1,17 @@
 package com.saralein.server.response;
 
 import com.saralein.server.exchange.Header;
+import com.saralein.server.exchange.Message;
 
 public class Response {
     private final Header header;
     private final byte[] body;
+    private final Message message;
 
-    public Response(Header header, byte[] body) {
+    public Response(Header header, byte[] body, Message message) {
         this.header = header;
         this.body = body;
+        this.message = message;
     }
 
     public Header getHeader() {
@@ -17,6 +20,14 @@ public class Response {
 
     public byte[] getBody() {
         return body;
+    }
+
+    public String summary() {
+        return message.summary(header);
+    }
+
+    public byte[] full() {
+        return message.full(header, body);
     }
 
     public static class Builder {
@@ -44,7 +55,7 @@ public class Response {
         }
 
         public Response build() {
-            return new Response(header, body);
+            return new Response(header, body, new Message());
         }
     }
 }

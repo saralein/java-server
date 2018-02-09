@@ -6,8 +6,6 @@ import com.saralein.server.request.parser.HeaderParser;
 import com.saralein.server.request.parser.ParameterParser;
 import com.saralein.server.request.parser.RequestLineParser;
 import com.saralein.server.request.parser.RequestParser;
-import com.saralein.server.response.ResponseSerializer;
-
 import java.util.concurrent.Executors;
 
 public class MockServer extends Server {
@@ -22,7 +20,6 @@ public class MockServer extends Server {
                         new RequestLineParser(),
                         new HeaderParser(),
                         new ParameterParser()),
-                new ResponseSerializer(),
                 Executors.newSingleThreadExecutor());
     }
 

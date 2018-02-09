@@ -13,7 +13,6 @@ import com.saralein.server.request.parser.ParameterParser;
 import com.saralein.server.request.parser.RequestLineParser;
 import com.saralein.server.request.parser.RequestParser;
 import com.saralein.server.response.Response;
-import com.saralein.server.response.ResponseSerializer;
 import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import org.junit.Before;
@@ -27,7 +26,6 @@ public class ConnectionHandlerTest {
     private MockSocket socket;
     private ConnectionHandler connectionHandler;
     private MockHandler directoryHandler;
-    private ResponseSerializer responseSerializer;
 
     @Before
     public void setUp() {
@@ -35,14 +33,13 @@ public class ConnectionHandlerTest {
         MockLogger logger = new MockLogger();
         RequestParser requestParser = new RequestParser(
                 new RequestLineParser(), new HeaderParser(), new ParameterParser());
-        responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");
         MockHandler fileHandler = new MockHandler(200, "File response");
         Router router = new Router(new Routes());
         Middleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryHandler, fileHandler);
         Application application = new Application(staticMiddleware.apply(router));
-        connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
+        connectionHandler = new ConnectionHandler(socket, logger, application, requestParser);
     }
 
     @Test
@@ -54,7 +51,7 @@ public class ConnectionHandlerTest {
                 .build();
 
         Response directoryResponse = directoryHandler.handle(request);
-        byte[] directoryBytes = responseSerializer.convertToBytes(directoryResponse);
+        byte[] directoryBytes = directoryResponse.full();
 
         socket.setRequest(directoryString);
         connectionHandler.run();
@@ -71,7 +68,7 @@ public class ConnectionHandlerTest {
                 .body("404 Not Found")
                 .build();
 
-        byte[] notFoundBytes = responseSerializer.convertToBytes(response);
+        byte[] notFoundBytes = response.full();
 
         socket.setRequest(notFoundString);
         connectionHandler.run();

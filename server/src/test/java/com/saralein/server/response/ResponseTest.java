@@ -1,6 +1,7 @@
 package com.saralein.server.response;
 
 import com.saralein.server.exchange.Header;
+import com.saralein.server.exchange.Message;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
@@ -18,7 +19,7 @@ public class ResponseTest {
 
         body = "Hello".getBytes();
 
-        response = new Response(header, body);
+        response = new Response(header, body, new Message());
     }
 
     @Test
@@ -61,7 +62,7 @@ public class ResponseTest {
                 .addHeader("Content-Type", "image/gif")
                 .body("Hello Builder")
                 .build();
-        byte[] responseBytes = new ResponseSerializer().convertToBytes(response);
+        byte[] responseBytes = response.full();
 
         assertArrayEquals(fullResponse, responseBytes);
     }
@@ -77,5 +78,15 @@ public class ResponseTest {
     @Test
     public void getsBodyFromResponse() {
         assertArrayEquals(body, response.getBody());
+    }
+
+    @Test
+    public void getsMessageWithResponseStatusAndHeader() {
+        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", response.summary());
+    }
+
+    @Test
+    public void getsMessageWithFullResponse() {
+        assertArrayEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nHello".getBytes(), response.full());
     }
 }
