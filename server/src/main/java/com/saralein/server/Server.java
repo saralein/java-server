@@ -5,8 +5,6 @@ import com.saralein.server.connection.ConnectionHandler;
 import com.saralein.server.connection.ServerSocket;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.parser.RequestParser;
-import com.saralein.server.response.ResponseSerializer;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
@@ -16,18 +14,16 @@ public class Server {
     private final Application application;
     private final RequestParser requestParser;
     private final String serverIP;
-    private final ResponseSerializer responseSerializer;
     private final ExecutorService threadPool;
     private boolean listening;
 
     public Server(String serverIP, ServerSocket serverSocket, Logger logger, Application application,
-                  RequestParser requestParser, ResponseSerializer responseSerializer, ExecutorService threadPool) {
+                  RequestParser requestParser, ExecutorService threadPool) {
         this.serverIP = serverIP;
         this.serverSocket = serverSocket;
         this.logger = logger;
         this.application = application;
         this.requestParser = requestParser;
-        this.responseSerializer = responseSerializer;
         this.threadPool = threadPool;
         this.listening = true;
     }
@@ -39,7 +35,7 @@ public class Server {
             while(listening) {
                 Connection socket = serverSocket.accept();
                 threadPool.execute(
-                        new ConnectionHandler(socket, logger, application, requestParser, responseSerializer)
+                        new ConnectionHandler(socket, logger, application, requestParser)
                 );
             }
             serverSocket.close();

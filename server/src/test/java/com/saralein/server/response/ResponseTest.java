@@ -62,7 +62,7 @@ public class ResponseTest {
                 .addHeader("Content-Type", "image/gif")
                 .body("Hello Builder")
                 .build();
-        byte[] responseBytes = new ResponseSerializer().convertToBytes(response);
+        byte[] responseBytes = response.full();
 
         assertArrayEquals(fullResponse, responseBytes);
     }
