@@ -1,6 +1,6 @@
 package com.saralein.server.request.parser;
 
-import com.saralein.server.request.transfer.RequestLine;
+import com.saralein.server.exchange.RequestLine;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

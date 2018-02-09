@@ -1,4 +1,4 @@
-package com.saralein.server.request.transfer;
+package com.saralein.server.exchange;
 
 public class RequestLine {
     private final String method;

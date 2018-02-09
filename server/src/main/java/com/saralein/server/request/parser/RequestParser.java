@@ -1,7 +1,7 @@
 package com.saralein.server.request.parser;
 
+import com.saralein.server.exchange.RequestLine;
 import com.saralein.server.request.Request;
-import com.saralein.server.request.transfer.RequestLine;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,7 @@
-package com.saralein.server.request.transfer;
+package com.saralein.server.exchange;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class RequestLineTest {
