@@ -1,5 +1,7 @@
 package com.saralein.server.response;
 
+import com.saralein.server.exchange.Header;
+
 public class ResponseSerializer {
     public byte[] convertToBytes(Response response) {
         Header header = response.getHeader();

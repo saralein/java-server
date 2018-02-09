@@ -1,7 +1,7 @@
 package com.saralein.server.response;
 
+import com.saralein.server.exchange.Header;
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 

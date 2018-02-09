@@ -1,7 +1,7 @@
-package com.saralein.server.response;
+package com.saralein.server.exchange;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class HeaderTest {
     @Test
