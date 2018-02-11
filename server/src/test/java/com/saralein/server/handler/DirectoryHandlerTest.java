@@ -39,7 +39,7 @@ public class DirectoryHandlerTest {
     }
 
     @Test
-    public void returnsValidDirectoryResponse() throws IOException {
+    public void returnsDirectoryResponse() throws IOException {
         Response response = directoryHandler.handle(request);
         Header header = response.getHeader();
 

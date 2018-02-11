@@ -4,10 +4,8 @@ import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class DirectoryHandler implements Handler {
     private final FileHelper fileHelper;
@@ -36,8 +34,7 @@ public class DirectoryHandler implements Handler {
 
     private String createBody(String uri) throws IOException {
         StringBuilder filesHTML = new StringBuilder();
-        String resourceUri = fileHelper.createAbsolutePath(uri);
-        Path resource = Paths.get(resourceUri);
+        Path resource = fileHelper.createAbsolutePath(uri);
 
         for (String filename : fileHelper.listFileNames(resource)) {
             String filePath = fileHelper.createRelativeFilePath(filename, resource);

@@ -13,19 +13,20 @@ import com.saralein.cobspec.validation.DirectoryValidator;
 import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
+import com.saralein.server.FileHelper;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
+import com.saralein.server.filesystem.FileIO;
 import com.saralein.server.logger.Logger;
-import com.saralein.server.middleware.Callable;
-import com.saralein.server.middleware.LoggingMiddleware;
-import com.saralein.server.middleware.Middleware;
-import com.saralein.server.middleware.StaticMiddleware;
+import com.saralein.server.middleware.*;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,17 +38,19 @@ public class Main {
         List<String> validationErrors = runValidationAndReturnErrors(args, home);
 
         if (validationErrors.isEmpty()) {
+            MessageDigest messageDigest = configureMessageDigest(logger);
             ArgsParser argsParser = new ArgsParser(args);
             Integer port = argsParser.parsePort();
             Path root = argsParser.parseRoot(home);
 
             Routes routes = configureRoutes(logStore);
-            List<Middleware> middlewares = configureMiddleware(root, logger);
+            List<Middleware> middlewares = configureMiddleware(root, logger, messageDigest);
             Application application = configureApplication(routes, middlewares);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
         } else {
             logger.fatal(String.join("\n", validationErrors));
+            System.exit(1);
         }
     }
 
@@ -55,6 +58,16 @@ public class Main {
         return new ApplicationLogger()
                 .add(new StoreTransport(logStore))
                 .add(new StreamTransport(System.out));
+    }
+
+    private static MessageDigest configureMessageDigest(Logger logger) {
+        try {
+            return MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            logger.fatal(e.getMessage());
+            System.exit(1);
+            return null;
+        }
     }
 
     private static List<String> runValidationAndReturnErrors(String[] args, String home) {
@@ -66,9 +79,14 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static List<Middleware> configureMiddleware(Path root, Logger logger) {
+    private static List<Middleware> configureMiddleware(Path root, Logger logger, MessageDigest messageDigest) {
+        FileHelper fileHelper = new FileHelper(root);
+        FileIO fileIO = new FileIO();
+
         List<Middleware> middlewares = new ArrayList<>();
-        middlewares.add(new StaticMiddleware(root));
+        middlewares.add(new FileMiddleware(fileHelper, fileIO));
+        middlewares.add(new PatchMiddleware(fileHelper, fileIO, messageDigest));
+        middlewares.add(new DirectoryMiddleware(fileHelper));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;
@@ -101,7 +119,7 @@ public class Main {
                 .post("/form", new FormPostController(formStore, formBody, formModification))
                 .put("/form", new FormPutController(formStore, formBody, formModification))
                 .delete("/form", new FormDeleteController(formStore))
-                .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
+                .options("/method_options", new OptionsController(Methods.allowAllButDeleteAndPatch()))
                 .get("/method_options", new DefaultController())
                 .put("/method_options", new DefaultController())
                 .post("/method_options", new DefaultController())

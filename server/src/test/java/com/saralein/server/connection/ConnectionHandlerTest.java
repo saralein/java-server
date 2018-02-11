@@ -2,8 +2,8 @@ package com.saralein.server.connection;
 
 import com.saralein.server.Application;
 import com.saralein.server.FileHelper;
+import com.saralein.server.middleware.DirectoryMiddleware;
 import com.saralein.server.middleware.Middleware;
-import com.saralein.server.middleware.StaticMiddleware;
 import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.mocks.MockLogger;
 import com.saralein.server.mocks.MockSocket;
@@ -36,9 +36,8 @@ public class ConnectionHandlerTest {
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");
-        MockHandler fileHandler = new MockHandler(200, "File response");
         Router router = new Router(new Routes());
-        Middleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryHandler, fileHandler);
+        Middleware staticMiddleware = new DirectoryMiddleware(new FileHelper(root), directoryHandler);
         Application application = new Application(staticMiddleware.apply(router));
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
