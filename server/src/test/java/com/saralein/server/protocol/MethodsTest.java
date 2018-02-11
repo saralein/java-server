@@ -1,12 +1,12 @@
 package com.saralein.server.protocol;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class MethodsTest {
     @Test
     public void returnsStringOfAllMethods() {
-        assertEquals("GET,OPTIONS,HEAD,POST,PUT", Methods.allowNonDestructiveMethods());
+        assertEquals("GET,OPTIONS,HEAD,POST,PUT", Methods.allowAllButDeleteAndPatch());
     }
 
     @Test
@@ -15,7 +15,7 @@ public class MethodsTest {
     }
 
     @Test
-    public void returnsStringOfGetAndHead() {
-        assertEquals("GET,HEAD", Methods.allowedFileSystemMethods());
+    public void returnsStringOfGetHeadAndPatch() {
+        assertEquals("GET,HEAD,PATCH", Methods.allowedFileSystemMethods());
     }
 }

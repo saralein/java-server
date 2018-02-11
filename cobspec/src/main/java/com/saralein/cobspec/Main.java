@@ -101,7 +101,7 @@ public class Main {
                 .post("/form", new FormPostController(formStore, formBody, formModification))
                 .put("/form", new FormPutController(formStore, formBody, formModification))
                 .delete("/form", new FormDeleteController(formStore))
-                .options("/method_options", new OptionsController(Methods.allowNonDestructiveMethods()))
+                .options("/method_options", new OptionsController(Methods.allowAllButDeleteAndPatch()))
                 .get("/method_options", new DefaultController())
                 .put("/method_options", new DefaultController())
                 .post("/method_options", new DefaultController())

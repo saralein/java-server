@@ -1,6 +1,7 @@
 package com.saralein.server.middleware;
 
 import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.FileIO;
 import com.saralein.server.handler.DirectoryHandler;
 import com.saralein.server.handler.FileHandler;
 import com.saralein.server.handler.Handler;
@@ -8,11 +9,8 @@ import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
-
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class StaticMiddleware implements Middleware {
     private final FileHelper fileHelper;
@@ -22,7 +20,7 @@ public class StaticMiddleware implements Middleware {
 
     public StaticMiddleware(Path root) {
         this(new FileHelper(root), new DirectoryHandler(new FileHelper(root)),
-                new FileHandler(new FileHelper(root)));
+                new FileHandler(new FileHelper(root), new FileIO()));
     }
 
     public StaticMiddleware(
@@ -43,11 +41,10 @@ public class StaticMiddleware implements Middleware {
 
     @Override
     public Response call(Request request) {
-        String resource = fileHelper.createAbsolutePath(request.getUri());
-        Path resourcePath = Paths.get(resource);
+        Path resource = fileHelper.createAbsolutePath(request.getUri());
 
-        if (resourceExists(resourcePath)) {
-            return getResponse(resourcePath, request);
+        if (resourceExists(resource)) {
+            return getResponse(resource, request);
         } else {
             return next.call(request);
         }
@@ -68,7 +65,7 @@ public class StaticMiddleware implements Middleware {
     private Response getDirectoryResponse(Request request) {
         try {
             return directoryHandler.handle(request);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return serverError();
         }
     }
@@ -76,7 +73,7 @@ public class StaticMiddleware implements Middleware {
     private Response getFileResponse(Request request) {
         try {
             return fileHandler.handle(request);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return serverError();
         }
     }
