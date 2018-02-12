@@ -3,11 +3,10 @@ package com.saralein.server.request.parser;
 import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.RequestLine;
 import com.saralein.server.request.Request;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import static com.saralein.server.Constants.CRLF;
 
 public class RequestParser {
@@ -36,12 +35,11 @@ public class RequestParser {
             throw new Exception("Invalid request.");
         }
 
-        List<String> messageHeaderAndBody = splitMessageHeaderAndBody(request);
         String rawRequestLine = pullRequestLine(request);
-        String rawHeaders = pullHeaders(messageHeaderAndBody);
-        String body = pullBody(messageHeaderAndBody);
-        String cookieHeader = pullSingleHeader(request, "Cookie:\\s*(.*?)\r\n");
-        String rangeHeader = pullSingleHeader(request, "Range:\\s*(.*?)\r\n");
+        List<String> rawHeaders = pullHeaders(request);
+        String body = pullBody(request);
+        String cookieHeader = pullHeaderValue(rawHeaders, "Cookie");
+        String rangeHeader = pullHeaderValue(rawHeaders, "Range");
         RequestLine requestLine = requestLineParser.parse(rawRequestLine);
 
         String method = requestLine.getMethod();
@@ -69,40 +67,35 @@ public class RequestParser {
         return request.substring(0, crlfIndex);
     }
 
-    private String pullHeaders(List<String> messageHeaderAndBody) {
-        String fullHeader = messageHeaderAndBody.get(0);
+    private List<String> pullHeaders(String request) {
+        String withoutBody = request.split(CRLF + CRLF)[0];
 
-        if (fullHeader.contains(CRLF)) {
-            int crlfIndex = fullHeader.indexOf(CRLF);
-            return fullHeader.substring(crlfIndex);
+        if (withoutBody.contains(CRLF)) {
+            int crlfIndex = withoutBody.indexOf(CRLF);
+            return Arrays.asList(withoutBody.substring(crlfIndex).split(CRLF));
         }
 
-        return empty;
+        return new ArrayList<>();
     }
 
-    private String pullBody(List<String> messageHeaderAndBody) {
+    private String pullBody(String request) {
+        String[] splitAtBody = request.split(CRLF + CRLF);
         int validLength = 2;
 
-        if (messageHeaderAndBody.size() == validLength) {
-            return messageHeaderAndBody.get(1);
+        if (splitAtBody.length == validLength) {
+            return splitAtBody[1];
         }
 
         return empty;
     }
 
-    private String pullSingleHeader(String request, String toMatch) {
-        String header = empty;
-        Pattern pattern = Pattern.compile(toMatch);
-        Matcher matcher = pattern.matcher(request);
-
-        while (matcher.find()) {
-            header = matcher.group(1);
+    private String pullHeaderValue(List<String> headers, String headerName) {
+        for (String header : headers) {
+            if (header.contains(headerName)) {
+                return header.replaceAll(headerName + "\\s*:\\s*", "");
+            }
         }
 
-        return header;
-    }
-
-    private List<String> splitMessageHeaderAndBody(String request) {
-        return Arrays.asList(request.split(CRLF + CRLF));
+        return empty;
     }
 }
