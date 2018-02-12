@@ -1,7 +1,8 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.FileHelper;
 import com.saralein.server.exchange.Header;
+import com.saralein.server.filesystem.File;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.mocks.MockIO;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertEquals;
 
 public class FileHandlerTest {
@@ -18,12 +21,12 @@ public class FileHandlerTest {
     private Path root;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchAlgorithmException {
         root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        FileHelper fileHelper = new FileHelper(root);
         byte[] mockResponse = "File read".getBytes();
         mockIO = new MockIO(mockResponse);
-        fileHandler = new FileHandler(fileHelper, mockIO);
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        fileHandler = new FileHandler(new File(sha1), new FilePath(root), mockIO);
     }
     
     @Test

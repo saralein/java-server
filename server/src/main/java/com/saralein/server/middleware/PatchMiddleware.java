@@ -1,28 +1,29 @@
 package com.saralein.server.middleware;
 
-import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.handler.Handler;
 import com.saralein.server.handler.PatchHandler;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
 
 public class PatchMiddleware implements Middleware {
-    private final FileHelper fileHelper;
+    private final File file;
+    private final FilePath filePath;
     private final Handler patchHandler;
     private Callable next;
 
-    public PatchMiddleware(FileHelper fileHelper, FileIO fileIO, MessageDigest messageDigest) {
-        this(fileHelper, new PatchHandler(messageDigest, fileHelper, fileIO));
+    public PatchMiddleware(File file, FilePath filePath, FileIO fileIO) {
+        this(file, filePath, new PatchHandler(file, filePath, fileIO));
     }
 
-    public PatchMiddleware(FileHelper fileHelper, Handler patchHandler) {
-        this.fileHelper = fileHelper;
+    public PatchMiddleware(File file, FilePath filePath, Handler patchHandler) {
+        this.file = file;
+        this.filePath = filePath;
         this.patchHandler = patchHandler;
         this.next = null;
     }
@@ -35,7 +36,9 @@ public class PatchMiddleware implements Middleware {
 
     @Override
     public Response call(Request request) {
-        if (isPatch(request) && fileExists(request)) {
+        Path path = filePath.absolute(request.getUri());
+
+        if (isPatch(request) && file.exists(path)) {
             return getPatchResponse(request);
         }
 
@@ -53,10 +56,5 @@ public class PatchMiddleware implements Middleware {
     private boolean isPatch(Request request) {
         String patch = Methods.PATCH.name();
         return request.getMethod().equals(patch);
-    }
-
-    private boolean fileExists(Request request) {
-        Path path = fileHelper.createAbsolutePath(request.getUri());
-        return Files.exists(path) && !Files.isDirectory(path);
     }
 }

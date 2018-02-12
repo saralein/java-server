@@ -1,6 +1,7 @@
 package com.saralein.server.middleware;
 
-import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.Directory;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.request.Request;
@@ -20,8 +21,8 @@ public class DirectoryMiddlewareTest {
         mockCallable = new MockCallable();
         mockHandler = new MockHandler(200, "Patch response");
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        FileHelper fileHelper = new FileHelper(root);
-        directoryMiddleware = new DirectoryMiddleware(fileHelper, mockHandler).apply(mockCallable);
+        directoryMiddleware = new DirectoryMiddleware(
+                new Directory(), new FilePath(root), mockHandler).apply(mockCallable);
     }
 
     @Test

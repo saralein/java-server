@@ -1,6 +1,7 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.Directory;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
@@ -8,10 +9,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class DirectoryHandler implements Handler {
-    private final FileHelper fileHelper;
+    private final Directory directory;
+    private final FilePath filePath;
 
-    public DirectoryHandler(FileHelper fileHelper) {
-        this.fileHelper = fileHelper;
+    public DirectoryHandler(Directory directory, FilePath filePath) {
+        this.directory = directory;
+        this.filePath = filePath;
     }
 
     public Response handle(Request request) throws IOException {
@@ -34,11 +37,11 @@ public class DirectoryHandler implements Handler {
 
     private String createBody(String uri) throws IOException {
         StringBuilder filesHTML = new StringBuilder();
-        Path resource = fileHelper.createAbsolutePath(uri);
+        Path resource = filePath.absolute(uri);
 
-        for (String filename : fileHelper.listFileNames(resource)) {
-            String filePath = fileHelper.createRelativeFilePath(filename, resource);
-            filesHTML.append(createFileHTML(filePath, filename));
+        for (String filename : directory.listFileNames(resource)) {
+            String relativePath = filePath.relative(filename, resource);
+            filesHTML.append(createFileHTML(relativePath, filename));
         }
 
         return filesHTML.toString();
