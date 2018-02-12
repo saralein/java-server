@@ -50,5 +50,4 @@ public class FileMiddlewareTest {
         assert (mockCallable.wasCalled());
         assertFalse(mockHandler.wasCalled());
     }
-
 }
