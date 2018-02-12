@@ -1,6 +1,7 @@
 package com.saralein.server.middleware;
 
-import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.File;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.request.Request;
@@ -8,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertFalse;
 
 public class FileMiddlewareTest {
@@ -16,11 +19,12 @@ public class FileMiddlewareTest {
     private Middleware fileMiddleware;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchAlgorithmException {
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
         mockHandler = new MockHandler(200, "File response");
         mockCallable = new MockCallable();
-        fileMiddleware = new FileMiddleware(new FileHelper(root), mockHandler).apply(mockCallable);
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        fileMiddleware = new FileMiddleware(new File(sha1), new FilePath(root), mockHandler).apply(mockCallable);
     }
 
     @Test

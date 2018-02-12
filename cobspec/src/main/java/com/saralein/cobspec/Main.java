@@ -13,12 +13,14 @@ import com.saralein.cobspec.validation.DirectoryValidator;
 import com.saralein.cobspec.validation.PortValidator;
 import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
-import com.saralein.server.FileHelper;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.controller.UnauthorizedController;
+import com.saralein.server.filesystem.Directory;
+import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.middleware.*;
 import com.saralein.server.protocol.Methods;
@@ -80,13 +82,15 @@ public class Main {
     }
 
     private static List<Middleware> configureMiddleware(Path root, Logger logger, MessageDigest messageDigest) {
-        FileHelper fileHelper = new FileHelper(root);
+        FilePath filePath = new FilePath(root);
+        File file = new File(messageDigest);
+        Directory directory = new Directory();
         FileIO fileIO = new FileIO();
 
         List<Middleware> middlewares = new ArrayList<>();
-        middlewares.add(new FileMiddleware(fileHelper, fileIO));
-        middlewares.add(new PatchMiddleware(fileHelper, fileIO, messageDigest));
-        middlewares.add(new DirectoryMiddleware(fileHelper));
+        middlewares.add(new FileMiddleware(file, filePath, fileIO));
+        middlewares.add(new PatchMiddleware(file, filePath, fileIO));
+        middlewares.add(new DirectoryMiddleware(directory, filePath));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;

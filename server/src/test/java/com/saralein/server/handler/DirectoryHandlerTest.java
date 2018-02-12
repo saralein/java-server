@@ -1,7 +1,8 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.FileHelper;
 import com.saralein.server.exchange.Header;
+import com.saralein.server.filesystem.Directory;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
@@ -29,13 +30,12 @@ public class DirectoryHandlerTest {
 
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
-        FileHelper fileHelper = new FileHelper(root);
         request = new Request.Builder()
                 .method("GET")
                 .uri("/")
                 .build();
 
-        directoryHandler = new DirectoryHandler(fileHelper);
+        directoryHandler = new DirectoryHandler(new Directory(), new FilePath(root));
     }
 
     @Test

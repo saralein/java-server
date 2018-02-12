@@ -1,7 +1,8 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.FileHelper;
 import com.saralein.server.exchange.Header;
+import com.saralein.server.filesystem.File;
+import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.mocks.MockIO;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
@@ -24,11 +25,10 @@ public class PatchHandlerTest {
     @Before
     public void setUp() throws NoSuchAlgorithmException {
         root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        FileHelper fileHelper = new FileHelper(root);
         byte[] mockResponse = "File read".getBytes();
         mockIO = new MockIO(mockResponse);
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        patchHandler = new PatchHandler(sha1, fileHelper, mockIO);
+        patchHandler = new PatchHandler(new File(sha1), new FilePath(root), mockIO);
         etag = DatatypeConverter.printHexBinary(sha1.digest(mockResponse)).toLowerCase();
     }
 
