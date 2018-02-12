@@ -16,15 +16,18 @@ public class RequestParser {
     private final ParameterParser parameterParser;
     private final String empty;
     private final CookieParser cookieParser;
+    private final RangeParser rangeParser;
 
     public RequestParser(
             RequestLineParser requestLineParser, HeaderParser headerParser,
-            ParameterParser parameterParser, CookieParser cookieParser
+            ParameterParser parameterParser, CookieParser cookieParser,
+            RangeParser rangeParser
     ) {
         this.requestLineParser = requestLineParser;
         this.headerParser = headerParser;
         this.parameterParser = parameterParser;
         this.cookieParser = cookieParser;
+        this.rangeParser = rangeParser;
         this.empty = "";
     }
 
@@ -37,7 +40,8 @@ public class RequestParser {
         String rawRequestLine = pullRequestLine(request);
         String rawHeaders = pullHeaders(messageHeaderAndBody);
         String body = pullBody(messageHeaderAndBody);
-        String cookieHeader = pullCookieHeader(request);
+        String cookieHeader = pullSingleHeader(request, "Cookie:\\s*(.*?)\r\n");
+        String rangeHeader = pullSingleHeader(request, "Range:\\s*(.*?)\r\n");
         RequestLine requestLine = requestLineParser.parse(rawRequestLine);
 
         String method = requestLine.getMethod();
@@ -47,6 +51,7 @@ public class RequestParser {
         Map<String, String> headers = headerParser.parse(rawHeaders);
         Map<String, String> parameters = parameterParser.parse(query);
         List<Cookie> cookies = cookieParser.parse(cookieHeader);
+        Map<String, Integer> range = rangeParser.parse(rangeHeader);
 
         return new Request.Builder()
                 .method(method)
@@ -54,6 +59,7 @@ public class RequestParser {
                 .body(body)
                 .parameters(parameters)
                 .cookies(cookies)
+                .range(range)
                 .addHeaders(headers)
                 .build();
     }
@@ -84,9 +90,9 @@ public class RequestParser {
         return empty;
     }
 
-    private String pullCookieHeader(String request) {
+    private String pullSingleHeader(String request, String toMatch) {
         String header = empty;
-        Pattern pattern = Pattern.compile("Cookie:\\s*(.*?)\r\n");
+        Pattern pattern = Pattern.compile(toMatch);
         Matcher matcher = pattern.matcher(request);
 
         while (matcher.find()) {

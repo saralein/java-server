@@ -60,6 +60,20 @@ public class RequestTest {
     }
 
     @Test
+    public void addsRangeToRequest() {
+        Map<String, Integer> range = new HashMap<String, Integer>() {{
+            put("start", 0);
+            put("end", 9);
+        }};
+
+        Request request = new Request.Builder()
+                .range(range)
+                .build();
+
+        assertEquals(range, request.getRange());
+    }
+
+    @Test
     public void addsBodyToRequest() {
         Request request = new Request.Builder()
                 .body("Hi")
