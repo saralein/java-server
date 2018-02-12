@@ -32,7 +32,8 @@ public class ConnectionHandlerTest {
         MockLogger logger = new MockLogger();
         RequestParser requestParser = new RequestParser(
                 new RequestLineParser(), new HeaderParser(),
-                new ParameterParser(), new CookieParser());
+                new ParameterParser(), new CookieParser(),
+                new RangeParser());
         responseSerializer = new ResponseSerializer();
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");

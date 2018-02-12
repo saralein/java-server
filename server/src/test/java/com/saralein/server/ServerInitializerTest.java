@@ -28,7 +28,8 @@ public class ServerInitializerTest {
         application = new Application(new MockCallable());
         requestParser = new RequestParser(
                 new RequestLineParser(), new HeaderParser(),
-                new ParameterParser(), new CookieParser());
+                new ParameterParser(), new CookieParser(),
+                new RangeParser());
         responseSerializer = new ResponseSerializer();
         thread = Executors.newSingleThreadExecutor();
     }

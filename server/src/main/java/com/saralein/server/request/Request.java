@@ -13,14 +13,16 @@ public class Request {
     private final String uri;
     private final String body;
     private final List<Cookie> cookies;
+    private final Map<String, Integer> range;
 
     public Request(
-            String method, String uri, Map<String, String> parameters,
-            List<Cookie> cookies, String body, Map<String, String> headers) {
+            String method, String uri, Map<String, String> parameters, List<Cookie> cookies,
+            Map<String, Integer> range, String body, Map<String, String> headers) {
         this.method = method;
         this.uri = uri;
         this.parameters = parameters;
         this.cookies = cookies;
+        this.range = range;
         this.body = body;
         this.request = headers;
     }
@@ -41,6 +43,10 @@ public class Request {
         return cookies;
     }
 
+    public Map<String, Integer> getRange() {
+        return range;
+    }
+
     public String getBody() {
         return body;
     }
@@ -59,6 +65,7 @@ public class Request {
         private String body = "";
         private Map<String, String> parameters = new HashMap<>();
         private List<Cookie> cookies = new ArrayList<>();
+        private Map<String, Integer> range = new HashMap<>();
         private Map<String, String> headers = new HashMap<>();
 
         public Builder method(String method) {
@@ -86,6 +93,11 @@ public class Request {
             return this;
         }
 
+        public Builder range(Map<String, Integer> range) {
+            this.range = range;
+            return this;
+        }
+
         public Builder addHeader(String key, String value) {
             headers.put(key, value);
             return this;
@@ -97,7 +109,7 @@ public class Request {
         }
 
         public Request build() {
-            return new Request(method, uri, parameters, cookies, body, headers);
+            return new Request(method, uri, parameters, cookies, range, body, headers);
         }
     }
 }

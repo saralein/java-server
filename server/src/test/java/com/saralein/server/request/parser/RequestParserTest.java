@@ -23,7 +23,8 @@ public class RequestParserTest {
     public void setUp() {
         requestParser = new RequestParser(
                 new RequestLineParser(), new HeaderParser(),
-                new ParameterParser(), new CookieParser());
+                new ParameterParser(), new CookieParser(),
+                new RangeParser());
     }
 
     private List<String> mapToString(List<Cookie> cookies) {
@@ -92,6 +93,20 @@ public class RequestParserTest {
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/cookie", parsedRequest.getUri());
         assertTrue(haveMatchingToString(cookies, parsedRequest.getCookies()));
+    }
+
+    @Test
+    public void parseRequestWithRange() throws Exception {
+        Map<String, Integer> range = new HashMap<String, Integer>() {{
+            put("start", 0);
+            put("end", 9);
+        }};
+        String rawRequest = "GET /recipe.txt HTTP/1.1\r\nRange: bytes=0-9\r\n\r\n";
+        Request parsedRequest = requestParser.parse(rawRequest);
+
+        assertEquals("GET", parsedRequest.getMethod());
+        assertEquals("/recipe.txt", parsedRequest.getUri());
+        assertEquals(range, parsedRequest.getRange());
     }
 
     @Test(expected = Exception.class)

@@ -23,7 +23,8 @@ public class ServerInitializer {
         this(logger, Runtime.getRuntime(), application,
                 new RequestParser(
                         new RequestLineParser(), new HeaderParser(),
-                        new ParameterParser(), new CookieParser()),
+                        new ParameterParser(), new CookieParser(),
+                        new RangeParser()),
                 new ResponseSerializer(), Executors.newFixedThreadPool(10));
     }
 

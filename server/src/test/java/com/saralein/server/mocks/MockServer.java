@@ -18,7 +18,8 @@ public class MockServer extends Server {
                         new RequestLineParser(),
                         new HeaderParser(),
                         new ParameterParser(),
-                        new CookieParser()),
+                        new CookieParser(),
+                        new RangeParser()),
                 new ResponseSerializer(),
                 Executors.newSingleThreadExecutor());
     }
