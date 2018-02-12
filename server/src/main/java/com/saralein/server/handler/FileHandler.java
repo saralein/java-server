@@ -4,11 +4,9 @@ import com.saralein.server.FileHelper;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FileHandler implements Handler {
     private final FileHelper fileHelper;
@@ -30,8 +28,7 @@ public class FileHandler implements Handler {
     }
 
     private byte[] createBody(Request request) throws IOException {
-        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
-        Path resource = Paths.get(resourceUri);
+        Path resource = fileHelper.createAbsolutePath(request.getUri());
 
         return Files.readAllBytes(resource);
     }
