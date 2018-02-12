@@ -18,8 +18,8 @@ public class FileHelper {
         this.root = root;
     }
 
-    public String createAbsolutePath(String name) {
-        return root.toString() + separator + name;
+    public Path createAbsolutePath(String name) {
+        return root.resolve(name.substring(1));
     }
 
     public String createRelativeFilePath(String name, Path resource) {
@@ -38,6 +38,10 @@ public class FileHelper {
                     .sorted()
                     .collect(Collectors.toList());
         }
+    }
+
+    public int getFileLength(Path resource) throws IOException {
+        return (int) Files.size(resource);
     }
 
     private String removeRootPortionOfPath(Path resource) {

@@ -38,8 +38,10 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");
         MockHandler fileHandler = new MockHandler(200, "File response");
+        MockHandler partialFileHandler = new MockHandler(200, "Partial response");
         Router router = new Router(new Routes());
-        Middleware staticMiddleware = new StaticMiddleware(new FileHelper(root), directoryHandler, fileHandler);
+        Middleware staticMiddleware = new StaticMiddleware(
+                new FileHelper(root), directoryHandler, fileHandler, partialFileHandler);
         Application application = new Application(staticMiddleware.apply(router));
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
