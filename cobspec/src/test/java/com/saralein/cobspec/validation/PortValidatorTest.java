@@ -35,15 +35,15 @@ public class PortValidatorTest {
     @Test
     public void returnsCorrectErrorForInvalidPortArg() {
         String error = "Port must be a number between 1024 and 65535.";
-        List<String> stringPortArgs = Arrays.asList("-p","coconuts");
-        ArrayList<String> stringPortErrors = portValidator.validate(stringPortArgs);
+        List<String> nonNumericPortArg = Arrays.asList("-p", "coconuts");
+        ArrayList<String> nonNumericPortError = portValidator.validate(nonNumericPortArg);
 
-        assertTrue(stringPortErrors.contains(error));
+        assertTrue(nonNumericPortError.contains(error));
 
-        List<String> outOfRangeArgs = Arrays.asList("-p","coconuts");
-        ArrayList<String> outOfRangeErrors = portValidator.validate(outOfRangeArgs);
+        List<String> outOfRangeArg = Arrays.asList("-p", "23");
+        ArrayList<String> outOfRangeError = portValidator.validate(outOfRangeArg);
 
-        assertTrue(outOfRangeErrors.contains(error));
+        assertTrue(outOfRangeError.contains(error));
     }
 
     @Test
