@@ -8,7 +8,7 @@ public class PortValidator extends Validator {
     @Override
     protected void checkForErrors(String portArg) {
         if (isNotNumeric(portArg) || isNotInRange(portArg)) {
-            errors.add("Port must be a number between 1 and 65535.");
+            errors.add("Port must be a number between 1024 and 65535.");
         }
     }
 
@@ -19,6 +19,6 @@ public class PortValidator extends Validator {
     private boolean isNotInRange(String portArg) {
         Integer portNum = Integer.parseInt(portArg);
 
-        return 1 > portNum || portNum > 65535;
+        return 1024 >= portNum || portNum > 65535;
     }
 }
