@@ -17,8 +17,8 @@ public enum Methods {
         return Methods.GET + "," + Methods.OPTIONS;
     }
 
-    public static String allowedFileSystemMethods() {
-        return Methods.GET + "," + Methods.HEAD + "," + Methods.PATCH;
+    public static String allowedFileMethods() {
+        return Methods.GET + "," + Methods.HEAD;
     }
 
     private static boolean isNotDeleteOrPatch(Methods method) {

@@ -16,6 +16,6 @@ public class MethodsTest {
 
     @Test
     public void returnsStringOfGetHeadAndPatch() {
-        assertEquals("GET,HEAD,PATCH", Methods.allowedFileSystemMethods());
+        assertEquals("GET,HEAD", Methods.allowedFileMethods());
     }
 }
