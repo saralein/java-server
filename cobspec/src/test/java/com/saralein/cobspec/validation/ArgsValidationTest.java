@@ -13,7 +13,7 @@ public class ArgsValidationTest {
     public void setUp() {
         String home = System.getProperty("user.dir") + "/src/test";
 
-        List<Validator> validators = new ArrayList<Validator>(){{
+        List<Validator> validators = new ArrayList<Validator>() {{
             add(new PortValidator());
             add(new DirectoryValidator(home));
         }};

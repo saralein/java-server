@@ -48,7 +48,7 @@ public class PortValidatorTest {
 
     @Test
     public void returnsEmptyErrorListForValidPortOption() {
-        List<String> args = Arrays.asList("-p","6066");
+        List<String> args = Arrays.asList("-p", "6066");
         ArrayList<String> errors = portValidator.validate(args);
 
         assertTrue(errors.size() == 0);
