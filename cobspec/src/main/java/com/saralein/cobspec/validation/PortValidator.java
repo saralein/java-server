@@ -19,6 +19,6 @@ public class PortValidator extends Validator {
     private boolean isNotInRange(String portArg) {
         Integer portNum = Integer.parseInt(portArg);
 
-        return 1 > portNum || portNum > 65535;
+        return 1024 >= portNum || portNum > 65535;
     }
 }
