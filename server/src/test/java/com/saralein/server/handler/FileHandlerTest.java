@@ -23,7 +23,7 @@ public class FileHandlerTest {
     @Before
     public void setUp() throws NoSuchAlgorithmException {
         root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        byte[] mockResponse = "File read".getBytes();
+        byte[] mockResponse = "File readAllBytes".getBytes();
         mockIO = new MockIO(mockResponse);
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         fileHandler = new FileHandler(new File(sha1), new FilePath(root), mockIO);

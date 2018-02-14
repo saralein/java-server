@@ -22,13 +22,13 @@ public class MockIO implements IO {
     }
 
     @Override
-    public byte[] read(Path path) throws IOException {
+    public byte[] readAllBytes(Path path) throws IOException {
         readPath = path;
         return response;
     }
 
     @Override
-    public byte[] partialRead(Path file, int start, int end) throws IOException {
+    public byte[] readByteRange(Path file, int start, int end) throws IOException {
         readPath = file;
         readStart = start;
         readEnd = end;

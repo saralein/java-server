@@ -49,7 +49,7 @@ public class PartialFileHandler implements Handler {
                 .status(206)
                 .addHeader("Content-Type", file.mimeType(request.getUri()))
                 .addHeader("Content-Range", formatContentRange(start, end, fileLength))
-                .body(fileIO.partialRead(resource, start, end))
+                .body(fileIO.readByteRange(resource, start, end))
                 .build();
     }
 

@@ -25,7 +25,7 @@ public class PatchHandlerTest {
     @Before
     public void setUp() throws NoSuchAlgorithmException {
         root = Paths.get(System.getProperty("user.dir"), "src/test/public");
-        byte[] mockResponse = "File read".getBytes();
+        byte[] mockResponse = "File readAllBytes".getBytes();
         mockIO = new MockIO(mockResponse);
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         patchHandler = new PatchHandler(new File(sha1), new FilePath(root), mockIO);

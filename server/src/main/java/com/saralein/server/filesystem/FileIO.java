@@ -9,12 +9,12 @@ import java.nio.file.StandardOpenOption;
 
 public class FileIO implements IO {
     @Override
-    public byte[] read(Path path) throws IOException {
+    public byte[] readAllBytes(Path path) throws IOException {
         return Files.readAllBytes(path);
     }
 
     @Override
-    public byte[] partialRead(Path file, int start, int end) throws IOException {
+    public byte[] readByteRange(Path file, int start, int end) throws IOException {
         FileChannel fileChannel = FileChannel.open(file, StandardOpenOption.READ);
         fileChannel.position(start);
         ByteBuffer buffer = ByteBuffer.allocate(end + 1 - start);
