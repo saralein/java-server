@@ -64,7 +64,7 @@ public class Main {
         try {
             return MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException e) {
-            logger.error(e.getMessage());
+            logger.fatal(e.getMessage());
             System.exit(1);
             return null;
         }
