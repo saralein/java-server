@@ -1,14 +1,20 @@
 package com.saralein.cobspec.validation;
 
+import org.junit.Before;
+import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 public class PortValidatorTest {
-    private final PortValidator portValidator = new PortValidator();
+    private PortValidator portValidator;
+
+    @Before
+    public void setUp() {
+        portValidator = new PortValidator();
+    }
 
     @Test
     public void returnsEmptyErrorListIfFlagNotInArgs() {
@@ -28,20 +34,21 @@ public class PortValidatorTest {
 
     @Test
     public void returnsCorrectErrorForInvalidPortArg() {
-        List<String> stringPortArgs = Arrays.asList("-p","coconuts");
-        ArrayList<String> stringPortErrors = portValidator.validate(stringPortArgs);
+        String error = "Port must be a number between 1024 and 65535.";
+        List<String> nonNumericPortArg = Arrays.asList("-p", "coconuts");
+        ArrayList<String> nonNumericPortError = portValidator.validate(nonNumericPortArg);
 
-        assertTrue(stringPortErrors.contains("Port must be a number between 1 and 65535."));
+        assertTrue(nonNumericPortError.contains(error));
 
-        List<String> outOfRangeArgs = Arrays.asList("-p","coconuts");
-        ArrayList<String> outOfRangeErrors = portValidator.validate(outOfRangeArgs);
+        List<String> outOfRangeArg = Arrays.asList("-p", "23");
+        ArrayList<String> outOfRangeError = portValidator.validate(outOfRangeArg);
 
-        assertTrue(outOfRangeErrors.contains("Port must be a number between 1 and 65535."));
+        assertTrue(outOfRangeError.contains(error));
     }
 
     @Test
     public void returnsEmptyErrorListForValidPortOption() {
-        List<String> args = Arrays.asList("-p","6066");
+        List<String> args = Arrays.asList("-p", "6066");
         ArrayList<String> errors = portValidator.validate(args);
 
         assertTrue(errors.size() == 0);

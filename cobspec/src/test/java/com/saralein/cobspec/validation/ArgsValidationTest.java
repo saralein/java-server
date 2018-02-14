@@ -1,10 +1,10 @@
 package com.saralein.cobspec.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.Assert.assertTrue;
 
 public class ArgsValidationTest {
     private ArgsValidation argsValidation;
@@ -13,7 +13,7 @@ public class ArgsValidationTest {
     public void setUp() {
         String home = System.getProperty("user.dir") + "/src/test";
 
-        List<Validator> validators = new ArrayList<Validator>(){{
+        List<Validator> validators = new ArrayList<Validator>() {{
             add(new PortValidator());
             add(new DirectoryValidator(home));
         }};
@@ -27,7 +27,7 @@ public class ArgsValidationTest {
         List<String> errors = argsValidation.validate(args);
 
         assertTrue(errors.contains("Valid directory not provided in options."));
-        assertTrue(errors.contains("Port must be a number between 1 and 65535."));
+        assertTrue(errors.contains("Port must be a number between 1024 and 65535."));
     }
 
     @Test
