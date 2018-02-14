@@ -24,6 +24,14 @@ public class FileIOTest {
     }
 
     @Test
+    public void readsPartialFileContent() throws IOException {
+        assertArrayEquals("1 cup rice".getBytes(), fileIO.partialRead(file, 0, 9));
+        assertArrayEquals("cup r".getBytes(), fileIO.partialRead(file, 2, 6));
+        assertArrayEquals("cup rice".getBytes(), fileIO.partialRead(file, 2, 9));
+        assertArrayEquals("p rice".getBytes(), fileIO.partialRead(file, 4, 9));
+    }
+
+    @Test
     public void writesContentToFile() throws IOException {
         assertArrayEquals("1 cup rice".getBytes(), fileIO.read(file));
         fileIO.write(file, "A pinch of salt");
