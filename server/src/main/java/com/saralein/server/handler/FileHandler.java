@@ -1,42 +1,57 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.FileHelper;
+import com.saralein.server.filesystem.File;
+import com.saralein.server.filesystem.FilePath;
+import com.saralein.server.filesystem.IO;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FileHandler implements Handler {
-    private final FileHelper fileHelper;
+    private final File file;
+    private final FilePath filePath;
+    private final IO fileIO;
 
-    public FileHandler(FileHelper fileHelper) {
-        this.fileHelper = fileHelper;
+    public FileHandler(File file, FilePath filePath, IO fileIO) {
+        this.file = file;
+        this.filePath = filePath;
+        this.fileIO = fileIO;
     }
 
     @Override
     public Response handle(Request request) throws IOException {
-        String requestMethod = request.getMethod();
-        byte[] body = requestMethod.equals(Methods.GET.name()) ? createBody(request) : new byte[]{};
+        String method = request.getMethod();
 
+        if (method.equals(Methods.HEAD.name())) {
+            return getHeadResponse(request);
+        }
+
+        return getGetResponse(request);
+    }
+
+    private Response getGetResponse(Request request) throws IOException {
         return new Response.Builder()
-                    .status(200)
-                    .addHeader("Content-Type", getMimeType(request))
-                    .body(body)
-                    .build();
+                .status(200)
+                .addHeader("Content-Type", getMimeType(request))
+                .body(createBody(request))
+                .build();
+    }
+
+    private Response getHeadResponse(Request request) {
+        return new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", getMimeType(request))
+                .build();
     }
 
     private byte[] createBody(Request request) throws IOException {
-        String resourceUri = fileHelper.createAbsolutePath(request.getUri());
-        Path resource = Paths.get(resourceUri);
-
-        return Files.readAllBytes(resource);
+        Path resource = filePath.absolute(request.getUri());
+        return fileIO.read(resource);
     }
 
     private String getMimeType(Request request) {
-        return fileHelper.determineMimeType(request.getUri());
+        return file.mimeType(request.getUri());
     }
 }

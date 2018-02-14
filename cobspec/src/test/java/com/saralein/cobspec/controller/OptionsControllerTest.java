@@ -22,7 +22,7 @@ public class OptionsControllerTest {
 
     @Test
     public void returnsResponseWithAllAllowedMethods() {
-        OptionsController optionsController = new OptionsController(Methods.allowNonDestructiveMethods());
+        OptionsController optionsController = new OptionsController(Methods.allowAllButDeleteAndPatch());
         Response response = optionsController.respond(request);
         Header header = response.getHeader();
 
