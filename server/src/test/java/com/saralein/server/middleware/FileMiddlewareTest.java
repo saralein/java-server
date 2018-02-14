@@ -24,7 +24,7 @@ public class FileMiddlewareTest {
     }
 
     @Test
-    public void callsHandlerForFiles() {
+    public void handlesFileRequest() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("GET")
@@ -36,7 +36,7 @@ public class FileMiddlewareTest {
     }
 
     @Test
-    public void callsCallableForNonFiles() {
+    public void passesNonFileRequestToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/")
                 .method("GET")

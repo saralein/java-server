@@ -25,7 +25,7 @@ public class PatchMiddlewareTest {
     }
 
     @Test
-    public void callsPatchHandlerForPatchRequests() {
+    public void handlesFilePatchRequest() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("PATCH")
@@ -37,7 +37,7 @@ public class PatchMiddlewareTest {
     }
 
     @Test
-    public void callsCallableForOtherMethodRequests() {
+    public void passesNonPatchRequestToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("GET")
@@ -49,7 +49,7 @@ public class PatchMiddlewareTest {
     }
 
     @Test
-    public void callsCallableForNonFiles() {
+    public void passesNonFileRequestToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/")
                 .method("GET")

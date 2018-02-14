@@ -27,7 +27,7 @@ public class FileHandlerTest {
     }
     
     @Test
-    public void returnsResponseForFile() throws IOException {
+    public void returnsGetResponse() throws IOException {
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/cheetara.jpg")
@@ -41,7 +41,7 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void returnsHead() throws IOException {
+    public void returnsHeadResponse() throws IOException {
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/cheetara.jpg")

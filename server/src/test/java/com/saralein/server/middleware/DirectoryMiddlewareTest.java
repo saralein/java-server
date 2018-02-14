@@ -25,7 +25,7 @@ public class DirectoryMiddlewareTest {
     }
 
     @Test
-    public void callsHandlerForDirectoryRequests() {
+    public void handlesDirectoryRequest() {
         Request request = new Request.Builder()
                 .uri("/")
                 .method("GET")
@@ -37,7 +37,7 @@ public class DirectoryMiddlewareTest {
     }
 
     @Test
-    public void callsCallableForOtherRequests() {
+    public void passesNonDirectoryRequestToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("GET")
