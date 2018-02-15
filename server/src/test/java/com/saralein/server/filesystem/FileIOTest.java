@@ -20,15 +20,23 @@ public class FileIOTest {
 
     @Test
     public void readsFileContent() throws IOException {
-        assertArrayEquals("1 cup rice".getBytes(), fileIO.read(file));
+        assertArrayEquals("1 cup rice".getBytes(), fileIO.readAllBytes(file));
+    }
+
+    @Test
+    public void readsPartialFileContent() throws IOException {
+        assertArrayEquals("1 cup rice".getBytes(), fileIO.readByteRange(file, 0, 9));
+        assertArrayEquals("cup r".getBytes(), fileIO.readByteRange(file, 2, 6));
+        assertArrayEquals("cup rice".getBytes(), fileIO.readByteRange(file, 2, 9));
+        assertArrayEquals("p rice".getBytes(), fileIO.readByteRange(file, 4, 9));
     }
 
     @Test
     public void writesContentToFile() throws IOException {
-        assertArrayEquals("1 cup rice".getBytes(), fileIO.read(file));
+        assertArrayEquals("1 cup rice".getBytes(), fileIO.readAllBytes(file));
         fileIO.write(file, "A pinch of salt");
-        assertArrayEquals("A pinch of salt".getBytes(), fileIO.read(file));
+        assertArrayEquals("A pinch of salt".getBytes(), fileIO.readAllBytes(file));
         fileIO.write(file, "1 cup rice");
-        assertArrayEquals("1 cup rice".getBytes(), fileIO.read(file));
+        assertArrayEquals("1 cup rice".getBytes(), fileIO.readAllBytes(file));
     }
 }

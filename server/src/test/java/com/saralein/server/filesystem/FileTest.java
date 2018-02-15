@@ -3,6 +3,9 @@ package com.saralein.server.filesystem;
 import org.junit.Before;
 import org.junit.Test;
 import javax.xml.bind.DatatypeConverter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertEquals;
@@ -26,8 +29,16 @@ public class FileTest {
     }
 
     @Test
+    public void getsLengthOfFiles() throws IOException {
+        Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
+        Path resource = root.resolve("recipe.txt");
+
+        assertEquals(10, file.length(resource));
+    }
+
+    @Test
     public void hashesFileContent() {
-        byte[] content = "Hi".getBytes();;
+        byte[] content = "Hi".getBytes();
         String hashed = DatatypeConverter.printHexBinary(sha1.digest(content)).toLowerCase();
 
         assertEquals(hashed, file.computeHash(content));
