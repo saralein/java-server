@@ -38,9 +38,9 @@ public class ConnectionHandlerTest {
         socket = new MockSocket();
         directoryHandler = new MockHandler(200, "Directory response");
         Router router = new Router(new Routes());
-        Middleware staticMiddleware = new DirectoryMiddleware(
+        Middleware directoryMiddleware = new DirectoryMiddleware(
                 new Directory(), new FilePath(root), directoryHandler);
-        Application application = new Application(staticMiddleware.apply(router));
+        Application application = new Application(directoryMiddleware.apply(router));
         connectionHandler = new ConnectionHandler(socket, logger, application, requestParser, responseSerializer);
     }
 
