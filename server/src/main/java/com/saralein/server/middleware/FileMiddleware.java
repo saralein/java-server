@@ -1,14 +1,15 @@
 package com.saralein.server.middleware;
 
 import com.saralein.server.filesystem.File;
-import com.saralein.server.filesystem.FileIO;
 import com.saralein.server.filesystem.FilePath;
+import com.saralein.server.filesystem.IO;
 import com.saralein.server.handler.FileHandler;
 import com.saralein.server.handler.Handler;
 import com.saralein.server.protocol.Methods;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileMiddleware implements Middleware {
@@ -17,7 +18,7 @@ public class FileMiddleware implements Middleware {
     private final Handler fileHandler;
     private Callable next;
 
-    public FileMiddleware(File file, FilePath filePath, FileIO fileIO) {
+    public FileMiddleware(File file, FilePath filePath, IO fileIO) {
         this(file, filePath, new FileHandler(file, filePath, fileIO));
     }
 
@@ -36,9 +37,7 @@ public class FileMiddleware implements Middleware {
 
     @Override
     public Response call(Request request) {
-        Path path = filePath.absolute(request.getUri());
-
-        if (file.exists(path)) {
+        if (fileExists(request)) {
             return getFileResponse(request);
         } else {
             return next.call(request);
@@ -55,6 +54,11 @@ public class FileMiddleware implements Middleware {
         } catch (Exception e) {
             return serverError();
         }
+    }
+
+    private boolean fileExists(Request request) {
+        Path path = filePath.absolute(request.getUri());
+        return Files.exists(path) && !Files.isDirectory(path);
     }
 
     private boolean isAcceptedMethod(String method) {

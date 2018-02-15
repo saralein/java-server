@@ -10,10 +10,19 @@ public class ErrorResponse {
     }
 
     public Response respond() {
+        return getBaseBuilder().build();
+    }
+
+    public Response respond(String name, String value) {
+        return getBaseBuilder()
+                .addHeader(name, value)
+                .build();
+    }
+
+    private Response.Builder getBaseBuilder() {
         return new Response.Builder()
                 .status(status)
                 .addHeader("Content-Type", "text/html")
-                .body(StatusCodes.retrieve(status))
-                .build();
+                .body(StatusCodes.retrieve(status));
     }
 }
