@@ -1,6 +1,7 @@
 package com.saralein.server.mocks;
 
 import com.saralein.server.filesystem.IO;
+import com.saralein.server.range.Range;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -28,10 +29,10 @@ public class MockIO implements IO {
     }
 
     @Override
-    public byte[] readByteRange(Path file, int start, int end) throws IOException {
+    public byte[] readByteRange(Path file, Range range) throws IOException {
         readPath = file;
-        readStart = start;
-        readEnd = end;
+        readStart = range.getStart();
+        readEnd = range.getEnd();
         return response;
     }
 

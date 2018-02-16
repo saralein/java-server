@@ -1,5 +1,6 @@
 package com.saralein.server.filesystem;
 
+import com.saralein.server.range.Range;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -14,7 +15,10 @@ public class FileIO implements IO {
     }
 
     @Override
-    public byte[] readByteRange(Path file, int start, int end) throws IOException {
+    public byte[] readByteRange(Path file, Range range) throws IOException {
+        int start = range.getStart();
+        int end = range.getEnd();
+
         FileChannel fileChannel = FileChannel.open(file, StandardOpenOption.READ);
         fileChannel.position(start);
         ByteBuffer buffer = ByteBuffer.allocate(end + 1 - start);

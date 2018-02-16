@@ -42,14 +42,11 @@ public class PartialFileHandler implements Handler {
     }
 
     private Response getResponse(Request request, Path resource, Range range, int fileLength) throws IOException {
-        int start = range.getStart();
-        int end = range.getEnd();
-
         return new Response.Builder()
                 .status(206)
                 .addHeader("Content-Type", file.mimeType(request.getUri()))
-                .addHeader("Content-Range", formatContentRange(start, end, fileLength))
-                .body(fileIO.readByteRange(resource, start, end))
+                .addHeader("Content-Range", formatContentRange(range, fileLength))
+                .body(fileIO.readByteRange(resource, range))
                 .build();
     }
 
@@ -57,7 +54,7 @@ public class PartialFileHandler implements Handler {
         return new ErrorResponse(416).respond("Content-Range", "*/" + fileLength);
     }
 
-    private String formatContentRange(int start, int end, int fileLength) {
-        return String.format("bytes %d-%d/%d", start, end, fileLength);
+    private String formatContentRange(Range range, int fileLength) {
+        return String.format("bytes %d-%d/%d", range.getStart(), range.getEnd(), fileLength);
     }
 }
