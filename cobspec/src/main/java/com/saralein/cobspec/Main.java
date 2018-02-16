@@ -21,9 +21,18 @@ import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
 import com.saralein.server.filesystem.FilePath;
+import com.saralein.server.handler.DirectoryHandler;
+import com.saralein.server.handler.FileHandler;
+import com.saralein.server.handler.PartialFileHandler;
+import com.saralein.server.handler.PatchHandler;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.middleware.*;
+import com.saralein.server.middleware.verifier.DirectoryVerifier;
+import com.saralein.server.middleware.verifier.FileVerifier;
+import com.saralein.server.middleware.verifier.PartialFileVerifier;
+import com.saralein.server.middleware.verifier.PatchVerifier;
 import com.saralein.server.protocol.Methods;
+import com.saralein.server.range.RangeParser;
 import com.saralein.server.router.Router;
 import com.saralein.server.router.Routes;
 import java.nio.file.Path;
@@ -87,10 +96,23 @@ public class Main {
         Directory directory = new Directory();
         FileIO fileIO = new FileIO();
 
+        FileHandler fileHandler = new FileHandler(file, filePath, fileIO);
+        PartialFileHandler partialFileHandler = new PartialFileHandler(
+                file, filePath, fileIO, new RangeParser());
+        PatchHandler patchHandler = new PatchHandler(file, filePath, fileIO);
+        DirectoryHandler directoryHandler = new DirectoryHandler(directory, filePath);
+
+        FileVerifier fileVerifier = new FileVerifier(file, filePath);
+        PartialFileVerifier partialFileVerifier = new PartialFileVerifier(file, filePath);
+        PatchVerifier patchVerifier = new PatchVerifier(file, filePath);
+        DirectoryVerifier directoryValidator = new DirectoryVerifier(directory, filePath);
+
         List<Middleware> middlewares = new ArrayList<>();
-        middlewares.add(new FileMiddleware(file, filePath, fileIO));
-        middlewares.add(new PatchMiddleware(file, filePath, fileIO));
-        middlewares.add(new DirectoryMiddleware(directory, filePath));
+        middlewares.add(new FileMethodMiddleware(file, filePath));
+        middlewares.add(new ResourceMiddleware(fileHandler, fileVerifier));
+        middlewares.add(new ResourceMiddleware(partialFileHandler, partialFileVerifier));
+        middlewares.add(new ResourceMiddleware(patchHandler, patchVerifier));
+        middlewares.add(new ResourceMiddleware(directoryHandler, directoryValidator));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;

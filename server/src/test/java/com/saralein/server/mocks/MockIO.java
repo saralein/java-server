@@ -1,40 +1,61 @@
 package com.saralein.server.mocks;
 
 import com.saralein.server.filesystem.IO;
+import com.saralein.server.range.Range;
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class MockIO implements IO {
     private final byte[] response;
-    private Path readCalledWith;
-    private Path writeCalledWithPath;
-    private String writeCalledWithContent;
+    private Path readPath;
+    private Integer readStart;
+    private Integer readEnd;
+    private Path writePath;
+    private String writeContent;
 
     public MockIO(byte[] response) {
         this.response = response;
-        this.readCalledWith = null;
-        this.writeCalledWithPath = null;
-        this.writeCalledWithContent = null;
+        this.readPath = null;
+        this.readStart = null;
+        this.readEnd = null;
+        this.writePath = null;
+        this.writeContent = null;
     }
 
     @Override
-    public byte[] read(Path path) throws IOException {
-        readCalledWith = path;
+    public byte[] readAllBytes(Path path) throws IOException {
+        readPath = path;
+        return response;
+    }
+
+    @Override
+    public byte[] readByteRange(Path file, Range range) throws IOException {
+        readPath = file;
+        readStart = range.getStart();
+        readEnd = range.getEnd();
         return response;
     }
 
     @Override
     public void write(Path path, String content) throws IOException {
-        writeCalledWithPath = path;
-        writeCalledWithContent = content;
+        writePath = path;
+        writeContent = content;
     }
 
-    public boolean readCalledWith(Path path) {
-        return path.equals(readCalledWith);
+    public boolean readCalledWithPath(Path path) {
+        return path.equals(readPath);
+    }
+
+    public boolean readCalledWithStart(int start) {
+        return readStart == start;
+    }
+
+    public boolean readCalledWithEnd(int end) {
+        return readEnd == end;
     }
 
     public boolean writeCalledWith(Path path, String content) {
-        return path.equals(writeCalledWithPath)
-                && content.equals(writeCalledWithContent);
+        return path.equals(writePath)
+                && content.equals(writeContent);
     }
 }

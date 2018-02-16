@@ -49,6 +49,6 @@ public class PatchHandler implements Handler {
 
     private byte[] createBody(Request request) throws IOException {
         Path resource = filePath.absolute(request.getUri());
-        return fileIO.read(resource);
+        return fileIO.readAllBytes(resource);
     }
 }

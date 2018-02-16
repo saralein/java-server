@@ -47,7 +47,7 @@ public class PatchHandlerTest {
         String expected = "HTTP/1.1 204 No Content\r\nContent-Location: /recipe.txt\r\n\r\n";
 
         assertEquals(expected, header.formatToString());
-        assert (mockIO.readCalledWith(path));
+        assert (mockIO.readCalledWithPath(path));
         assert (mockIO.writeCalledWith(path, body));
     }
 
@@ -64,6 +64,6 @@ public class PatchHandlerTest {
         String expected = "HTTP/1.1 409 Conflict\r\nContent-Type: text/html\r\n\r\n";
 
         assertEquals(expected, header.formatToString());
-        assert (mockIO.readCalledWith(root.resolve("recipe.txt")));
+        assert (mockIO.readCalledWithPath(root.resolve("recipe.txt")));
     }
 }
