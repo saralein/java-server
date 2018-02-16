@@ -17,11 +17,11 @@ public class CookieController implements Controller {
     }
 
     public Response respond(Request request) {
-        if (hasCookies(request)) {
-            return getCookieResponse(request);
+        if (hasParameters(request)) {
+            return getSetCookieResponse(request);
         }
 
-        return getSetCookieResponse(request);
+        return getCookieResponse(request);
     }
 
     private Response getSetCookieResponse(Request request) {
@@ -59,8 +59,8 @@ public class CookieController implements Controller {
         return builder.toString();
     }
 
-    private boolean hasCookies(Request request) {
-        return !request.getCookies().isEmpty();
+    private boolean hasParameters(Request request) {
+        return !request.getParameters().isEmpty();
     }
 
     private List<Cookie> generateCookies(Map<String, String> parameters) {
