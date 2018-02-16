@@ -2,6 +2,7 @@ package com.saralein.server.middleware;
 
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FilePath;
+import com.saralein.server.middleware.verifier.FileVerifier;
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.mocks.MockHandler;
 import com.saralein.server.request.Request;
@@ -13,51 +14,41 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertFalse;
 
-public class PatchMiddlewareTest {
-    private MockCallable mockCallable;
+public class ResourceMiddlewareTest {
     private MockHandler mockHandler;
-    private Middleware patchMiddleware;
+    private MockCallable mockCallable;
+    private Middleware fileMiddleware;
 
     @Before
     public void setUp() throws NoSuchAlgorithmException {
-        mockCallable = new MockCallable();
-        mockHandler = new MockHandler(200, "Patch response");
         Path root = Paths.get(System.getProperty("user.dir"), "src/test/public");
+        mockHandler = new MockHandler(200, "File response");
+        mockCallable = new MockCallable();
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        patchMiddleware = new PatchMiddleware(new File(sha1), new FilePath(root), mockHandler).apply(mockCallable);
+        File file = new File(sha1);
+        FilePath filePath = new FilePath(root);
+        fileMiddleware = new ResourceMiddleware(mockHandler, new FileVerifier(file, filePath)).apply(mockCallable);
     }
 
     @Test
-    public void handlesFilePatchRequest() {
+    public void handlesResourceRequest() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
-                .method("PATCH")
+                .method("GET")
                 .build();
-        patchMiddleware.call(request);
+        fileMiddleware.call(request);
 
         assert (mockHandler.wasCalled());
         assertFalse(mockCallable.wasCalled());
     }
 
     @Test
-    public void passesNonPatchRequestToNextMiddleware() {
-        Request request = new Request.Builder()
-                .uri("/recipe.txt")
-                .method("GET")
-                .build();
-        patchMiddleware.call(request);
-
-        assert (mockCallable.wasCalled());
-        assertFalse(mockHandler.wasCalled());
-    }
-
-    @Test
-    public void passesNonFileRequestToNextMiddleware() {
+    public void passesNonMatchingRequestToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/")
                 .method("GET")
                 .build();
-        patchMiddleware.call(request);
+        fileMiddleware.call(request);
 
         assert (mockCallable.wasCalled());
         assertFalse(mockHandler.wasCalled());

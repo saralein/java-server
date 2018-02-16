@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Directory {
+public class Directory implements Resource {
     private String separator;
     private String empty;
 
@@ -17,6 +17,7 @@ public class Directory {
         this.empty = "";
     }
 
+    @Override
     public boolean exists(Path directory) {
         return Files.exists(directory) && Files.isDirectory(directory);
     }

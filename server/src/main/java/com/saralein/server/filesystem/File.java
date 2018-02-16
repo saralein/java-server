@@ -8,13 +8,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 
-public class File {
+public class File implements Resource {
     private final MessageDigest messageDigest;
 
     public File(MessageDigest messageDigest) {
         this.messageDigest = messageDigest;
     }
 
+    @Override
     public boolean exists(Path file) {
         return Files.exists(file) && !Files.isDirectory(file);
     }
