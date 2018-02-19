@@ -1,12 +1,12 @@
-package com.saralein.server.authorization;
+package com.saralein.server.middleware;
 
 import java.util.Base64;
 
-public class Authorizer {
+public class AuthMiddleware {
     private final String username;
     private final String password;
 
-    public Authorizer(String username, String password) {
+    public AuthMiddleware(String username, String password) {
         this.username = username;
         this.password = password;
     }
