@@ -15,8 +15,6 @@ import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
-import com.saralein.server.authorization.Authorizer;
-import com.saralein.server.controller.UnauthorizedController;
 import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
@@ -55,7 +53,7 @@ public class Main {
             Path root = argsParser.parseRoot(home);
 
             Routes routes = configureRoutes(logStore);
-            List<Middleware> middlewares = configureMiddleware(root, logger, messageDigest);
+            List<Middleware> middlewares = configureMiddleware(root, logger, routes, messageDigest);
             Application application = configureApplication(routes, middlewares);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
@@ -90,7 +88,7 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static List<Middleware> configureMiddleware(Path root, Logger logger, MessageDigest messageDigest) {
+    private static List<Middleware> configureMiddleware(Path root, Logger logger, Routes routes, MessageDigest messageDigest) {
         FilePath filePath = new FilePath(root);
         File file = new File(messageDigest);
         Directory directory = new Directory();
@@ -113,6 +111,7 @@ public class Main {
         middlewares.add(new ResourceMiddleware(partialFileHandler, partialFileVerifier));
         middlewares.add(new ResourceMiddleware(patchHandler, patchVerifier));
         middlewares.add(new ResourceMiddleware(directoryHandler, directoryValidator));
+        middlewares.add(new AuthMiddleware(routes, "admin", "hunter2", "ServerCity"));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;
@@ -133,10 +132,6 @@ public class Main {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
-
-        Authorizer authorizer = new Authorizer("admin", "hunter2");
-        UnauthorizedController unauthorizedController = new UnauthorizedController("ServerCity");
-
         CookieStore cookieStore = new CookieStore();
 
         return new Routes()
@@ -154,9 +149,10 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
+                .get("/logs", new LogController(logStore))
                 .get("/parameters", new ParameterController())
                 .get("/cookie", new CookieController(cookieStore))
-                .get("/eat_cookie", new CookieController(cookieStore));
+                .get("/eat_cookie", new CookieController(cookieStore))
+                .useAuthorization("/logs");
     }
 }

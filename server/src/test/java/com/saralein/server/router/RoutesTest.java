@@ -24,6 +24,14 @@ public class RoutesTest {
     }
 
     @Test
+    public void addsRoutesToListAuthorizedRoutes() {
+        Routes authRoutes = new Routes().useAuthorization("/logs");
+
+        assertFalse(authRoutes.requiresAuthorization("/form"));
+        assert (authRoutes.requiresAuthorization("/logs"));
+    }
+
+    @Test
     public void checksForMatchingRouteAndMethod() {
         assertFalse(routes.matchesRouteAndMethod("/doggos", "GET"));
         assertFalse(routes.matchesRouteAndMethod("/redirect", "DELETE"));
