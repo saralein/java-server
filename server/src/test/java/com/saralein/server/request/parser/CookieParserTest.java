@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -30,17 +29,10 @@ public class CookieParserTest {
         cookieParser = new CookieParser();
     }
 
-    private List<String> mapToString(List<Cookie> cookies) {
-        return cookies.stream()
-                .map(Cookie::toString)
-                .collect(Collectors.toList());
-    }
-
-    private boolean haveMatchingToString(List<Cookie> expected, List<Cookie> actual) {
-        List<String> expectedStrings = mapToString(expected);
-        List<String> actualStrings = mapToString(actual);
-
-        return expectedStrings.equals(actualStrings);
+    private boolean cookiesAreEqual(List<Cookie> cookies, List<Cookie> expected) {
+        cookies.sort(Cookie::compareTo);
+        expected.sort(Cookie::compareTo);
+        return cookies.equals(expected);
     }
 
     @Test
@@ -53,13 +45,13 @@ public class CookieParserTest {
     public void returnsCookieListForSingleCookieHeader() {
         List<Cookie> parsedCookies = cookieParser.parse("type=chocolate");
         assertEquals(oneCookie.size(), parsedCookies.size());
-        assertTrue(haveMatchingToString(oneCookie, parsedCookies));
+        assertTrue(cookiesAreEqual(oneCookie, parsedCookies));
     }
 
     @Test
     public void returnsCookieListForMultipleCookieHeader() {
         List<Cookie> parsedCookies = cookieParser.parse("type=chocolate;baker=Phil;");
         assertEquals(twoCookies.size(), parsedCookies.size());
-        assertTrue(haveMatchingToString(twoCookies, parsedCookies));
+        assertTrue(cookiesAreEqual(twoCookies, parsedCookies));
     }
 }

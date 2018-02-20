@@ -21,11 +21,8 @@ public class CookieStore {
     }
 
     public boolean containsCookie(Cookie cookie) {
-        String lookup = cookie.toString();
-
         return cookies.stream()
-                .map(Cookie::toString)
-                .filter(storeCookie -> storeCookie.equals(lookup))
+                .filter(storeCookie -> storeCookie.equals(cookie))
                 .collect(Collectors.toList())
                 .size() > 0;
     }

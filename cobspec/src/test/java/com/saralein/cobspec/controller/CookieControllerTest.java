@@ -20,6 +20,12 @@ public class CookieControllerTest {
     private CookieController cookieController;
     private CookieStore cookieStore;
 
+    private boolean cookiesAreEqual(List<Cookie> expected, List<Cookie> actual) {
+        expected.sort(Cookie::compareTo);
+        actual.sort(Cookie::compareTo);
+        return expected.equals(actual);
+    }
+
     @Before
     public void setUp() {
         chocolateCookie = new Cookie("type", "chocolate");
@@ -45,10 +51,10 @@ public class CookieControllerTest {
                 .build();
         Response response = cookieController.respond(request);
         Header header = response.getHeader();
-        String expectedHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n" +
-                "Set-Cookie: baker=Phil\r\nSet-Cookie: type=chocolate\r\n\r\n";
+        String expectedHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
 
         assertEquals(expectedHeader, header.formatToString());
+        assert (cookiesAreEqual(cookies, response.getCookies()));
         assertTrue(cookieStore.containsCookie(chocolateCookie));
         assertTrue(cookieStore.containsCookie(new Cookie("baker", "Phil")));
     }

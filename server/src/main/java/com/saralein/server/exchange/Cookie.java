@@ -1,6 +1,6 @@
 package com.saralein.server.exchange;
 
-public class Cookie {
+public class Cookie implements Comparable<Cookie> {
     private final String name;
     private final String value;
 
@@ -18,7 +18,19 @@ public class Cookie {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s=%s", name, value);
+    public boolean equals(Object object) {
+        if (!(object instanceof Cookie)) {
+            return false;
+        }
+
+        Cookie cookie = (Cookie) object;
+        return name.equals(cookie.getName()) && value.equals(cookie.getValue());
+    }
+
+    @Override
+    public int compareTo(Cookie cookie) {
+        String thisNameValue = name + value;
+        String compareNameValue = cookie.name + cookie.value;
+        return thisNameValue.compareTo(compareNameValue);
     }
 }

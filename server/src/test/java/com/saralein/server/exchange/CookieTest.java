@@ -3,6 +3,7 @@ package com.saralein.server.exchange;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CookieTest {
     private String name;
@@ -27,7 +28,24 @@ public class CookieTest {
     }
 
     @Test
-    public void formatsNameAndValueToString() {
-        assertEquals(name + "=" + value, cookie.toString());
+    public void comparesCookieEquality() {
+        Cookie cookie = new Cookie("type", "chocolate");
+        Cookie matching = new Cookie("type", "chocolate");
+        Cookie nonMatching = new Cookie("baker", "Phil");
+
+        assert (cookie.equals(matching));
+        assertFalse(cookie.equals(nonMatching));
+    }
+
+    @Test
+    public void comparesCookiesWithCompareTo() {
+        Cookie cookie = new Cookie("type", "chocolate");
+        Cookie matching = new Cookie("type", "chocolate");
+        Cookie before = new Cookie("baker", "Phil");
+        Cookie after = new Cookie("zoo", "Brookfield");
+
+        assert (cookie.compareTo(matching) == 0);
+        assert (cookie.compareTo(before) > 0);
+        assert (cookie.compareTo(after) < 0);
     }
 }
