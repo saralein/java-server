@@ -28,20 +28,21 @@ public class FileMethodMiddlewareTest {
     }
 
     @Test
-    public void handlesFileRequest() {
+    public void handlesFileRequestWithInvalidMethod() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("DELETE")
                 .build();
         Response response = fileMethodErrorMiddleware.call(request);
         Header header = response.getHeader();
+        String expected = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\nAllow: GET,HEAD\r\n\r\n";
 
-        assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertEquals(expected, header.formatToString());
         assertFalse(mockCallable.wasCalled());
     }
 
     @Test
-    public void passesNonFileRequestToNextMiddleware() {
+    public void passesFileRequestWithValidMethodToNextMiddleware() {
         Request request = new Request.Builder()
                 .uri("/recipe.txt")
                 .method("GET")
