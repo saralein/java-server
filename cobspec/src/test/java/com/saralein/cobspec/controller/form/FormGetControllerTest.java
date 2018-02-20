@@ -2,14 +2,11 @@ package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.DataStore;
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.LinkedHashMap;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class FormGetControllerTest {
     private Request request;
@@ -30,23 +27,29 @@ public class FormGetControllerTest {
 
     @Test
     public void returnsCorrectResponseWhenStoreIsEmpty() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .build();
         Response response = formGetController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("".getBytes(), response.getBody());
+        assert (response.equals(expected));
     }
 
     @Test
     public void returnsCorrectResponseWhenStoreHasData() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body("<p>My=Data<br>More=Stuff<br></p>")
+                .build();
         dataStore.addData("/form", new LinkedHashMap<String, String>(){{
             put("My", "Data");
             put("More", "Stuff");
         }});
         Response response = formGetController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("<p>My=Data<br>More=Stuff<br></p>".getBytes(), response.getBody());
+
+        assert (response.equals(expected));
     }
 }

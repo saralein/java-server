@@ -1,18 +1,16 @@
 package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.HashMap;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class FormPostControllerTest {
     private byte[] bodyArray;
-    private Response formResponse;
+    private Response response;
     private FormPostController formPostController;
     private FormStore formStore;
 
@@ -31,19 +29,18 @@ public class FormPostControllerTest {
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
         formPostController = new FormPostController(formStore, formBody, formModification);
-        formResponse = formPostController.call(request);
+        response = formPostController.call(request);
     }
 
     @Test
-    public void returnsResponseWithCorrectHeader() {
-        Header header = formResponse.getHeader();
+    public void returnsResponseForValidRequests() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body(bodyArray)
+                .build();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-    }
-
-    @Test
-    public void returnsResponseWithCorrectBody() {
-        assertArrayEquals(bodyArray, formResponse.getBody());
+        assert (response.equals(expected));
     }
 
     @Test
@@ -57,16 +54,17 @@ public class FormPostControllerTest {
 
     @Test
     public void returnsCorrectResponseForBadRequests() {
+        Response expected = new Response.Builder()
+                .status(400)
+                .addHeader("Content-Type", "text/html")
+                .build();
         Request request = new Request.Builder()
                 .method("POST")
                 .uri("/form")
                 .body("My=Data&MoreStuff")
                 .build();
-
         Response response = formPostController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("".getBytes(), response.getBody());
+        assert (response.equals(expected));
     }
 }

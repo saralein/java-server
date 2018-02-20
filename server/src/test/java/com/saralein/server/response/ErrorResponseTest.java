@@ -1,36 +1,37 @@
 package com.saralein.server.response;
 
-import com.saralein.server.exchange.Header;
+import org.junit.Before;
 import org.junit.Test;
+import java.util.HashMap;
+import java.util.Map;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class ErrorResponseTest {
-    @Test
-    public void creates404Response() {
-        Response response = new ErrorResponse(404).respond();
-        Header header = response.getHeader();
+    private Map<String, String> headers;
 
-        assertEquals("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+    @Before
+    public void setUp() {
+        headers = new HashMap<>();
+        headers.put("Content-Type", "text/html");
+    }
+
+    @Test
+    public void returnsResponseWithStatus() {
+        Response response = new ErrorResponse(404).respond();
+        
+        assertEquals(404, response.getStatus());
+        assertEquals(headers, response.getHeaders());
         assertArrayEquals("404 Not Found".getBytes(), response.getBody());
     }
 
     @Test
-    public void creates405Response() {
-        Response response = new ErrorResponse(405).respond();
-        Header header = response.getHeader();
-
-        assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("405 Method Not Allowed".getBytes(), response.getBody());
-    }
-
-    @Test
-    public void creates416Response() {
+    public void returnsResponseWithStatusAndProvidedHeader() {
+        headers.put("Content-Range", "*/10");
         Response response = new ErrorResponse(416).respond("Content-Range", "*/10");
-        Header header = response.getHeader();
-        String expected = "HTTP/1.1 416 Range Not Satisfiable\r\nContent-Range: */10\r\nContent-Type: text/html\r\n\r\n";
 
-        assertEquals(expected, header.formatToString());
+        assertEquals(416, response.getStatus());
+        assertEquals(headers, response.getHeaders());
         assertArrayEquals("416 Range Not Satisfiable".getBytes(), response.getBody());
     }
 }

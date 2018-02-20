@@ -1,13 +1,12 @@
 package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.data.LogStore;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.Base64;
+
 
 public class LogControllerTest {
     private LogController logController;
@@ -16,21 +15,24 @@ public class LogControllerTest {
     public void setUp() {
         LogStore logStore = new LogStore();
         logStore.add("Message 1");
-        logStore.add("Message 2");
         logController = new LogController(logStore);
     }
 
     @Test
-    public void returns200WithLogsInBody() {
+    public void returns200ForAuthorizedRequest() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/plain")
+                .body("Message 1")
+                .build();
+        String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
         Request request = new Request.Builder()
                 .method("GET")
                 .uri("/logs")
+                .addHeader("Authorization", "Basic " + auth)
                 .build();
         Response response = logController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n", header.formatToString());
-        assertTrue(new String(response.getBody()).contains("Message 1"));
-        assertTrue(new String(response.getBody()).contains("Message 2"));
+        assert (response.equals(expected));
     }
 }

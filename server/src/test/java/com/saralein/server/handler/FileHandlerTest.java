@@ -1,6 +1,5 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.exchange.Header;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.mocks.MockIO;
@@ -14,13 +13,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import static org.junit.Assert.assertEquals;
 
 public class FileHandlerTest {
+    private Path root;
     private MockIO mockIO;
     private FileHandler fileHandler;
-    private Path root;
-    private String etag;
+    private Response.Builder responseBuilder;
+
+    private Request requestWithMethod(String method) {
+        return new Request.Builder()
+                .method(method)
+                .uri("/cheetara.jpg")
+                .build();
+    }
 
     @Before
     public void setUp() throws NoSuchAlgorithmException {
@@ -28,36 +33,32 @@ public class FileHandlerTest {
         byte[] mockResponse = "File read".getBytes();
         mockIO = new MockIO(mockResponse);
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        etag = DatatypeConverter.printHexBinary(sha1.digest(mockResponse)).toLowerCase();
+        String etag = DatatypeConverter.printHexBinary(sha1.digest(mockResponse)).toLowerCase();
         fileHandler = new FileHandler(new File(sha1), new FilePath(root), mockIO);
+        responseBuilder = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "image/jpeg")
+                .addHeader("ETag", etag);
     }
-    
+
     @Test
     public void returnsGetResponse() throws IOException {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/cheetara.jpg")
+        Response expected = responseBuilder
+                .body("File read")
                 .build();
+        Request request = requestWithMethod("GET");
         Response response = fileHandler.handle(request);
-        Header header = response.getHeader();
-        String expected = "HTTP/1.1 200 OK\r\nETag: " +
-                etag + "\r\nContent-Type: image/jpeg\r\n\r\n";
 
-        assertEquals(expected, header.formatToString());
         assert (mockIO.readCalledWithPath(root.resolve("cheetara.jpg")));
+        assert (response.equals(expected));
     }
 
     @Test
     public void returnsHeadResponse() throws IOException {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/cheetara.jpg")
-                .build();
+        Response expected = responseBuilder.build();
+        Request request = requestWithMethod("HEAD");
         Response response = fileHandler.handle(request);
-        Header header = response.getHeader();
-        String expected = "HTTP/1.1 200 OK\r\nETag: " +
-                etag + "\r\nContent-Type: image/jpeg\r\n\r\n";
 
-        assertEquals(expected, header.formatToString());
+        assert (response.equals(expected));
     }
 }

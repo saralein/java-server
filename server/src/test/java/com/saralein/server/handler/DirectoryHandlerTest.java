@@ -1,6 +1,5 @@
 package com.saralein.server.handler;
 
-import com.saralein.server.exchange.Header;
 import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.FilePath;
 import com.saralein.server.request.Request;
@@ -10,23 +9,20 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class DirectoryHandlerTest {
-    private byte[] bodyArray;
+    private byte[] body;
     private DirectoryHandler directoryHandler;
     private Request request;
 
     @Before
     public void setUp() {
-        String body = "<li><a href=/cake.pdf>cake.pdf</a></li>" +
+        body = ("<li><a href=/cake.pdf>cake.pdf</a></li>" +
                 "<li><a href=/cheetara.jpg>cheetara.jpg</a></li>" +
                 "<li><a href=/marshmallow.gif>marshmallow.gif</a></li>" +
                 "<li><a href=/recipe.txt>recipe.txt</a></li>" +
-                "<li><a href=/sloths/>sloths/</a></li>";
-
-        bodyArray = body.getBytes();
+                "<li><a href=/sloths/>sloths/</a></li>")
+                .getBytes();
 
         String rootPath = System.getProperty("user.dir") + "/src/test/public";
         Path root = Paths.get(rootPath);
@@ -40,10 +36,13 @@ public class DirectoryHandlerTest {
 
     @Test
     public void returnsDirectoryResponse() throws IOException {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body(body)
+                .build();
         Response response = directoryHandler.handle(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals(bodyArray, response.getBody());
+        assert (response.equals(expected));
     }
 }

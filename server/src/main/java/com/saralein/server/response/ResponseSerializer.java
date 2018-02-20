@@ -1,6 +1,7 @@
 package com.saralein.server.response;
 
 import com.saralein.server.exchange.Cookie;
+import com.saralein.server.protocol.StatusCodes;
 import java.util.List;
 import java.util.Map;
 import static com.saralein.server.Constants.CRLF;
@@ -27,8 +28,8 @@ public class ResponseSerializer {
     }
 
     private String formatStatusLine(Response response) {
-        Map<String, String> headers = response.getHeaders();
-        return headers.get("Status") + CRLF;
+        int status = response.getStatus();
+        return "HTTP/1.1 " + StatusCodes.retrieve(status) + CRLF;
     }
 
     private String formatHeaders(Response response) {
@@ -36,11 +37,9 @@ public class ResponseSerializer {
         Map<String, String> headerFields = response.getHeaders();
 
         for (String key : headerFields.keySet()) {
-            if (!key.equals("Status")) {
-                String header = key + ": " + headerFields.get(key);
-                builder.append(header);
-                builder.append(CRLF);
-            }
+            String header = key + ": " + headerFields.get(key);
+            builder.append(header);
+            builder.append(CRLF);
         }
 
         return builder.toString();

@@ -1,17 +1,18 @@
 package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.HashMap;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FormDeleteControllerTest {
     private FormStore formStore;
-    private Response formDeleteResponse;
+    private Response response;
+    private Response expected;
 
     @Before
     public void setUp() {
@@ -30,7 +31,12 @@ public class FormDeleteControllerTest {
                 .uri("/form")
                 .build();
 
-        formDeleteResponse = new FormDeleteController(formStore).call(request);
+        response = new FormDeleteController(formStore).call(request);
+        expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body("Form data has been deleted.")
+                .build();
     }
 
     @Test
@@ -46,10 +52,7 @@ public class FormDeleteControllerTest {
 
     @Test
     public void returnsCorrectResponseIfDataExisted() {
-        Header header = formDeleteResponse.getHeader();
-
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("Form data has been deleted.".getBytes(), formDeleteResponse.getBody());
+        assert (response.equals(expected));
     }
 
     @Test
@@ -59,9 +62,7 @@ public class FormDeleteControllerTest {
                 .uri("/pickles")
                 .build();
         Response response = new FormDeleteController(formStore).call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("Form data has been deleted.".getBytes(), response.getBody());
+        assert (response.equals(expected));
     }
 }

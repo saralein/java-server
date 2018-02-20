@@ -1,14 +1,12 @@
 package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.FormStore;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class FormPutControllerTest {
@@ -48,12 +46,15 @@ public class FormPutControllerTest {
 
     @Test
     public void returnsCorrectResponseForSingleData() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body("<p>My=Data<br>More=Stuff<br></p>")
+                .build();
         Request request = createRequest("My=Data");
         Response response = formPutController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("<p>My=Data<br>More=Stuff<br></p>".getBytes(), response.getBody());
+        assert (response.equals(expected));
     }
 
     @Test
@@ -69,21 +70,27 @@ public class FormPutControllerTest {
 
     @Test
     public void returnsCorrectResponseForMultipleData() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/html")
+                .body("<p>My=Data<br>More=Things<br></p>")
+                .build();
         Request request = createRequest("My=Data&More=Things");
         Response response = formPutController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("<p>My=Data<br>More=Things<br></p>".getBytes(), response.getBody());
+        assert (response.equals(expected));
     }
 
     @Test
     public void returnsCorrectResponseForBadRequests() {
+        Response expected = new Response.Builder()
+                .status(400)
+                .addHeader("Content-Type", "text/html")
+                .build();
         Request request = createRequest("My=Data&MoreStuff");
         Response response = formPutController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("".getBytes(), response.getBody());
+
+        assert (response.equals(expected));
     }
 }

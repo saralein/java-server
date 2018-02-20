@@ -3,7 +3,6 @@ package com.saralein.cobspec.controller;
 import com.saralein.cobspec.data.CookieStore;
 import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class CookieControllerTest {
     private Cookie chocolateCookie;
@@ -20,6 +19,8 @@ public class CookieControllerTest {
     private List<Cookie> cookies;
     private CookieController cookieController;
     private CookieStore cookieStore;
+    private Request eatCookieRequest;
+    private Response eatCookieResponse;
 
     @Before
     public void setUp() {
@@ -31,10 +32,27 @@ public class CookieControllerTest {
         }};
         cookieStore = new CookieStore();
         cookieController = new CookieController(cookieStore);
+
+        eatCookieRequest = new Request.Builder()
+                .uri("/eat_cookie")
+                .cookies(cookies)
+                .build();
+
+        eatCookieResponse = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/plain")
+                .body("mmmm chocolate\nmmmm Phil\n")
+                .build();
     }
 
     @Test
     public void respondsWithSetCookieAndAddsCookiesToStore() {
+        Response expected = new Response.Builder()
+                .status(200)
+                .addHeader("Content-Type", "text/plain")
+                .setCookies(cookies)
+                .body("Eat")
+                .build();
         Map<String, String> parameters = new HashMap<String, String>() {{
             put("baker", "Phil");
             put("type", "chocolate");
@@ -45,10 +63,8 @@ public class CookieControllerTest {
                 .parameters(parameters)
                 .build();
         Response response = cookieController.call(request);
-        Header header = response.getHeader();
-        String expectedHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
 
-        assertEquals(expectedHeader, header.formatToString());
+        assert (response.equals(expected));
         assertTrue(cookieStore.containsCookie(chocolateCookie));
         assertTrue(cookieStore.containsCookie(new Cookie("baker", "Phil")));
         CookieAssertion.assertCookiesAreEqual(cookies, response.getCookies());
@@ -57,27 +73,17 @@ public class CookieControllerTest {
     @Test
     public void usesCookiesToRespond() {
         cookieStore.addCookies(cookies);
-        Request request = new Request.Builder()
-                .uri("/eat_cookie")
-                .cookies(cookies)
-                .build();
-        Response response = cookieController.call(request);
-        String expected = "mmmm chocolate\nmmmm Phil\n";
+        Response response = cookieController.call(eatCookieRequest);
 
-        assertArrayEquals(expected.getBytes(), response.getBody());
+        assert (response.equals(eatCookieResponse));
     }
 
     @Test
     public void excludesCookieNotInStoreInResponse() {
         cookieStore.addCookies(cookies);
         cookies.add(new Cookie("amount", "12"));
-        Request request = new Request.Builder()
-                .uri("/eat_cookie")
-                .cookies(cookies)
-                .build();
-        Response response = cookieController.call(request);
-        String expected = "mmmm chocolate\nmmmm Phil\n";
+        Response response = cookieController.call(eatCookieRequest);
 
-        assertArrayEquals(expected.getBytes(), response.getBody());
+        assert (response.equals(eatCookieResponse));
     }
 }

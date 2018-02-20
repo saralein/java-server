@@ -1,28 +1,27 @@
 package com.saralein.server.middleware;
 
 import com.saralein.server.authorization.Authorizer;
-import com.saralein.server.exchange.Header;
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.request.Request;
+import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.Base64;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class AuthMiddlewareTest {
     private Middleware authMiddleware;
     private MockCallable mockCallable;
-    private String unauthorized;
+    private Response unauthorized;
 
     @Before
     public void setUp() {
         mockCallable = new MockCallable();
-        unauthorized = "HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: " +
-                "Basic realm=\"ServerCity\"\r\nContent-Type: text/html\r\n\r\n";
         Authorizer authorizer = new Authorizer("admin", "hunter2");
         authMiddleware = new AuthMiddleware(authorizer, "ServerCity").apply(mockCallable);
+        unauthorized = new ErrorResponse(401)
+                .respond("WWW-Authenticate", "Basic realm=\"ServerCity\"");
     }
 
     @Test
@@ -34,9 +33,8 @@ public class AuthMiddlewareTest {
                 .addHeader("Authorization", "Basic " + auth)
                 .build();
         Response response = authMiddleware.call(request);
-        Header header = response.getHeader();
 
-        assertEquals(unauthorized, header.formatToString());
+        assert (response.equals(unauthorized));
         assertFalse(mockCallable.wasCalled());
     }
 
@@ -46,11 +44,9 @@ public class AuthMiddlewareTest {
                 .method("GET")
                 .uri("/logs")
                 .build();
-
         Response response = authMiddleware.call(request);
-        Header header = response.getHeader();
 
-        assertEquals(unauthorized, header.formatToString());
+        assert (response.equals(unauthorized));
         assertFalse(mockCallable.wasCalled());
     }
 

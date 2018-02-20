@@ -1,6 +1,5 @@
 package com.saralein.cobspec.controller;
 
-import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import org.junit.Before;
@@ -11,20 +10,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class ParameterControllerTest {
-    private static final String OK_HEADER = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
     private ParameterController parameterController;
     private Map<String, String> parameters;
-    private String expectedHeader;
-    private String expectedBody;
+    private Response expected;
 
-    public ParameterControllerTest(Map<String, String> parameters, String expectedHeader, String expectedBody) {
+    public ParameterControllerTest(Map<String, String> parameters, Response expected) {
         this.parameters = parameters;
-        this.expectedHeader = expectedHeader;
-        this.expectedBody = expectedBody;
+        this.expected = expected;
     }
 
     @Parameterized.Parameters
@@ -32,23 +27,31 @@ public class ParameterControllerTest {
         return Arrays.asList(new Object[][]{
                 {
                         new HashMap<>(),
-                        OK_HEADER,
-                        ""
+                        new Response.Builder()
+                                .status(200)
+                                .addHeader("Content-Type", "text/plain")
+                                .build()
                 },
                 {
                         new HashMap<String, String>() {{
                             put("variable", "stuff");
                         }},
-                        OK_HEADER,
-                        "variable = stuff"
+                        new Response.Builder()
+                                .status(200)
+                                .addHeader("Content-Type", "text/plain")
+                                .body("variable = stuff")
+                                .build()
                 },
                 {
                         new HashMap<String, String>() {{
                             put("variable", "stuff");
                             put("another", "thing");
                         }},
-                        OK_HEADER,
-                        "another = thing\nvariable = stuff"
+                        new Response.Builder()
+                                .status(200)
+                                .addHeader("Content-Type", "text/plain")
+                                .body("another = thing\nvariable = stuff")
+                                .build()
                 }
         });
     }
@@ -59,15 +62,13 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void returnsCorrectResponseBasedOnUrl() {
+    public void returnsCorrectResponseBasedOnParameters() {
         Request request = new Request.Builder()
                 .uri("/parameters")
                 .parameters(parameters)
                 .build();
         Response response = parameterController.call(request);
-        Header header = response.getHeader();
 
-        assertEquals(expectedHeader, header.formatToString());
-        assertEquals(expectedBody, new String(response.getBody()));
+        assert (response.equals(expected));
     }
 }
