@@ -18,17 +18,20 @@ public class Cookie {
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode() + value.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cookie cookie = (Cookie) o;
+
+        if (!name.equals(cookie.name)) return false;
+        return value.equals(cookie.value);
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Cookie)) {
-            return false;
-        }
-
-        Cookie cookie = (Cookie) object;
-        return name.equals(cookie.getName()) && value.equals(cookie.getValue());
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
     }
 }
