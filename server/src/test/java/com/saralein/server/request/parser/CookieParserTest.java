@@ -1,12 +1,12 @@
 package com.saralein.server.request.parser;
 
+import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CookieParserTest {
     private List<Cookie> emptyCookies;
@@ -29,12 +29,6 @@ public class CookieParserTest {
         cookieParser = new CookieParser();
     }
 
-    private boolean cookiesAreEqual(List<Cookie> cookies, List<Cookie> expected) {
-        cookies.sort(Cookie::compareTo);
-        expected.sort(Cookie::compareTo);
-        return cookies.equals(expected);
-    }
-
     @Test
     public void returnsEmptyListForInvalidCookieHeader() {
         assertEquals(emptyCookies, cookieParser.parse(""));
@@ -45,13 +39,13 @@ public class CookieParserTest {
     public void returnsCookieListForSingleCookieHeader() {
         List<Cookie> parsedCookies = cookieParser.parse("type=chocolate");
         assertEquals(oneCookie.size(), parsedCookies.size());
-        assertTrue(cookiesAreEqual(oneCookie, parsedCookies));
+        CookieAssertion.assertCookiesAreEqual(oneCookie, parsedCookies);
     }
 
     @Test
     public void returnsCookieListForMultipleCookieHeader() {
         List<Cookie> parsedCookies = cookieParser.parse("type=chocolate;baker=Phil;");
         assertEquals(twoCookies.size(), parsedCookies.size());
-        assertTrue(cookiesAreEqual(twoCookies, parsedCookies));
+        CookieAssertion.assertCookiesAreEqual(twoCookies, parsedCookies);
     }
 }

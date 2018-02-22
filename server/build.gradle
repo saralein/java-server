@@ -37,6 +37,19 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+configurations {
+    testArtifacts
+}
+
+task testJar(type: Jar) {
+    baseName = "server-test"
+    from sourceSets.test.output
+}
+
+artifacts {
+    testArtifacts testJar
+}
+
 jar {
     manifest {
         attributes (

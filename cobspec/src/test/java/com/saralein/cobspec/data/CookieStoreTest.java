@@ -1,5 +1,6 @@
 package com.saralein.cobspec.data;
 
+import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,12 +11,6 @@ import static org.junit.Assert.*;
 public class CookieStoreTest {
     private List<Cookie> twoCookies;
     private CookieStore cookieStore;
-
-    private boolean cookiesAreEqual(List<Cookie> expected, List<Cookie> actual) {
-        expected.sort(Cookie::compareTo);
-        actual.sort(Cookie::compareTo);
-        return expected.equals(actual);
-    }
 
     @Before
     public void setUp() {
@@ -36,7 +31,7 @@ public class CookieStoreTest {
         List<Cookie> modifiedCookies = cookieStore.getCookies();
 
         assertEquals(twoCookies.size(), modifiedCookies.size());
-        assertTrue(cookiesAreEqual(twoCookies, modifiedCookies));
+        CookieAssertion.assertCookiesAreEqual(twoCookies, modifiedCookies);
     }
 
     @Test

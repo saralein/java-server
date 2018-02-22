@@ -36,16 +36,4 @@ public class CookieTest {
         assert (cookie.equals(matching));
         assertFalse(cookie.equals(nonMatching));
     }
-
-    @Test
-    public void comparesCookiesWithCompareTo() {
-        Cookie cookie = new Cookie("type", "chocolate");
-        Cookie matching = new Cookie("type", "chocolate");
-        Cookie before = new Cookie("baker", "Phil");
-        Cookie after = new Cookie("zoo", "Brookfield");
-
-        assert (cookie.compareTo(matching) == 0);
-        assert (cookie.compareTo(before) > 0);
-        assert (cookie.compareTo(after) < 0);
-    }
 }

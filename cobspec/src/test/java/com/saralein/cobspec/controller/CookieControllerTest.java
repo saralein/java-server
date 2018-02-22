@@ -1,6 +1,7 @@
 package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.data.CookieStore;
+import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.Header;
 import com.saralein.server.request.Request;
@@ -19,12 +20,6 @@ public class CookieControllerTest {
     private List<Cookie> cookies;
     private CookieController cookieController;
     private CookieStore cookieStore;
-
-    private boolean cookiesAreEqual(List<Cookie> expected, List<Cookie> actual) {
-        expected.sort(Cookie::compareTo);
-        actual.sort(Cookie::compareTo);
-        return expected.equals(actual);
-    }
 
     @Before
     public void setUp() {
@@ -54,9 +49,9 @@ public class CookieControllerTest {
         String expectedHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
 
         assertEquals(expectedHeader, header.formatToString());
-        assert (cookiesAreEqual(cookies, response.getCookies()));
         assertTrue(cookieStore.containsCookie(chocolateCookie));
         assertTrue(cookieStore.containsCookie(new Cookie("baker", "Phil")));
+        CookieAssertion.assertCookiesAreEqual(cookies, response.getCookies());
     }
 
     @Test

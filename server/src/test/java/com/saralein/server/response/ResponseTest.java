@@ -1,5 +1,6 @@
 package com.saralein.server.response;
 
+import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.Header;
 import org.junit.Test;
@@ -11,12 +12,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class ResponseTest {
-    private boolean cookiesAreEqual(List<Cookie> cookies, List<Cookie> expected) {
-        cookies.sort(Cookie::compareTo);
-        expected.sort(Cookie::compareTo);
-        return cookies.equals(expected);
-    }
-
     @Test
     public void addsStatusToResponse() {
         String status = "HTTP/1.1 200 OK\r\n\r\n";
@@ -50,7 +45,7 @@ public class ResponseTest {
                 .setCookies(expected)
                 .build();
 
-        assert (cookiesAreEqual(response.getCookies(), expected));
+        CookieAssertion.assertCookiesAreEqual(expected, response.getCookies());
     }
 
     @Test
