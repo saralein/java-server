@@ -1,6 +1,6 @@
 package com.saralein.server.router;
 
-import com.saralein.server.middleware.Callable;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.protocol.Methods;
 import java.util.HashMap;
 

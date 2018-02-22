@@ -1,7 +1,7 @@
 package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.data.LogStore;
-import com.saralein.server.middleware.Callable;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
