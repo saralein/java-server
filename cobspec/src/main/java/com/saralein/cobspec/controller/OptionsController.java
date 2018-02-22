@@ -1,10 +1,10 @@
 package com.saralein.cobspec.controller;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
-public class OptionsController implements Controller {
+public class OptionsController implements Callable {
     private final String methods;
 
     public OptionsController(String methods) {

@@ -1,15 +1,15 @@
 package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.data.CookieStore;
-import com.saralein.server.controller.Controller;
 import com.saralein.server.exchange.Cookie;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CookieController implements Controller {
+public class CookieController implements Callable {
     private final CookieStore store;
 
     public CookieController(CookieStore cookieStore) {

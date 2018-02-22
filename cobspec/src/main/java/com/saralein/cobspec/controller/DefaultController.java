@@ -1,10 +1,10 @@
 package com.saralein.cobspec.controller;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
-public class DefaultController implements Controller {
+public class DefaultController implements Callable {
     public Response call(Request request) {
         return new Response.Builder()
                     .status(200)

@@ -1,12 +1,12 @@
 package com.saralein.cobspec.controller.form;
 
 import com.saralein.cobspec.data.DataStore;
-import com.saralein.server.controller.Controller;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.HashMap;
 
-public class FormPutController implements Controller {
+public class FormPutController implements Callable {
     private final DataStore dataStore;
     private final FormBody formBody;
     private final FormModification formModification;

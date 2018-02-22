@@ -1,10 +1,10 @@
 package com.saralein.server.mocks;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
-public class MockController implements Controller {
+public class MockController implements Callable {
     private int status;
     private String body;
 
