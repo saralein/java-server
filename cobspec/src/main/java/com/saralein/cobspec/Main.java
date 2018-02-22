@@ -15,6 +15,7 @@ import com.saralein.cobspec.validation.Validator;
 import com.saralein.server.Application;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
+import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
@@ -105,13 +106,15 @@ public class Main {
         PatchVerifier patchVerifier = new PatchVerifier(file, filePath);
         DirectoryVerifier directoryValidator = new DirectoryVerifier(directory, filePath);
 
+        Authorizer authorizer = new Authorizer("admin", "hunter2");
+
         List<Middleware> middlewares = new ArrayList<>();
         middlewares.add(new FileMethodMiddleware(file, filePath));
         middlewares.add(new ResourceMiddleware(fileHandler, fileVerifier));
         middlewares.add(new ResourceMiddleware(partialFileHandler, partialFileVerifier));
         middlewares.add(new ResourceMiddleware(patchHandler, patchVerifier));
         middlewares.add(new ResourceMiddleware(directoryHandler, directoryValidator));
-        middlewares.add(new AuthMiddleware(routes, "admin", "hunter2", "ServerCity"));
+        middlewares.add(new AuthMiddleware(authorizer, "/logs", "ServerCity"));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;
@@ -152,7 +155,6 @@ public class Main {
                 .get("/logs", new LogController(logStore))
                 .get("/parameters", new ParameterController())
                 .get("/cookie", new CookieController(cookieStore))
-                .get("/eat_cookie", new CookieController(cookieStore))
-                .useAuthorization("/logs");
+                .get("/eat_cookie", new CookieController(cookieStore));
     }
 }

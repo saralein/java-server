@@ -1,10 +1,10 @@
 package com.saralein.server.middleware;
 
+import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.exchange.Header;
 import com.saralein.server.mocks.MockCallable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-import com.saralein.server.router.Routes;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.Base64;
@@ -18,12 +18,12 @@ public class AuthMiddlewareTest {
 
     @Before
     public void setUp() {
-        Routes routes = new Routes().useAuthorization("/logs");
         mockCallable = new MockCallable();
         unauthorized = "HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: " +
                 "Basic realm=\"ServerCity\"\r\nContent-Type: text/html\r\n\r\n";
+        Authorizer authorizer = new Authorizer("admin", "hunter2");
         authMiddleware = new AuthMiddleware(
-                routes, "admin", "hunter2", "ServerCity").apply(mockCallable);
+                authorizer, "/logs", "ServerCity").apply(mockCallable);
     }
 
     @Test

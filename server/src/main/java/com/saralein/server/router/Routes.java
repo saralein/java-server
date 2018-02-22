@@ -2,17 +2,13 @@ package com.saralein.server.router;
 
 import com.saralein.server.controller.Controller;
 import com.saralein.server.protocol.Methods;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Routes {
     private final HashMap<String, HashMap<Methods, Controller>> routes;
-    private final List<String> authRequired;
 
     public Routes() {
         this.routes = new HashMap<>();
-        this.authRequired = new ArrayList<>();
     }
 
     public Routes get(String uri, Controller controller) {
@@ -43,15 +39,6 @@ public class Routes {
     public Routes delete(String uri, Controller controller) {
         addRoute(uri, Methods.DELETE, controller);
         return this;
-    }
-
-    public Routes useAuthorization(String uri) {
-        authRequired.add(uri);
-        return this;
-    }
-
-    public boolean requiresAuthorization(String uri) {
-        return authRequired.contains(uri);
     }
 
     boolean matchesRouteAndMethod(String route, String method) {

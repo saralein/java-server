@@ -1,22 +1,19 @@
 package com.saralein.server.middleware;
 
+import com.saralein.server.authorization.Authorizer;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
-import com.saralein.server.router.Routes;
-import java.util.Base64;
 
 public class AuthMiddleware implements Middleware {
-    private final Routes routes;
-    private final String username;
-    private final String password;
+    private final Authorizer authorizer;
     private final String realm;
+    private String route;
     private Callable next;
 
-    public AuthMiddleware(Routes routes, String username, String password, String realm) {
-        this.routes = routes;
-        this.username = username;
-        this.password = password;
+    public AuthMiddleware(Authorizer authorizer, String route, String realm) {
+        this.authorizer = authorizer;
+        this.route = route;
         this.realm = realm;
         this.next = null;
     }
@@ -29,31 +26,14 @@ public class AuthMiddleware implements Middleware {
 
     @Override
     public Response call(Request request) {
-        if (isAuthorized(request)) {
+        String uri = request.getUri();
+        String encodedAuth = request.getHeader("Authorization");
+
+        if (!uri.equals(route) || authorizer.isAuthorized(encodedAuth)) {
             return next.call(request);
         }
 
         return unauthorized();
-    }
-
-    private boolean isAuthorized(Request request) {
-        String uri = request.getUri();
-        String encodedAuthorization = request.getHeader("Authorization");
-        String parsedAuthorization = parseRequestAuthorization(encodedAuthorization);
-        return !routes.requiresAuthorization(uri) || encodeValidAuthorization().equals(parsedAuthorization);
-    }
-
-    private String parseRequestAuthorization(String encodedAuthorization) {
-        if (encodedAuthorization.isEmpty()) {
-            return null;
-        }
-
-        return encodedAuthorization.split(" ")[1];
-    }
-
-    private String encodeValidAuthorization() {
-        String validAuthorization = username + ":" + password;
-        return Base64.getEncoder().encodeToString(validAuthorization.getBytes());
     }
 
     private Response unauthorized() {
