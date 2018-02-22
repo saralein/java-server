@@ -1,7 +1,7 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
+import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class FormPutController implements Controller {
         this.formModification = formModification;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         String uri = request.getUri();
         HashMap<String, String> formData = dataStore.retrieveData(request.getUri());
 

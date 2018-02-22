@@ -43,7 +43,7 @@ public class CookieControllerTest {
                 .method("GET")
                 .parameters(parameters)
                 .build();
-        Response response = cookieController.respond(request);
+        Response response = cookieController.call(request);
         Header header = response.getHeader();
         String expectedHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n" +
                 "Set-Cookie: baker=Phil\r\nSet-Cookie: type=chocolate\r\n\r\n";
@@ -60,7 +60,7 @@ public class CookieControllerTest {
                 .uri("/eat_cookie")
                 .cookies(cookies)
                 .build();
-        Response response = cookieController.respond(request);
+        Response response = cookieController.call(request);
         String expected = "mmmm chocolate\nmmmm Phil\n";
 
         assertArrayEquals(expected.getBytes(), response.getBody());
@@ -74,7 +74,7 @@ public class CookieControllerTest {
                 .uri("/eat_cookie")
                 .cookies(cookies)
                 .build();
-        Response response = cookieController.respond(request);
+        Response response = cookieController.call(request);
         String expected = "mmmm chocolate\nmmmm Phil\n";
 
         assertArrayEquals(expected.getBytes(), response.getBody());

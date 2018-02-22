@@ -38,7 +38,7 @@ public class FormPutControllerTest {
     @Test
     public void updatesExistingDataForSingleData() {
         Request request = createRequest("My=Data");
-        formPutController.respond(request);
+        formPutController.call(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
         assertEquals(2, data.keySet().size());
@@ -49,7 +49,7 @@ public class FormPutControllerTest {
     @Test
     public void returnsCorrectResponseForSingleData() {
         Request request = createRequest("My=Data");
-        Response response = formPutController.respond(request);
+        Response response = formPutController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -59,7 +59,7 @@ public class FormPutControllerTest {
     @Test
     public void updatesExistingDataForMultipleData() {
         Request request = createRequest("My=Data&More=Things");
-        formPutController.respond(request);
+        formPutController.call(request);
         HashMap<String, String> data = formStore.retrieveData("/form");
 
         assertEquals(2, data.keySet().size());
@@ -70,7 +70,7 @@ public class FormPutControllerTest {
     @Test
     public void returnsCorrectResponseForMultipleData() {
         Request request = createRequest("My=Data&More=Things");
-        Response response = formPutController.respond(request);
+        Response response = formPutController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -80,7 +80,7 @@ public class FormPutControllerTest {
     @Test
     public void returnsCorrectResponseForBadRequests() {
         Request request = createRequest("My=Data&MoreStuff");
-        Response response = formPutController.respond(request);
+        Response response = formPutController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

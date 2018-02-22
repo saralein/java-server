@@ -12,7 +12,7 @@ public class LogController implements Controller {
         this.logStore = logStore;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         return new Response.Builder()
                 .status(200)
                 .addHeader("Content-Type", "text/plain")

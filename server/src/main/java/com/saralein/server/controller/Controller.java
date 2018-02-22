@@ -1,8 +1,6 @@
 package com.saralein.server.controller;
 
-import com.saralein.server.request.Request;
-import com.saralein.server.response.Response;
+import com.saralein.server.middleware.Callable;
 
-public interface Controller {
-    Response respond(Request request);
+public interface Controller extends Callable {
 }

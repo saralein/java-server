@@ -31,7 +31,7 @@ public class FormPostControllerTest {
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
         formPostController = new FormPostController(formStore, formBody, formModification);
-        formResponse = formPostController.respond(request);
+        formResponse = formPostController.call(request);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FormPostControllerTest {
                 .body("My=Data&MoreStuff")
                 .build();
 
-        Response response = formPostController.respond(request);
+        Response response = formPostController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

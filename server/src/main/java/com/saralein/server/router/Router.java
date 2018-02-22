@@ -1,6 +1,5 @@
 package com.saralein.server.router;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.server.middleware.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.ErrorResponse;
@@ -19,8 +18,8 @@ public class Router implements Callable {
         String method = request.getMethod();
 
         if (routes.matchesRouteAndMethod(uri, method)) {
-            Controller controller = routes.retrieveController(uri, method);
-            return controller.respond(request);
+            Callable controller = routes.retrieveController(uri, method);
+            return controller.call(request);
         } else if (routes.matchesRouteButNotMethod(uri, method)) {
             return new ErrorResponse(405).respond();
         } else {

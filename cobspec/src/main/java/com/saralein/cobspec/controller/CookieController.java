@@ -16,7 +16,7 @@ public class CookieController implements Controller {
         this.store = cookieStore;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         if (hasCookies(request)) {
             return getCookieResponse(request);
         }

@@ -13,7 +13,7 @@ public class MockController implements Controller {
         this.body = body;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         return new Response.Builder()
                 .status(status)
                 .body(body)

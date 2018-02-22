@@ -1,7 +1,7 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
+import com.saralein.server.controller.Controller;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class FormPostController implements Controller {
         this.formModification = formModification;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         HashMap<String, String> formData = new LinkedHashMap<>();
 
         boolean succeeded = formModification.processFormData(request, formData, dataStore);

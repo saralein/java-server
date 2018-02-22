@@ -30,7 +30,7 @@ public class FormGetControllerTest {
 
     @Test
     public void returnsCorrectResponseWhenStoreIsEmpty() {
-        Response response = formGetController.respond(request);
+        Response response = formGetController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
@@ -43,7 +43,7 @@ public class FormGetControllerTest {
             put("My", "Data");
             put("More", "Stuff");
         }});
-        Response response = formGetController.respond(request);
+        Response response = formGetController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());

@@ -11,7 +11,7 @@ public class OptionsController implements Controller {
         this.methods = methods;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         return new Response.Builder()
                     .status(200)
                     .addHeader("Allow", methods)

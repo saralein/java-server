@@ -137,6 +137,11 @@ public class Main {
         FormModification formModification = new FormModification();
         CookieStore cookieStore = new CookieStore();
 
+        Authorizer authorizer = new Authorizer("admin", "hunter2");
+
+        LogController logController = new LogController(logStore);
+        Middleware authMiddleware = new AuthMiddleware(authorizer, "/logs", "ServerCity").apply(logController);
+
         return new Routes()
                 .get("/redirect", new RedirectController())
                 .get("/form", new FormGetController(formStore, formBody))
@@ -152,7 +157,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logStore))
+                .get("/logs", authMiddleware)
                 .get("/parameters", new ParameterController())
                 .get("/cookie", new CookieController(cookieStore))
                 .get("/eat_cookie", new CookieController(cookieStore));
