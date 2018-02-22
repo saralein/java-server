@@ -22,8 +22,7 @@ public class AuthMiddlewareTest {
         unauthorized = "HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: " +
                 "Basic realm=\"ServerCity\"\r\nContent-Type: text/html\r\n\r\n";
         Authorizer authorizer = new Authorizer("admin", "hunter2");
-        authMiddleware = new AuthMiddleware(
-                authorizer, "/logs", "ServerCity").apply(mockCallable);
+        authMiddleware = new AuthMiddleware(authorizer, "ServerCity").apply(mockCallable);
     }
 
     @Test
@@ -62,17 +61,6 @@ public class AuthMiddlewareTest {
                 .method("GET")
                 .uri("/logs")
                 .addHeader("Authorization", "Basic " + auth)
-                .build();
-        authMiddleware.call(request);
-
-        assert (mockCallable.wasCalled());
-    }
-
-    @Test
-    public void passesRequestWithNoRequiredAuthToNextMiddleware() {
-        Request request = new Request.Builder()
-                .method("GET")
-                .uri("/coffee")
                 .build();
         authMiddleware.call(request);
 

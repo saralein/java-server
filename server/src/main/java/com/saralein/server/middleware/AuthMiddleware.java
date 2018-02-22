@@ -8,12 +8,10 @@ import com.saralein.server.response.Response;
 public class AuthMiddleware implements Middleware {
     private final Authorizer authorizer;
     private final String realm;
-    private String route;
     private Callable next;
 
-    public AuthMiddleware(Authorizer authorizer, String route, String realm) {
+    public AuthMiddleware(Authorizer authorizer, String realm) {
         this.authorizer = authorizer;
-        this.route = route;
         this.realm = realm;
         this.next = null;
     }
@@ -26,10 +24,7 @@ public class AuthMiddleware implements Middleware {
 
     @Override
     public Response call(Request request) {
-        String uri = request.getUri();
-        String encodedAuth = request.getHeader("Authorization");
-
-        if (!uri.equals(route) || authorizer.isAuthorized(encodedAuth)) {
+        if (authorizer.isAuthorized(request)) {
             return next.call(request);
         }
 

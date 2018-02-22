@@ -54,7 +54,7 @@ public class Main {
             Path root = argsParser.parseRoot(home);
 
             Routes routes = configureRoutes(logStore);
-            List<Middleware> middlewares = configureMiddleware(root, logger, routes, messageDigest);
+            List<Middleware> middlewares = configureMiddleware(root, logger, messageDigest);
             Application application = configureApplication(routes, middlewares);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
@@ -89,7 +89,7 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static List<Middleware> configureMiddleware(Path root, Logger logger, Routes routes, MessageDigest messageDigest) {
+    private static List<Middleware> configureMiddleware(Path root, Logger logger, MessageDigest messageDigest) {
         FilePath filePath = new FilePath(root);
         File file = new File(messageDigest);
         Directory directory = new Directory();
@@ -106,15 +106,12 @@ public class Main {
         PatchVerifier patchVerifier = new PatchVerifier(file, filePath);
         DirectoryVerifier directoryValidator = new DirectoryVerifier(directory, filePath);
 
-        Authorizer authorizer = new Authorizer("admin", "hunter2");
-
         List<Middleware> middlewares = new ArrayList<>();
         middlewares.add(new FileMethodMiddleware(file, filePath));
         middlewares.add(new ResourceMiddleware(fileHandler, fileVerifier));
         middlewares.add(new ResourceMiddleware(partialFileHandler, partialFileVerifier));
         middlewares.add(new ResourceMiddleware(patchHandler, patchVerifier));
         middlewares.add(new ResourceMiddleware(directoryHandler, directoryValidator));
-        middlewares.add(new AuthMiddleware(authorizer, "/logs", "ServerCity"));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;
@@ -140,7 +137,7 @@ public class Main {
         Authorizer authorizer = new Authorizer("admin", "hunter2");
 
         LogController logController = new LogController(logStore);
-        Middleware authMiddleware = new AuthMiddleware(authorizer, "/logs", "ServerCity").apply(logController);
+        Middleware authMiddleware = new AuthMiddleware(authorizer, "ServerCity").apply(logController);
 
         return new Routes()
                 .get("/redirect", new RedirectController())
