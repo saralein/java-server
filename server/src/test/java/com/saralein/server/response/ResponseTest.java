@@ -24,12 +24,14 @@ public class ResponseTest {
     }
 
     @Test
-    public void addsHeaderToResponse() {
+    public void addsHeadersToResponse() {
         Map<String, String> expected = new HashMap<String, String>() {{
             put("Location", "/");
+            put("Content-Type", "text/plain");
         }};
         Response response = new Response.Builder()
                 .addHeader("Location", "/")
+                .addHeader("Content-Type", "text/plain")
                 .build();
 
         assertEquals(expected, response.getHeaders());
