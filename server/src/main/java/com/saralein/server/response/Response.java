@@ -2,19 +2,31 @@ package com.saralein.server.response;
 
 import com.saralein.server.exchange.Cookie;
 import com.saralein.server.exchange.Header;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Response {
     private final Header header;
+    private final List<Cookie> cookies;
     private final byte[] body;
 
-    public Response(Header header, byte[] body) {
+    public Response(Header header, List<Cookie> cookies, byte[] body) {
         this.header = header;
+        this.cookies = cookies;
         this.body = body;
     }
 
     public Header getHeader() {
         return header;
+    }
+
+    public Map<String, String> getHeaders() {
+        return header.getHeaders();
+    }
+
+    public List<Cookie> getCookies() {
+        return cookies;
     }
 
     public byte[] getBody() {
@@ -24,6 +36,7 @@ public class Response {
     public static class Builder {
         private byte[] body = new byte[]{};
         private Header header = new Header();
+        private List<Cookie> cookies = new ArrayList<>();
 
         public Builder body(String body) {
             this.body = body.getBytes();
@@ -46,12 +59,12 @@ public class Response {
         }
 
         public Builder setCookies(List<Cookie> cookies) {
-            header.setCookies(cookies);
+            this.cookies.addAll(cookies);
             return this;
         }
 
         public Response build() {
-            return new Response(header, body);
+            return new Response(header, cookies, body);
         }
     }
 }

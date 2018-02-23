@@ -1,30 +1,27 @@
 package com.saralein.server.exchange;
 
 import com.saralein.server.protocol.StatusCodes;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import static com.saralein.server.Constants.CRLF;
 
 public class Header {
     private HashMap<String, String> header;
-    private List<Cookie> cookies;
 
     public Header() {
         this.header = new HashMap<>();
-        this.cookies = new ArrayList<>();
     }
 
     public void status(int code) {
         header.put("Status", createStatusLine(code));
     }
 
-    public void addHeader(String title, String content) {
-        header.put(title, content);
+    public Map<String, String> getHeaders() {
+        return header;
     }
 
-    public void setCookies(List<Cookie> cookies) {
-        this.cookies = cookies;
+    public void addHeader(String title, String content) {
+        header.put(title, content);
     }
 
     public String formatToString() {
@@ -32,7 +29,6 @@ public class Header {
 
         appendStatusLine(headerBuilder);
         appendHeaders(headerBuilder);
-        appendSetCookies(headerBuilder);
         appendBlankLine(headerBuilder);
 
         return headerBuilder.toString();
@@ -55,13 +51,6 @@ public class Header {
                 String headerLine = key + ": " + header.get(key) + CRLF;
                 headerBuilder.append(headerLine);
             }
-        }
-    }
-
-    private void appendSetCookies(StringBuilder headerBuilder) {
-        for (Cookie cookie : cookies) {
-            String cookieLine = String.format("Set-Cookie: %s", cookie.toString()) + CRLF;
-            headerBuilder.append(cookieLine);
         }
     }
 

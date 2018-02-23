@@ -18,7 +18,20 @@ public class Cookie {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s=%s", name, value);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cookie cookie = (Cookie) o;
+
+        if (!name.equals(cookie.name)) return false;
+        return value.equals(cookie.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
     }
 }

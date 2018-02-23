@@ -1,5 +1,6 @@
 package com.saralein.server.request.parser;
 
+import com.saralein.server.assertions.CookieAssertion;
 import com.saralein.server.exchange.Cookie;
 import com.saralein.server.request.Request;
 import org.junit.Before;
@@ -10,9 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class RequestParserTest {
     @Rule
@@ -24,19 +23,6 @@ public class RequestParserTest {
         requestParser = new RequestParser(
                 new RequestLineParser(), new HeaderParser(),
                 new ParameterParser(), new CookieParser());
-    }
-
-    private List<String> mapToString(List<Cookie> cookies) {
-        return cookies.stream()
-                .map(Cookie::toString)
-                .collect(Collectors.toList());
-    }
-
-    private boolean haveMatchingToString(List<Cookie> expected, List<Cookie> actual) {
-        List<String> expectedStrings = mapToString(expected);
-        List<String> actualStrings = mapToString(actual);
-
-        return expectedStrings.equals(actualStrings);
     }
 
     @Test
@@ -91,7 +77,7 @@ public class RequestParserTest {
 
         assertEquals("GET", parsedRequest.getMethod());
         assertEquals("/cookie", parsedRequest.getUri());
-        assertTrue(haveMatchingToString(cookies, parsedRequest.getCookies()));
+        CookieAssertion.assertCookiesAreEqual(cookies, parsedRequest.getCookies());
     }
 
     @Test(expected = Exception.class)
