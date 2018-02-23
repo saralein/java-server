@@ -1,11 +1,15 @@
 package com.saralein.server.router;
 
+import com.saralein.server.mocks.MockController;
 import com.saralein.server.mocks.MockRedirect;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class RoutesTest {
-    private Routes routes = new Routes().get("/redirect", new MockRedirect());
+    private Routes routes = new Routes()
+            .get("/redirect", new MockRedirect())
+            .post("/form", new MockController(200, "Form response"))
+            .put("/form", new MockController(200, "Form response"));
 
     @Test
     public void addsRoutesForMethods() {
@@ -40,5 +44,10 @@ public class RoutesTest {
     @Test
     public void returnsControllerForRoute() {
         assertEquals(MockRedirect.class, routes.retrieveController("/redirect", "GET").getClass());
+    }
+
+    @Test
+    public void returnsAvailableMethodsForRoute() {
+        assertEquals("POST,PUT", routes.getMethodsByRoute("/form"));
     }
 }
