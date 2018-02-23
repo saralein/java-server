@@ -1,8 +1,8 @@
 package com.saralein.cobspec.controller;
 
 import com.saralein.cobspec.data.CookieStore;
-import com.saralein.server.exchange.Cookie;
 import com.saralein.server.callable.Callable;
+import com.saralein.server.exchange.Cookie;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class CookieController implements Callable {
         this.store = cookieStore;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         if (hasParameters(request)) {
             return getSetCookieResponse(request);
         }
