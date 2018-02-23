@@ -1,6 +1,5 @@
 package com.saralein.server.filesystem;
 
-import com.saralein.server.range.Range;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.IOException;
@@ -22,14 +21,6 @@ public class FileIOTest {
     @Test
     public void readsFileContent() throws IOException {
         assertArrayEquals("1 cup rice".getBytes(), fileIO.readAllBytes(file));
-    }
-
-    @Test
-    public void readsPartialFileContent() throws IOException {
-        assertArrayEquals("1 cup rice".getBytes(), fileIO.readByteRange(file, new Range(0, 9)));
-        assertArrayEquals("cup r".getBytes(), fileIO.readByteRange(file, new Range(2, 6)));
-        assertArrayEquals("cup rice".getBytes(), fileIO.readByteRange(file, new Range(2, 9)));
-        assertArrayEquals("p rice".getBytes(), fileIO.readByteRange(file, new Range(4, 9)));
     }
 
     @Test

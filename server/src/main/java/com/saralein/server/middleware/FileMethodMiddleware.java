@@ -31,7 +31,7 @@ public class FileMethodMiddleware implements Middleware {
         Path resource = filePath.absolute(request.getUri());
 
         if (file.exists(resource) && isNotAcceptedMethod(request)) {
-            return new ErrorResponse(405).respond();
+            return new ErrorResponse(405).respond("Allow", Methods.allowedFileMethods());
         }
 
         return next.call(request);
