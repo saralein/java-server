@@ -1,5 +1,6 @@
 package com.saralein.server.authorization;
 
+import com.saralein.server.request.Request;
 import java.util.Base64;
 
 public class Authorizer {
@@ -11,7 +12,8 @@ public class Authorizer {
         this.password = password;
     }
 
-    public boolean isAuthorized(String encodedAuthorization) {
+    public boolean isAuthorized(Request request) {
+        String encodedAuthorization = request.getHeader("Authorization");
         return encodeValidAuthorization().equals(parseRequestAuthorization(encodedAuthorization));
     }
 

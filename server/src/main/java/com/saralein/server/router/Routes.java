@@ -1,42 +1,42 @@
 package com.saralein.server.router;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.protocol.Methods;
 import java.util.HashMap;
 
 public class Routes {
-    private final HashMap<String, HashMap<Methods, Controller>> routes;
+    private final HashMap<String, HashMap<Methods, Callable>> routes;
 
     public Routes() {
         this.routes = new HashMap<>();
     }
 
-    public Routes get(String uri, Controller controller) {
+    public Routes get(String uri, Callable controller) {
         addRoute(uri, Methods.GET, controller);
         return this;
     }
 
-    public Routes post(String uri, Controller controller) {
+    public Routes post(String uri, Callable controller) {
         addRoute(uri, Methods.POST, controller);
         return this;
     }
 
-    public Routes put(String uri, Controller controller) {
+    public Routes put(String uri, Callable controller) {
         addRoute(uri, Methods.PUT, controller);
         return this;
     }
 
-    public Routes head(String uri, Controller controller) {
+    public Routes head(String uri, Callable controller) {
         addRoute(uri, Methods.HEAD, controller);
         return this;
     }
 
-    public Routes options(String uri, Controller controller) {
+    public Routes options(String uri, Callable controller) {
         addRoute(uri, Methods.OPTIONS, controller);
         return this;
     }
 
-    public Routes delete(String uri, Controller controller) {
+    public Routes delete(String uri, Callable controller) {
         addRoute(uri, Methods.DELETE, controller);
         return this;
     }
@@ -49,13 +49,13 @@ public class Routes {
         return isRoute(route) && !hasMethod(route, method);
     }
 
-    Controller retrieveController(String route, String method) {
+    Callable retrieveController(String route, String method) {
         return routes.get(route).get(Methods.valueOf(method));
     }
 
-    private void addRoute(String uri, Methods method, Controller controller) {
+    private void addRoute(String uri, Methods method, Callable controller) {
         if (!routes.containsKey(uri)) {
-            routes.put(uri, new HashMap<Methods, Controller>(){{
+            routes.put(uri, new HashMap<Methods, Callable>() {{
                 put(method, controller);
             }});
         } else {

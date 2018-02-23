@@ -16,6 +16,7 @@ import com.saralein.server.Application;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
@@ -54,7 +55,7 @@ public class Main {
             Path root = argsParser.parseRoot(home);
 
             Routes routes = configureRoutes(logStore);
-            List<Middleware> middlewares = configureMiddleware(root, logger, routes, messageDigest);
+            List<Middleware> middlewares = configureMiddleware(root, logger, messageDigest);
             Application application = configureApplication(routes, middlewares);
             Server server = new ServerInitializer(logger, application).setup(port);
             server.run();
@@ -89,7 +90,7 @@ public class Main {
         return new ArgsValidation(validators).validate(args);
     }
 
-    private static List<Middleware> configureMiddleware(Path root, Logger logger, Routes routes, MessageDigest messageDigest) {
+    private static List<Middleware> configureMiddleware(Path root, Logger logger, MessageDigest messageDigest) {
         FilePath filePath = new FilePath(root);
         File file = new File(messageDigest);
         Directory directory = new Directory();
@@ -106,15 +107,12 @@ public class Main {
         PatchVerifier patchVerifier = new PatchVerifier(file, filePath);
         DirectoryVerifier directoryValidator = new DirectoryVerifier(directory, filePath);
 
-        Authorizer authorizer = new Authorizer("admin", "hunter2");
-
         List<Middleware> middlewares = new ArrayList<>();
         middlewares.add(new FileMethodMiddleware(file, filePath));
         middlewares.add(new ResourceMiddleware(fileHandler, fileVerifier));
         middlewares.add(new ResourceMiddleware(partialFileHandler, partialFileVerifier));
         middlewares.add(new ResourceMiddleware(patchHandler, patchVerifier));
         middlewares.add(new ResourceMiddleware(directoryHandler, directoryValidator));
-        middlewares.add(new AuthMiddleware(authorizer, "/logs", "ServerCity"));
         middlewares.add(new LoggingMiddleware(logger));
 
         return middlewares;
@@ -137,6 +135,11 @@ public class Main {
         FormModification formModification = new FormModification();
         CookieStore cookieStore = new CookieStore();
 
+        Authorizer authorizer = new Authorizer("admin", "hunter2");
+
+        LogController logController = new LogController(logStore);
+        Middleware authMiddleware = new AuthMiddleware(authorizer, "ServerCity").apply(logController);
+
         return new Routes()
                 .get("/redirect", new RedirectController())
                 .get("/form", new FormGetController(formStore, formBody))
@@ -152,7 +155,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logStore))
+                .get("/logs", authMiddleware)
                 .get("/parameters", new ParameterController())
                 .get("/cookie", new CookieController(cookieStore))
                 .get("/eat_cookie", new CookieController(cookieStore));

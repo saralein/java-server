@@ -1,5 +1,6 @@
 package com.saralein.server.authorization;
 
+import com.saralein.server.request.Request;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.Base64;
@@ -17,17 +18,26 @@ public class AuthorizerTest {
     @Test
     public void returnsFalseForIncorrectCredentials() {
         String auth = Base64.getEncoder().encodeToString("admin:password123".getBytes());
-        assertFalse(authorizer.isAuthorized("Basic " + auth));
+        Request request = new Request.Builder()
+                .addHeader("Authorization", "Basic " + auth)
+                .build();
+        assertFalse(authorizer.isAuthorized(request));
     }
 
     @Test
     public void returnsFalseForNoCredentials() {
-        assertFalse(authorizer.isAuthorized(""));
+        Request request = new Request.Builder()
+                .addHeader("Authorization", "")
+                .build();
+        assertFalse(authorizer.isAuthorized(request));
     }
 
     @Test
     public void returnsTrueForValidCredentials() {
         String auth = Base64.getEncoder().encodeToString("admin:hunter2".getBytes());
-        assertTrue(authorizer.isAuthorized("Basic " + auth));
+        Request request = new Request.Builder()
+                .addHeader("Authorization", "Basic " + auth)
+                .build();
+        assertTrue(authorizer.isAuthorized(request));
     }
 }

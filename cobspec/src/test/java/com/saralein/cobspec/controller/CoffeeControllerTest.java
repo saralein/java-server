@@ -14,7 +14,7 @@ public class CoffeeControllerTest {
                 .method("GET")
                 .uri("coffee")
                 .build();
-        Response response = new CoffeeController().respond(request);
+        Response response = new CoffeeController().call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 418 I'm a teapot\r\nContent-type: text/html\r\n\r\n", header.formatToString());

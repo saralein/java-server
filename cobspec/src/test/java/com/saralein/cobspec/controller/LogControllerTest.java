@@ -26,7 +26,7 @@ public class LogControllerTest {
                 .method("GET")
                 .uri("/logs")
                 .build();
-        Response response = logController.respond(request);
+        Response response = logController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n", header.formatToString());
