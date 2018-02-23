@@ -27,19 +27,20 @@ public class PatchHandler implements Handler {
         String resourceEtag = file.computeHash(body);
 
         if (requestEtag.equals(resourceEtag)) {
-            return getSuccessResponse(request);
+            return getSuccessResponse(request, requestEtag);
         }
 
         return getFailResponse();
     }
 
-    private Response getSuccessResponse(Request request) throws IOException {
+    private Response getSuccessResponse(Request request, String etag) throws IOException {
         Path resource = filePath.absolute(request.getUri());
         fileIO.write(resource, request.getBody());
 
         return new Response.Builder()
                 .status(204)
                 .addHeader("Content-Location", request.getUri())
+                .addHeader("ETag", etag)
                 .build();
     }
 

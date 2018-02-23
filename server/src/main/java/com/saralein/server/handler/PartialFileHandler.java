@@ -10,6 +10,7 @@ import com.saralein.server.response.ErrorResponse;
 import com.saralein.server.response.Response;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class PartialFileHandler implements Handler {
     private final File file;
@@ -42,11 +43,16 @@ public class PartialFileHandler implements Handler {
     }
 
     private Response getResponse(Request request, Path resource, Range range, int fileLength) throws IOException {
+        byte[] body = fileIO.readAllBytes(resource);
+        byte[] partialBody = getPartialBody(body, range);
+        String etag = file.computeHash(body);
+
         return new Response.Builder()
                 .status(206)
                 .addHeader("Content-Type", file.mimeType(request.getUri()))
                 .addHeader("Content-Range", formatContentRange(range, fileLength))
-                .body(fileIO.readByteRange(resource, range))
+                .addHeader("ETag", etag)
+                .body(partialBody)
                 .build();
     }
 
@@ -56,5 +62,9 @@ public class PartialFileHandler implements Handler {
 
     private String formatContentRange(Range range, int fileLength) {
         return String.format("bytes %d-%d/%d", range.getStart(), range.getEnd(), fileLength);
+    }
+
+    private byte[] getPartialBody(byte[] body, Range range) {
+        return Arrays.copyOfRange(body, range.getStart(), range.getEnd() + 1);
     }
 }
