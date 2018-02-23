@@ -12,7 +12,7 @@ public class DefaultControllerTest {
     public void returns200Response() {
         Request request = new Request.Builder().build();
         DefaultController defaultController = new DefaultController();
-        Response response = defaultController.respond(request);
+        Response response = defaultController.call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\n\r\n", header.formatToString());

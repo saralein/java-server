@@ -1,16 +1,15 @@
 package com.saralein.cobspec.controller;
 
-import com.saralein.server.controller.Controller;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ParameterController implements Controller {
+public class ParameterController implements Callable {
     @Override
-    public Response respond(Request request) {
+    public Response call(Request request) {
         Map<String, String> parameters = request.getParameters();
         String body = formatParametersToBody(parameters);
 

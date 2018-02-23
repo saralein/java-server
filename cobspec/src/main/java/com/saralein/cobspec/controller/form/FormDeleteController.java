@@ -1,18 +1,18 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 
-public class FormDeleteController implements Controller {
+public class FormDeleteController implements Callable {
     private final DataStore dataStore;
 
     public FormDeleteController(DataStore dataStore) {
         this.dataStore = dataStore;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         dataStore.deleteData(request.getUri());
 
         return new Response.Builder()

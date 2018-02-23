@@ -64,7 +64,7 @@ public class ParameterControllerTest {
                 .uri("/parameters")
                 .parameters(parameters)
                 .build();
-        Response response = parameterController.respond(request);
+        Response response = parameterController.call(request);
         Header header = response.getHeader();
 
         assertEquals(expectedHeader, header.formatToString());

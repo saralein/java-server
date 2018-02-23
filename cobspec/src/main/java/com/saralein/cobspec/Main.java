@@ -16,7 +16,7 @@ import com.saralein.server.Application;
 import com.saralein.server.Server;
 import com.saralein.server.ServerInitializer;
 import com.saralein.server.authorization.Authorizer;
-import com.saralein.server.controller.UnauthorizedController;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.filesystem.Directory;
 import com.saralein.server.filesystem.File;
 import com.saralein.server.filesystem.FileIO;
@@ -133,11 +133,12 @@ public class Main {
         FormStore formStore = new FormStore();
         FormBody formBody = new FormBody();
         FormModification formModification = new FormModification();
+        CookieStore cookieStore = new CookieStore();
 
         Authorizer authorizer = new Authorizer("admin", "hunter2");
-        UnauthorizedController unauthorizedController = new UnauthorizedController("ServerCity");
 
-        CookieStore cookieStore = new CookieStore();
+        LogController logController = new LogController(logStore);
+        Middleware authMiddleware = new AuthMiddleware(authorizer, "ServerCity").apply(logController);
 
         return new Routes()
                 .get("/redirect", new RedirectController())
@@ -154,7 +155,7 @@ public class Main {
                 .get("/method_options2", new DefaultController())
                 .get("/tea", new DefaultController())
                 .get("/coffee", new CoffeeController())
-                .get("/logs", new LogController(logStore, authorizer, unauthorizedController))
+                .get("/logs", authMiddleware)
                 .get("/parameters", new ParameterController())
                 .get("/cookie", new CookieController(cookieStore))
                 .get("/eat_cookie", new CookieController(cookieStore));

@@ -1,5 +1,6 @@
 package com.saralein.server.middleware;
 
+import com.saralein.server.callable.Callable;
 import com.saralein.server.logger.Logger;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;

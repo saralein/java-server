@@ -1,12 +1,12 @@
 package com.saralein.cobspec.controller.form;
 
-import com.saralein.server.controller.Controller;
 import com.saralein.cobspec.data.DataStore;
+import com.saralein.server.callable.Callable;
 import com.saralein.server.request.Request;
 import com.saralein.server.response.Response;
 import java.util.HashMap;
 
-public class FormGetController implements Controller {
+public class FormGetController implements Callable {
     private final FormBody formBody;
     private DataStore dataStore;
 
@@ -15,7 +15,7 @@ public class FormGetController implements Controller {
         this.formBody = formBody;
     }
 
-    public Response respond(Request request) {
+    public Response call(Request request) {
         return new Response.Builder()
                     .status(200)
                     .addHeader("Content-Type", "text/html")

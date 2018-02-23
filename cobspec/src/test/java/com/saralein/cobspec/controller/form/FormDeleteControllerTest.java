@@ -30,7 +30,7 @@ public class FormDeleteControllerTest {
                 .uri("/form")
                 .build();
 
-        formDeleteResponse = new FormDeleteController(formStore).respond(request);
+        formDeleteResponse = new FormDeleteController(formStore).call(request);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class FormDeleteControllerTest {
                 .method("DELETE")
                 .uri("/pickles")
                 .build();
-        Response response = new FormDeleteController(formStore).respond(request);
+        Response response = new FormDeleteController(formStore).call(request);
         Header header = response.getHeader();
 
         assertEquals("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
