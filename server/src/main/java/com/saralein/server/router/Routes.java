@@ -2,7 +2,10 @@ package com.saralein.server.router;
 
 import com.saralein.server.callable.Callable;
 import com.saralein.server.protocol.Methods;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Routes {
     private final HashMap<String, HashMap<Methods, Callable>> routes;
@@ -47,6 +50,15 @@ public class Routes {
 
     boolean matchesRouteButNotMethod(String route, String method) {
         return isRoute(route) && !hasMethod(route, method);
+    }
+
+    String getMethodsByRoute(String route) {
+        List<Methods> methods = new ArrayList<>(routes.get(route).keySet());
+
+        return methods.stream()
+                .map(Enum::toString)
+                .sorted()
+                .collect(Collectors.joining(","));
     }
 
     Callable retrieveController(String route, String method) {

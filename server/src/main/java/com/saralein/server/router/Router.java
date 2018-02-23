@@ -21,7 +21,7 @@ public class Router implements Callable {
             Callable controller = routes.retrieveController(uri, method);
             return controller.call(request);
         } else if (routes.matchesRouteButNotMethod(uri, method)) {
-            return new ErrorResponse(405).respond();
+            return new ErrorResponse(405).respond("Allow", routes.getMethodsByRoute(uri));
         } else {
             return new ErrorResponse(404).respond();
         }

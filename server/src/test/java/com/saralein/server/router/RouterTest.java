@@ -50,8 +50,9 @@ public class RouterTest {
         Request request = createRequest("DELETE", "/stuff");
         Response response = router.call(request);
         Header header = response.getHeader();
+        String expected = "HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\nAllow: GET\r\n\r\n";
 
-        assertEquals("HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/html\r\n\r\n", header.formatToString());
+        assertEquals(expected, header.formatToString());
         assertArrayEquals("405 Method Not Allowed".getBytes(), response.getBody());
     }
 }
