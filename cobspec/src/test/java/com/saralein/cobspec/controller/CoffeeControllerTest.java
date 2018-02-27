@@ -16,8 +16,9 @@ public class CoffeeControllerTest {
                 .build();
         Response response = new CoffeeController().call(request);
         Header header = response.getHeader();
+        String expected = "HTTP/1.1 418 I'm a teapot\r\nContent-Type: text/html\r\n\r\n";
 
-        assertEquals("HTTP/1.1 418 I'm a teapot\r\nContent-type: text/html\r\n\r\n", header.formatToString());
-        assertArrayEquals("I'm a teapot.".getBytes(), response.getBody());
+        assertEquals(expected, header.formatToString());
+        assertArrayEquals("418 I'm a teapot".getBytes(), response.getBody());
     }
 }
